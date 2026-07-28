@@ -2,14 +2,29 @@ import { useEffect, useState } from "react";
 import { obtenerServicios } from "../services/servicios.service.js";
 import { obtenerBarberosPorServicio } from "../services/barberos.service.js";
 
+import ReservaStepper from "../components/reserva/ReservaStepper.jsx";
+import PasoServicio from "../components/reserva/PasoServicio.jsx";
+import PasoDia from "../components/reserva/PasoDia.jsx";
+
 function ReservaPage() {
+  const [pasoActual, setPasoActual] = useState(1);
+
   const [servicios, setServicios] = useState([]);
   const [cargando, setCargando] = useState(true);
+  const [cargandoBarbero, setCargandoBarbero] = useState(false);
   const [error, setError] = useState("");
 
-  const [servicioSeleccionado, setServicioSeleccionado] = useState(null);
-  const [barberoSeleccionado, setBarberoSeleccionado] = useState(null);
-  const [cargandoBarbero, setCargandoBarbero] = useState(false);
+  const [reserva, setReserva] = useState({
+    servicio: null,
+    barbero: null,
+    fecha: null,
+    hora: null,
+    cliente: {
+      nombre: "",
+      telefono: "",
+      observacion: "",
+    },
+  });
 
   useEffect(() => {
     const cargarServicios = async () => {
@@ -33,42 +48,49 @@ function ReservaPage() {
 
   const seleccionarServicio = async (servicio) => {
     try {
-      setServicioSeleccionado(servicio);
-      setBarberoSeleccionado(null);
       setCargandoBarbero(true);
       setError("");
 
       const barberos = await obtenerBarberosPorServicio(servicio.id);
 
       if (barberos.length === 0) {
-        setError("No hay ningún barbero disponible para este servicio.");
+        setError(
+          "No hay ningún profesional disponible para este servicio."
+        );
         return;
       }
 
-      // Como por ahora hay un solo barbero, se selecciona automáticamente.
-      setBarberoSeleccionado(barberos[0]);
+      setReserva((reservaAnterior) => ({
+        ...reservaAnterior,
+        servicio,
+        barbero: barberos[0],
+        fecha: null,
+        hora: null,
+      }));
+
+      setPasoActual(2);
     } catch (error) {
       console.error(error);
-      setError("No se pudo obtener el barbero disponible.");
+      setError("No se pudo obtener el profesional disponible.");
     } finally {
       setCargandoBarbero(false);
     }
   };
 
-  const continuarReserva = () => {
-    if (!servicioSeleccionado || !barberoSeleccionado) {
-      return;
-    }
-
-    console.log("Servicio seleccionado:", servicioSeleccionado);
-    console.log("Barbero seleccionado:", barberoSeleccionado);
-
-    // En el próximo paso vamos a avanzar a la selección del día.
+  const volverAServicios = () => {
+    setPasoActual(1);
+    setError("");
   };
 
   if (cargando) {
     return (
-      <main>
+      <main
+        style={{
+          maxWidth: "1000px",
+          margin: "0 auto",
+          padding: "40px 20px",
+        }}
+      >
         <h1>Reservar turno</h1>
         <p>Cargando servicios...</p>
       </main>
@@ -76,82 +98,45 @@ function ReservaPage() {
   }
 
   return (
-    <main>
-      <h1>Reservar turno</h1>
+    <main
+      style={{
+        maxWidth: "1000px",
+        margin: "0 auto",
+        padding: "40px 20px",
+      }}
+    >
+      <ReservaStepper pasoActual={pasoActual} />
 
-      <p>Seleccioná el servicio que querés reservar.</p>
-
-      {error && <p>{error}</p>}
-
-      <section>
-        {servicios.map((servicio) => {
-          const estaSeleccionado =
-            servicioSeleccionado?.id === servicio.id;
-
-          return (
-            <article
-              key={servicio.id}
-              onClick={() => seleccionarServicio(servicio)}
-              style={{
-                border: estaSeleccionado
-                  ? "2px solid white"
-                  : "1px solid gray",
-                padding: "20px",
-                marginBottom: "16px",
-                cursor: cargandoBarbero ? "wait" : "pointer",
-                opacity: cargandoBarbero && !estaSeleccionado ? 0.7 : 1,
-              }}
-            >
-              <h2>{servicio.nombre}</h2>
-
-              <p>{servicio.descripcion}</p>
-
-              <p>Duración: {servicio.duracionMinutos} minutos</p>
-
-              <p>
-                Precio:{" "}
-                {Number(servicio.precio).toLocaleString("es-AR", {
-                  style: "currency",
-                  currency: "ARS",
-                })}
-              </p>
-            </article>
-          );
-        })}
-      </section>
-
-      {cargandoBarbero && (
-        <section>
-          <p>Buscando el profesional disponible...</p>
-        </section>
+      {error && (
+        <div
+          role="alert"
+          style={{
+            padding: "14px",
+            marginBottom: "24px",
+            border: "1px solid #b94a48",
+            borderRadius: "8px",
+            backgroundColor: "#351a1a",
+          }}
+        >
+          {error}
+        </div>
       )}
 
-      {servicioSeleccionado &&
-        barberoSeleccionado &&
-        !cargandoBarbero && (
-          <section>
-            <h2>Servicio seleccionado</h2>
+      {pasoActual === 1 && (
+        <PasoServicio
+          servicios={servicios}
+          servicioSeleccionado={reserva.servicio}
+          cargandoBarbero={cargandoBarbero}
+          onSeleccionarServicio={seleccionarServicio}
+        />
+      )}
 
-            <p>{servicioSeleccionado.nombre}</p>
-
-            <h2>Profesional asignado</h2>
-
-            <p>
-              {barberoSeleccionado.nombre}
-              {barberoSeleccionado.apellido
-                ? ` ${barberoSeleccionado.apellido}`
-                : ""}
-            </p>
-
-            {barberoSeleccionado.descripcion && (
-              <p>{barberoSeleccionado.descripcion}</p>
-            )}
-
-            <button type="button" onClick={continuarReserva}>
-              Elegir día
-            </button>
-          </section>
-        )}
+      {pasoActual === 2 && (
+        <PasoDia
+          reserva={reserva}
+          onVolver={volverAServicios}
+        />
+      )}
     </main>
   );
 }
