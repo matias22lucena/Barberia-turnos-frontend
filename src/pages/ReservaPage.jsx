@@ -5,6 +5,7 @@ import { obtenerBarberosPorServicio } from "../services/barberos.service.js";
 import ReservaStepper from "../components/reserva/ReservaStepper.jsx";
 import PasoServicio from "../components/reserva/PasoServicio.jsx";
 import PasoDia from "../components/reserva/PasoDia.jsx";
+import PasoHora from "../components/reserva/PasoHora.jsx";
 
 function ReservaPage() {
   const [pasoActual, setPasoActual] = useState(1);
@@ -77,8 +78,24 @@ function ReservaPage() {
     }
   };
 
+  const seleccionarFecha = (fecha) => {
+    setReserva((reservaAnterior) => ({
+      ...reservaAnterior,
+      fecha,
+      hora: null,
+    }));
+
+    setPasoActual(3);
+    setError("");
+  };
+
   const volverAServicios = () => {
     setPasoActual(1);
+    setError("");
+  };
+
+  const volverADias = () => {
+    setPasoActual(2);
     setError("");
   };
 
@@ -134,7 +151,15 @@ function ReservaPage() {
       {pasoActual === 2 && (
         <PasoDia
           reserva={reserva}
+          onSeleccionarFecha={seleccionarFecha}
           onVolver={volverAServicios}
+        />
+      )}
+
+      {pasoActual === 3 && (
+        <PasoHora
+          reserva={reserva}
+          onVolver={volverADias}
         />
       )}
     </main>
