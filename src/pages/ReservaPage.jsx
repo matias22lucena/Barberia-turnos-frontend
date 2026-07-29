@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+
 import { obtenerServicios } from "../services/servicios.service.js";
 import { obtenerBarberosPorServicio } from "../services/barberos.service.js";
 
@@ -6,6 +7,8 @@ import ReservaStepper from "../components/reserva/ReservaStepper.jsx";
 import PasoServicio from "../components/reserva/PasoServicio.jsx";
 import PasoDia from "../components/reserva/PasoDia.jsx";
 import PasoHora from "../components/reserva/PasoHora.jsx";
+import PasoDatos from "../components/reserva/PasoDatos.jsx";
+import PasoConfirmacion from "../components/reserva/PasoConfirmacion.jsx";
 
 function ReservaPage() {
   const [pasoActual, setPasoActual] = useState(1);
@@ -67,6 +70,11 @@ function ReservaPage() {
         barbero: barberos[0],
         fecha: null,
         hora: null,
+        cliente: {
+          nombre: "",
+          telefono: "",
+          observacion: "",
+        },
       }));
 
       setPasoActual(2);
@@ -89,6 +97,26 @@ function ReservaPage() {
     setError("");
   };
 
+  const seleccionarHora = (hora) => {
+    setReserva((reservaAnterior) => ({
+      ...reservaAnterior,
+      hora,
+    }));
+
+    setPasoActual(4);
+    setError("");
+  };
+
+  const guardarDatosCliente = (cliente) => {
+    setReserva((reservaAnterior) => ({
+      ...reservaAnterior,
+      cliente,
+    }));
+
+    setPasoActual(5);
+    setError("");
+  };
+
   const volverAServicios = () => {
     setPasoActual(1);
     setError("");
@@ -97,6 +125,22 @@ function ReservaPage() {
   const volverADias = () => {
     setPasoActual(2);
     setError("");
+  };
+
+  const volverAHorarios = () => {
+    setPasoActual(3);
+    setError("");
+  };
+
+  const volverADatos = () => {
+    setPasoActual(4);
+    setError("");
+  };
+
+  const confirmarTurno = () => {
+    console.log("Reserva lista para enviar:", reserva);
+
+    alert("La reserva está lista para guardarse.");
   };
 
   if (cargando) {
@@ -159,7 +203,24 @@ function ReservaPage() {
       {pasoActual === 3 && (
         <PasoHora
           reserva={reserva}
+          onSeleccionarHora={seleccionarHora}
           onVolver={volverADias}
+        />
+      )}
+
+      {pasoActual === 4 && (
+        <PasoDatos
+          reserva={reserva}
+          onContinuar={guardarDatosCliente}
+          onVolver={volverAHorarios}
+        />
+      )}
+
+      {pasoActual === 5 && (
+        <PasoConfirmacion
+          reserva={reserva}
+          onConfirmar={confirmarTurno}
+          onVolver={volverADatos}
         />
       )}
     </main>
