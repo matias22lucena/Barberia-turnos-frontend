@@ -1,4 +1,9 @@
-function PasoConfirmacion({ reserva, onVolver, onConfirmar }) {
+function PasoConfirmacion({
+  reserva,
+  onVolver,
+  onConfirmar,
+  confirmando,
+}) {
   const precioFormateado = Number(
     reserva.servicio?.precio || 0
   ).toLocaleString("es-AR", {
@@ -13,6 +18,10 @@ function PasoConfirmacion({ reserva, onVolver, onConfirmar }) {
   return (
     <section>
       <h1>Revisá tu turno</h1>
+
+      <p>
+        Verificá que todos los datos sean correctos antes de confirmar.
+      </p>
 
       <div
         style={{
@@ -75,7 +84,16 @@ function PasoConfirmacion({ reserva, onVolver, onConfirmar }) {
           {reserva.cliente.observacion && (
             <>
               <span style={{ color: "#aaa" }}>Observación</span>
-              <strong>{reserva.cliente.observacion}</strong>
+
+              <strong
+                style={{
+                  maxWidth: "400px",
+                  textAlign: "right",
+                  overflowWrap: "anywhere",
+                }}
+              >
+                {reserva.cliente.observacion}
+              </strong>
             </>
           )}
         </div>
@@ -84,6 +102,7 @@ function PasoConfirmacion({ reserva, onVolver, onConfirmar }) {
       <button
         type="button"
         onClick={onConfirmar}
+        disabled={confirmando}
         style={{
           width: "100%",
           marginTop: "20px",
@@ -92,21 +111,26 @@ function PasoConfirmacion({ reserva, onVolver, onConfirmar }) {
           borderRadius: "8px",
           backgroundColor: "#f0b23e",
           color: "#111",
-          cursor: "pointer",
+          cursor: confirmando ? "wait" : "pointer",
           fontWeight: 700,
           fontSize: "16px",
+          opacity: confirmando ? 0.7 : 1,
         }}
       >
-        Confirmar turno
+        {confirmando
+          ? "Confirmando turno..."
+          : "Confirmar turno"}
       </button>
 
       <button
         type="button"
         onClick={onVolver}
+        disabled={confirmando}
         style={{
           marginTop: "20px",
           padding: "10px 18px",
-          cursor: "pointer",
+          cursor: confirmando ? "not-allowed" : "pointer",
+          opacity: confirmando ? 0.6 : 1,
         }}
       >
         ← Atrás

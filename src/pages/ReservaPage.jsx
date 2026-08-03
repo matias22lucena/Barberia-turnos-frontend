@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import { obtenerServicios } from "../services/servicios.service.js";
 import { obtenerBarberosPorServicio } from "../services/barberos.service.js";
+import { crearTurno } from "../services/turnos.service.js";
 
 import ReservaStepper from "../components/reserva/ReservaStepper.jsx";
 import PasoServicio from "../components/reserva/PasoServicio.jsx";
@@ -16,7 +17,10 @@ function ReservaPage() {
   const [servicios, setServicios] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [cargandoBarbero, setCargandoBarbero] = useState(false);
+  const [confirmandoTurno, setConfirmandoTurno] = useState(false);
+
   const [error, setError] = useState("");
+  const [turnoConfirmado, setTurnoConfirmado] = useState(null);
 
   const [reserva, setReserva] = useState({
     servicio: null,
@@ -80,7 +84,12 @@ function ReservaPage() {
       setPasoActual(2);
     } catch (error) {
       console.error(error);
-      setError("No se pudo obtener el profesional disponible.");
+
+      const mensaje =
+        error.response?.data?.message ||
+        "No se pudo obtener el profesional disponible.";
+
+      setError(mensaje);
     } finally {
       setCargandoBarbero(false);
     }
@@ -117,6 +126,43 @@ function ReservaPage() {
     setError("");
   };
 
+  const confirmarTurno = async () => {
+    if (
+      !reserva.barbero?.id ||
+      !reserva.servicio?.id ||
+      !reserva.fecha?.fechaISO ||
+      !reserva.hora
+    ) {
+      setError("Faltan datos para confirmar el turno.");
+      return;
+    }
+
+    try {
+      setConfirmandoTurno(true);
+      setError("");
+
+      const turnoCreado = await crearTurno({
+        barberoId: reserva.barbero.id,
+        servicioId: reserva.servicio.id,
+        fecha: reserva.fecha.fechaISO,
+        hora: reserva.hora,
+        cliente: reserva.cliente,
+      });
+
+      setTurnoConfirmado(turnoCreado);
+    } catch (error) {
+      console.error(error);
+
+      const mensaje =
+        error.response?.data?.message ||
+        "No se pudo confirmar el turno.";
+
+      setError(mensaje);
+    } finally {
+      setConfirmandoTurno(false);
+    }
+  };
+
   const volverAServicios = () => {
     setPasoActual(1);
     setError("");
@@ -137,10 +183,22 @@ function ReservaPage() {
     setError("");
   };
 
-  const confirmarTurno = () => {
-    console.log("Reserva lista para enviar:", reserva);
+  const comenzarNuevaReserva = () => {
+    setTurnoConfirmado(null);
+    setPasoActual(1);
+    setError("");
 
-    alert("La reserva está lista para guardarse.");
+    setReserva({
+      servicio: null,
+      barbero: null,
+      fecha: null,
+      hora: null,
+      cliente: {
+        nombre: "",
+        telefono: "",
+        observacion: "",
+      },
+    });
   };
 
   if (cargando) {
@@ -154,6 +212,106 @@ function ReservaPage() {
       >
         <h1>Reservar turno</h1>
         <p>Cargando servicios...</p>
+      </main>
+    );
+  }
+
+  if (turnoConfirmado) {
+    return (
+      <main
+        style={{
+          maxWidth: "700px",
+          margin: "0 auto",
+          padding: "40px 20px",
+        }}
+      >
+        <section
+          style={{
+            padding: "32px",
+            border: "1px solid #3d3733",
+            borderRadius: "12px",
+            backgroundColor: "#1c1917",
+            textAlign: "center",
+          }}
+        >
+          <div
+            style={{
+              width: "64px",
+              height: "64px",
+              margin: "0 auto 20px",
+              display: "grid",
+              placeItems: "center",
+              borderRadius: "50%",
+              backgroundColor: "#3a2a10",
+              color: "#f0b23e",
+              fontSize: "32px",
+            }}
+          >
+            ✓
+          </div>
+
+          <h1>¡Turno reservado!</h1>
+
+          <p>
+            Tu reserva fue guardada correctamente.
+          </p>
+
+          <div
+            style={{
+              marginTop: "28px",
+              padding: "24px",
+              border: "1px solid #3d3733",
+              borderRadius: "10px",
+              backgroundColor: "#151311",
+              textAlign: "left",
+            }}
+          >
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr auto",
+                gap: "16px",
+              }}
+            >
+              <span style={{ color: "#aaa" }}>Código</span>
+              <strong>{turnoConfirmado.codigo}</strong>
+
+              <span style={{ color: "#aaa" }}>Servicio</span>
+              <strong>{turnoConfirmado.servicioNombre}</strong>
+
+              <span style={{ color: "#aaa" }}>Profesional</span>
+              <strong>{turnoConfirmado.barberoNombre}</strong>
+
+              <span style={{ color: "#aaa" }}>Fecha</span>
+              <strong>{turnoConfirmado.fecha}</strong>
+
+              <span style={{ color: "#aaa" }}>Horario</span>
+              <strong>{turnoConfirmado.horaInicio}</strong>
+
+              <span style={{ color: "#aaa" }}>Estado</span>
+              <strong>{turnoConfirmado.estado}</strong>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={comenzarNuevaReserva}
+            style={{
+              width: "100%",
+              marginTop: "24px",
+              padding: "14px 18px",
+              border: "none",
+              borderRadius: "8px",
+              backgroundColor: "#f0b23e",
+              color: "#111",
+              cursor: "pointer",
+              fontWeight: 700,
+              fontSize: "16px",
+            }}
+          >
+            Reservar otro turno
+          </button>
+        </section>
       </main>
     );
   }
@@ -219,6 +377,7 @@ function ReservaPage() {
       {pasoActual === 5 && (
         <PasoConfirmacion
           reserva={reserva}
+          confirmando={confirmandoTurno}
           onConfirmar={confirmarTurno}
           onVolver={volverADatos}
         />
