@@ -1,0 +1,253 @@
+.home-servicios {
+  width: 100%;
+
+  border-top: 1px solid var(--color-border);
+
+  background-color: #12100e;
+}
+
+.home-servicios__container {
+  width: 100%;
+  max-width: 1180px;
+
+  margin: 0 auto;
+  padding: 96px 24px;
+}
+
+.home-servicios__header {
+  max-width: 720px;
+  margin-bottom: 42px;
+}
+
+.home-servicios__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+
+  color: var(--color-primary);
+
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.home-servicios__eyebrow::before {
+  content: "";
+
+  width: 28px;
+  height: 1px;
+
+  background-color: var(--color-primary);
+}
+
+.home-servicios__title {
+  margin: 16px 0 14px;
+
+  color: var(--color-text);
+
+  font-size: clamp(32px, 4vw, 48px);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+}
+
+.home-servicios__description {
+  margin: 0;
+
+  color: var(--color-text-muted);
+
+  font-size: 17px;
+  line-height: 1.65;
+}
+
+.home-servicios__grid {
+  width: 100%;
+
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.home-servicios__card {
+  min-width: 0;
+  padding: 26px;
+
+  display: flex;
+  flex-direction: column;
+
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+
+  background-color: var(--color-surface);
+
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.home-servicios__card:hover {
+  border-color: var(--color-primary-dark);
+
+  background-color: var(--color-surface-hover);
+
+  transform: translateY(-4px);
+}
+
+.home-servicios__card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.home-servicios__duration {
+  display: block;
+  margin-bottom: 10px;
+
+  color: var(--color-text-muted);
+
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.home-servicios__card-title {
+  margin: 0;
+
+  color: var(--color-text);
+
+  font-size: 22px;
+  line-height: 1.25;
+}
+
+.home-servicios__price {
+  flex-shrink: 0;
+
+  color: var(--color-primary);
+
+  font-size: 18px;
+  white-space: nowrap;
+}
+
+.home-servicios__card-description {
+  margin: 18px 0 28px;
+
+  color: var(--color-text-muted);
+
+  line-height: 1.6;
+}
+
+.home-servicios__reserve-button {
+  width: 100%;
+  min-height: 44px;
+  margin-top: auto;
+  padding: 11px 14px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+
+  background-color: transparent;
+  color: var(--color-text);
+
+  font-size: 14px;
+  font-weight: 700;
+
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.home-servicios__reserve-button:hover {
+  border-color: var(--color-primary);
+
+  background-color: rgba(239, 179, 66, 0.1);
+  color: var(--color-primary);
+}
+
+.home-servicios__loading {
+  min-height: 180px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  color: var(--color-text-muted);
+}
+
+.home-servicios__loading .spinner-border {
+  color: var(--color-primary);
+}
+
+.home-servicios__error {
+  padding: 14px 16px;
+
+  border: 1px solid var(--color-danger);
+  border-radius: 8px;
+
+  background-color: rgba(214, 91, 91, 0.12);
+  color: #ffb6b6;
+}
+
+.home-servicios__empty {
+  padding: 28px;
+
+  border: 1px dashed var(--color-border);
+  border-radius: 10px;
+
+  background-color: var(--color-surface);
+  color: var(--color-text-muted);
+
+  text-align: center;
+}
+
+@media (max-width: 960px) {
+  .home-servicios__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .home-servicios__container {
+    padding: 76px 16px;
+  }
+
+  .home-servicios__header {
+    margin-bottom: 32px;
+  }
+
+  .home-servicios__title {
+    font-size: 34px;
+  }
+
+  .home-servicios__description {
+    font-size: 16px;
+  }
+
+  .home-servicios__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .home-servicios__card {
+    padding: 22px;
+  }
+}
+
+@media (max-width: 390px) {
+  .home-servicios__card-top {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .home-servicios__price {
+    white-space: normal;
+  }
+}

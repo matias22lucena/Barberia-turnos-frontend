@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import "./PasoDatos.css";
+
 function PasoDatos({
   reserva,
   onContinuar,
@@ -66,29 +68,26 @@ function PasoDatos({
   };
 
   return (
-    <section>
-      <h1>Tus datos</h1>
+    <section className="paso-datos">
+      <header className="paso-datos__header">
+        <h1 className="paso-datos__title">
+          Tus datos
+        </h1>
 
-      <p>
-        Completá tus datos para continuar con la reserva.
-      </p>
+        <p className="paso-datos__description">
+          Completá tus datos para continuar con la reserva.
+        </p>
+      </header>
 
       <form
+        className="paso-datos__form"
         onSubmit={manejarEnvio}
-        style={{
-          display: "grid",
-          gap: "18px",
-          marginTop: "28px",
-        }}
+        noValidate
       >
-        <div>
+        <div className="paso-datos__field">
           <label
             htmlFor="nombre"
-            style={{
-              display: "block",
-              marginBottom: "8px",
-              fontWeight: 600,
-            }}
+            className="paso-datos__label"
           >
             Nombre y apellido
           </label>
@@ -101,38 +100,34 @@ function PasoDatos({
             onChange={manejarCambio}
             placeholder="Ejemplo: Carlos Gómez"
             autoComplete="name"
-            style={{
-              width: "100%",
-              padding: "12px",
-              borderRadius: "8px",
-              border: errores.nombre
-                ? "1px solid #b94a48"
-                : "1px solid #3d3733",
-              backgroundColor: "#151311",
-              color: "#f5f5f5",
-            }}
+            className={[
+              "paso-datos__input",
+              errores.nombre
+                ? "paso-datos__input--error"
+                : "",
+            ]
+              .filter(Boolean)
+              .join(" ")}
+            aria-invalid={Boolean(errores.nombre)}
+            aria-describedby={
+              errores.nombre ? "nombre-error" : undefined
+            }
           />
 
           {errores.nombre && (
             <p
-              style={{
-                color: "#ff8f8f",
-                marginTop: "6px",
-              }}
+              id="nombre-error"
+              className="paso-datos__error"
             >
               {errores.nombre}
             </p>
           )}
         </div>
 
-        <div>
+        <div className="paso-datos__field">
           <label
             htmlFor="telefono"
-            style={{
-              display: "block",
-              marginBottom: "8px",
-              fontWeight: 600,
-            }}
+            className="paso-datos__label"
           >
             Teléfono / WhatsApp
           </label>
@@ -145,40 +140,40 @@ function PasoDatos({
             onChange={manejarCambio}
             placeholder="Ejemplo: 3815555555"
             autoComplete="tel"
-            style={{
-              width: "100%",
-              padding: "12px",
-              borderRadius: "8px",
-              border: errores.telefono
-                ? "1px solid #b94a48"
-                : "1px solid #3d3733",
-              backgroundColor: "#151311",
-              color: "#f5f5f5",
-            }}
+            inputMode="tel"
+            className={[
+              "paso-datos__input",
+              errores.telefono
+                ? "paso-datos__input--error"
+                : "",
+            ]
+              .filter(Boolean)
+              .join(" ")}
+            aria-invalid={Boolean(errores.telefono)}
+            aria-describedby={
+              errores.telefono ? "telefono-error" : undefined
+            }
           />
 
           {errores.telefono && (
             <p
-              style={{
-                color: "#ff8f8f",
-                marginTop: "6px",
-              }}
+              id="telefono-error"
+              className="paso-datos__error"
             >
               {errores.telefono}
             </p>
           )}
         </div>
 
-        <div>
+        <div className="paso-datos__field">
           <label
             htmlFor="observacion"
-            style={{
-              display: "block",
-              marginBottom: "8px",
-              fontWeight: 600,
-            }}
+            className="paso-datos__label"
           >
             Observación
+            <span className="paso-datos__optional">
+              Opcional
+            </span>
           </label>
 
           <textarea
@@ -188,45 +183,33 @@ function PasoDatos({
             onChange={manejarCambio}
             placeholder="Información adicional para el barbero"
             rows="4"
-            style={{
-              width: "100%",
-              padding: "12px",
-              resize: "vertical",
-              borderRadius: "8px",
-              border: "1px solid #3d3733",
-              backgroundColor: "#151311",
-              color: "#f5f5f5",
-            }}
+            maxLength="500"
+            className="paso-datos__textarea"
           />
+
+          <span className="paso-datos__counter">
+            {formulario.observacion.length}/500
+          </span>
         </div>
 
         <button
           type="submit"
-          style={{
-            padding: "13px 18px",
-            border: "none",
-            borderRadius: "8px",
-            backgroundColor: "#f0b23e",
-            color: "#111",
-            cursor: "pointer",
-            fontWeight: 700,
-          }}
+          className="paso-datos__continue-button"
         >
           Continuar
         </button>
       </form>
 
-      <button
-        type="button"
-        onClick={onVolver}
-        style={{
-          marginTop: "22px",
-          padding: "10px 18px",
-          cursor: "pointer",
-        }}
-      >
-        ← Atrás
-      </button>
+      <div className="paso-datos__actions">
+        <button
+          type="button"
+          className="paso-datos__back-button"
+          onClick={onVolver}
+        >
+          <span aria-hidden="true">←</span>
+          Atrás
+        </button>
+      </div>
     </section>
   );
 }

@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
+
 import { obtenerHorariosPorBarbero } from "../../services/horarios.service.js";
 import { generarProximasFechas } from "../../utils/fechas.js";
+
+import "./PasoDia.css";
 
 function PasoDia({
   reserva,
@@ -55,101 +58,90 @@ function PasoDia({
 
   if (cargandoHorarios) {
     return (
-      <section>
-        <h1>Elegí el día</h1>
-        <p>Cargando días disponibles...</p>
+      <section className="paso-dia">
+        <header className="paso-dia__header">
+          <h1 className="paso-dia__title">
+            Elegí el día
+          </h1>
+
+          <p className="paso-dia__description">
+            Cargando días disponibles...
+          </p>
+        </header>
+
+        <div className="paso-dia__loading">
+          <div
+            className="spinner-border spinner-border-sm"
+            role="status"
+            aria-hidden="true"
+          />
+
+          <span>Buscando fechas disponibles...</span>
+        </div>
       </section>
     );
   }
 
   return (
-    <section>
-      <h1>Elegí el día</h1>
+    <section className="paso-dia">
+      <header className="paso-dia__header">
+        <h1 className="paso-dia__title">
+          Elegí el día
+        </h1>
 
-      <p>
-        Seleccioná una fecha para{" "}
-        <strong>{reserva.servicio?.nombre}</strong>.
-      </p>
+        <p className="paso-dia__description">
+          Seleccioná una fecha para{" "}
+          <strong>{reserva.servicio?.nombre}</strong>.
+        </p>
+      </header>
 
       {error && (
         <div
           role="alert"
-          style={{
-            padding: "14px",
-            marginTop: "20px",
-            border: "1px solid #b94a48",
-            borderRadius: "8px",
-            backgroundColor: "#351a1a",
-          }}
+          className="paso-dia__error"
         >
           {error}
         </div>
       )}
 
       {!error && fechasDisponibles.length === 0 && (
-        <p>No hay días laborales configurados.</p>
+        <div className="paso-dia__empty">
+          No hay días laborales configurados.
+        </div>
       )}
 
       {!error && fechasDisponibles.length > 0 && (
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns:
-              "repeat(auto-fit, minmax(140px, 1fr))",
-            gap: "12px",
-            marginTop: "28px",
-          }}
-        >
+        <div className="paso-dia__grid">
           {fechasDisponibles.map((fecha) => {
             const seleccionada =
               reserva.fecha?.fechaISO === fecha.fechaISO;
+
+            const clasesTarjeta = [
+              "paso-dia__card",
+              seleccionada
+                ? "paso-dia__card--selected"
+                : "",
+            ]
+              .filter(Boolean)
+              .join(" ");
 
             return (
               <button
                 key={fecha.fechaISO}
                 type="button"
+                className={clasesTarjeta}
                 onClick={() => onSeleccionarFecha(fecha)}
-                style={{
-                  minHeight: "110px",
-                  padding: "14px",
-                  borderRadius: "10px",
-                  border: seleccionada
-                    ? "2px solid #f0b23e"
-                    : "1px solid #3d3733",
-                  backgroundColor: seleccionada
-                    ? "#2b2114"
-                    : "#1c1917",
-                  color: "#f5f5f5",
-                  cursor: "pointer",
-                }}
+                aria-pressed={seleccionada}
               >
-                <span
-                  style={{
-                    display: "block",
-                    marginBottom: "8px",
-                    color: "#aaa",
-                    fontSize: "12px",
-                  }}
-                >
+                <span className="paso-dia__weekday">
                   {fecha.nombreDiaCorto}
                 </span>
 
-                <strong
-                  style={{
-                    display: "block",
-                    fontSize: "24px",
-                  }}
-                >
+                <strong className="paso-dia__number">
                   {fecha.numeroDia}
                 </strong>
 
-                <span
-                  style={{
-                    display: "block",
-                    marginTop: "6px",
-                    color: "#aaa",
-                  }}
-                >
+                <span className="paso-dia__month">
                   {fecha.mesCorto}
                 </span>
               </button>
@@ -158,17 +150,16 @@ function PasoDia({
         </div>
       )}
 
-      <button
-        type="button"
-        onClick={onVolver}
-        style={{
-          marginTop: "28px",
-          padding: "10px 18px",
-          cursor: "pointer",
-        }}
-      >
-        ← Atrás
-      </button>
+      <div className="paso-dia__actions">
+        <button
+          type="button"
+          className="paso-dia__back-button"
+          onClick={onVolver}
+        >
+          <span aria-hidden="true">←</span>
+          Atrás
+        </button>
+      </div>
     </section>
   );
 }

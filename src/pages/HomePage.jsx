@@ -1,15 +1,17 @@
-import { Link } from "react-router-dom";
+import HomeHeader from "../components/home/HomeHeader.jsx";
+import HomeHero from "../components/home/HomeHero.jsx";
+import HomeServicios from "../components/home/HomeServicios.jsx";
+import HomeHorarios from "../components/home/HomeHorarios.jsx";
+
+import "./HomePage.css";
 
 function HomePage() {
   return (
-    <main>
-      <h1>Barbería El Estilo</h1>
-
-      <p>Reservá tu turno de forma rápida y sencilla.</p>
-
-      <Link to="/reservar">
-        Reservar turno
-      </Link>
+    <main className="home-page">
+      <HomeHeader />
+      <HomeHero />
+      <HomeServicios />
+      <HomeHorarios />
     </main>
   );
 }

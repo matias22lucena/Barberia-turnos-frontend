@@ -1,54 +1,88 @@
+import "./ReservaStepper.css";
+
 const pasos = [
-  { numero: 1, nombre: "Servicio" },
-  { numero: 2, nombre: "Día" },
-  { numero: 3, nombre: "Hora" },
-  { numero: 4, nombre: "Tus datos" },
-  { numero: 5, nombre: "Confirmación" },
+  "Servicio",
+  "Día",
+  "Hora",
+  "Tus datos",
+  "Confirmación",
 ];
 
 function ReservaStepper({ pasoActual }) {
+  const nombrePasoActual = pasos[pasoActual - 1];
+  const progreso = (pasoActual / pasos.length) * 100;
+
   return (
-    <nav aria-label="Progreso de la reserva">
-      <div
-        style={{
-          display: "flex",
-          gap: "12px",
-          marginBottom: "32px",
-          overflowX: "auto",
-          paddingBottom: "8px",
-        }}
-      >
-        {pasos.map((paso) => {
-          const completado = paso.numero < pasoActual;
-          const activo = paso.numero === pasoActual;
+    <nav
+      className="reserva-stepper"
+      aria-label="Progreso de la reserva"
+    >
+      {/* Stepper para escritorio */}
+      <ol className="reserva-stepper__list">
+        {pasos.map((nombre, indice) => {
+          const numeroPaso = indice + 1;
+          const estaActivo = numeroPaso === pasoActual;
+          const estaCompletado = numeroPaso < pasoActual;
+
+          const clases = [
+            "reserva-stepper__item",
+            estaActivo
+              ? "reserva-stepper__item--active"
+              : "",
+            estaCompletado
+              ? "reserva-stepper__item--completed"
+              : "",
+          ]
+            .filter(Boolean)
+            .join(" ");
 
           return (
-            <div
-              key={paso.numero}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                padding: "10px 16px",
-                borderRadius: "999px",
-                whiteSpace: "nowrap",
-                border: activo
-                  ? "2px solid #f0b23e"
-                  : "1px solid #444",
-                backgroundColor:
-                  activo || completado ? "#3a2a10" : "#1c1c1c",
-                color:
-                  activo || completado ? "#f0b23e" : "#aaaaaa",
-              }}
+            <li
+              key={nombre}
+              className={clases}
+              aria-current={estaActivo ? "step" : undefined}
             >
-              <span>
-                {completado ? "✓" : paso.numero}
+              <span className="reserva-stepper__number">
+                {estaCompletado ? "✓" : numeroPaso}
               </span>
 
-              <span>{paso.nombre}</span>
-            </div>
+              <span>{nombre}</span>
+            </li>
           );
         })}
+      </ol>
+
+      {/* Stepper compacto para celular */}
+      <div className="reserva-stepper__mobile">
+        <div className="reserva-stepper__mobile-info">
+          <div>
+            <span className="reserva-stepper__mobile-count">
+              Paso {pasoActual} de {pasos.length}
+            </span>
+
+            <strong className="reserva-stepper__mobile-title">
+              {nombrePasoActual}
+            </strong>
+          </div>
+
+          <span className="reserva-stepper__mobile-percentage">
+            {Math.round(progreso)}%
+          </span>
+        </div>
+
+        <div
+          className="reserva-stepper__progress"
+          role="progressbar"
+          aria-valuemin="1"
+          aria-valuemax={pasos.length}
+          aria-valuenow={pasoActual}
+          aria-label={`Paso ${pasoActual} de ${pasos.length}`}
+        >
+          <div
+            className="reserva-stepper__progress-bar"
+            style={{ width: `${progreso}%` }}
+          />
+        </div>
       </div>
     </nav>
   );
