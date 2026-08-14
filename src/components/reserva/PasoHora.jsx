@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
+
 import { obtenerDisponibilidad } from "../../services/disponibilidad.service.js";
+
+import "./PasoHora.css";
 
 function PasoHora({
   reserva,
@@ -55,87 +58,96 @@ function PasoHora({
 
   if (cargando) {
     return (
-      <section>
-        <h1>Horarios disponibles</h1>
-        <p>Cargando horarios...</p>
+      <section className="paso-hora">
+        <header className="paso-hora__header">
+          <h1 className="paso-hora__title">
+            Horarios disponibles
+          </h1>
+
+          <p className="paso-hora__description">
+            Cargando horarios...
+          </p>
+        </header>
+
+        <div className="paso-hora__loading">
+          <div
+            className="spinner-border spinner-border-sm"
+            role="status"
+            aria-hidden="true"
+          />
+
+          <span>Consultando disponibilidad...</span>
+        </div>
       </section>
     );
   }
 
   return (
-    <section>
-      <h1>Horarios disponibles</h1>
+    <section className="paso-hora">
+      <header className="paso-hora__header">
+        <h1 className="paso-hora__title">
+          Horarios disponibles
+        </h1>
 
-      <p>
-        Servicio: <strong>{reserva.servicio?.nombre}</strong>
-      </p>
+        <div className="paso-hora__summary">
+          <p>
+            <span>Servicio</span>
+            <strong>{reserva.servicio?.nombre}</strong>
+          </p>
 
-      <p>
-        Día: <strong>{reserva.fecha?.textoCompleto}</strong>
-      </p>
+          <p>
+            <span>Día</span>
+            <strong>{reserva.fecha?.textoCompleto}</strong>
+          </p>
+        </div>
+      </header>
 
       {error && (
         <div
           role="alert"
-          style={{
-            padding: "14px",
-            marginTop: "20px",
-            border: "1px solid #b94a48",
-            borderRadius: "8px",
-            backgroundColor: "#351a1a",
-          }}
+          className="paso-hora__error"
         >
           {error}
         </div>
       )}
 
       {!error && horarios.length === 0 && (
-        <div
-          style={{
-            marginTop: "24px",
-            padding: "20px",
-            border: "1px solid #3d3733",
-            borderRadius: "10px",
-            backgroundColor: "#1c1917",
-          }}
-        >
-          <p>No hay horarios disponibles para esta fecha.</p>
+        <div className="paso-hora__empty">
+          <div className="paso-hora__empty-icon">
+            !
+          </div>
+
+          <div>
+            <strong>No hay horarios disponibles</strong>
+
+            <p>
+              Volvé atrás y seleccioná otra fecha.
+            </p>
+          </div>
         </div>
       )}
 
       {!error && horarios.length > 0 && (
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns:
-              "repeat(auto-fit, minmax(120px, 1fr))",
-            gap: "12px",
-            marginTop: "28px",
-          }}
-        >
+        <div className="paso-hora__grid">
           {horarios.map((hora) => {
             const seleccionada = reserva.hora === hora;
+
+            const clasesHorario = [
+              "paso-hora__button",
+              seleccionada
+                ? "paso-hora__button--selected"
+                : "",
+            ]
+              .filter(Boolean)
+              .join(" ");
 
             return (
               <button
                 key={hora}
                 type="button"
+                className={clasesHorario}
                 onClick={() => onSeleccionarHora(hora)}
-                style={{
-                  minHeight: "52px",
-                  padding: "12px",
-                  borderRadius: "10px",
-                  border: seleccionada
-                    ? "2px solid #f0b23e"
-                    : "1px solid #3d3733",
-                  backgroundColor: seleccionada
-                    ? "#2b2114"
-                    : "#1c1917",
-                  color: "#f5f5f5",
-                  cursor: "pointer",
-                  fontSize: "16px",
-                  fontWeight: 600,
-                }}
+                aria-pressed={seleccionada}
               >
                 {hora}
               </button>
@@ -144,19 +156,18 @@ function PasoHora({
         </div>
       )}
 
-      <button
-        type="button"
-        onClick={onVolver}
-        style={{
-          marginTop: "28px",
-          padding: "10px 18px",
-          cursor: "pointer",
-        }}
-      >
-        ← Atrás
-      </button>
+      <div className="paso-hora__actions">
+        <button
+          type="button"
+          className="paso-hora__back-button"
+          onClick={onVolver}
+        >
+          <span aria-hidden="true">←</span>
+          Atrás
+        </button>
+      </div>
     </section>
   );
 }
 
-export default PasoHora;  
+export default PasoHora;

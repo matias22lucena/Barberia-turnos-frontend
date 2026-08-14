@@ -1,82 +1,100 @@
+import { Link } from "react-router-dom";
+
+import "./PasoServicio.css";
+
 function PasoServicio({
   servicios,
   servicioSeleccionado,
   cargandoBarbero,
   onSeleccionarServicio,
 }) {
+  const formatearPrecio = (precio) => {
+    return Number(precio).toLocaleString("es-AR", {
+      style: "currency",
+      currency: "ARS",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    });
+  };
+
   return (
-    <section>
-      <h1>¿Qué servicio querés?</h1>
+    <section className="paso-servicio">
+      <header className="paso-servicio__header">
+        <h1 className="paso-servicio__title">
+          ¿Qué servicio querés?
+        </h1>
 
-      <p>Seleccioná una opción para continuar con la reserva.</p>
+        <p className="paso-servicio__description">
+          Seleccioná una opción para continuar con la reserva.
+        </p>
+      </header>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-          gap: "16px",
-          marginTop: "24px",
-        }}
-      >
+      <div className="paso-servicio__grid">
         {servicios.map((servicio) => {
           const seleccionado =
             servicioSeleccionado?.id === servicio.id;
+
+          const clasesTarjeta = [
+            "paso-servicio__card",
+            seleccionado
+              ? "paso-servicio__card--selected"
+              : "",
+          ]
+            .filter(Boolean)
+            .join(" ");
 
           return (
             <button
               key={servicio.id}
               type="button"
+              className={clasesTarjeta}
               disabled={cargandoBarbero}
               onClick={() => onSeleccionarServicio(servicio)}
-              style={{
-                textAlign: "left",
-                padding: "20px",
-                borderRadius: "10px",
-                border: seleccionado
-                  ? "2px solid #f0b23e"
-                  : "1px solid #3d3733",
-                backgroundColor: seleccionado
-                  ? "#2b2114"
-                  : "#1c1917",
-                color: "#f5f5f5",
-                cursor: cargandoBarbero ? "wait" : "pointer",
-                opacity: cargandoBarbero ? 0.7 : 1,
-              }}
+              aria-pressed={seleccionado}
             >
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  gap: "16px",
-                }}
-              >
-                <h2 style={{ margin: 0 }}>
+              <div className="paso-servicio__card-header">
+                <h2 className="paso-servicio__card-title">
                   {servicio.nombre}
                 </h2>
 
-                <strong style={{ color: "#f0b23e" }}>
-                  {Number(servicio.precio).toLocaleString("es-AR", {
-                    style: "currency",
-                    currency: "ARS",
-                  })}
+                <strong className="paso-servicio__card-price">
+                  {formatearPrecio(servicio.precio)}
                 </strong>
               </div>
 
-              <p>{servicio.descripcion}</p>
+              <p className="paso-servicio__card-description">
+                {servicio.descripcion}
+              </p>
 
-              <small>
+              <p className="paso-servicio__card-duration">
                 Duración: {servicio.duracionMinutos} minutos
-              </small>
+              </p>
             </button>
           );
         })}
       </div>
 
       {cargandoBarbero && (
-        <p style={{ marginTop: "20px" }}>
-          Verificando profesional disponible...
-        </p>
+        <div className="paso-servicio__loading">
+          <div
+            className="spinner-border spinner-border-sm"
+            role="status"
+            aria-hidden="true"
+          />
+
+          <span>Verificando profesional disponible...</span>
+        </div>
       )}
+
+      <div className="paso-servicio__actions">
+        <Link
+          to="/"
+          className="paso-servicio__back-button"
+        >
+          <span aria-hidden="true">←</span>
+          Atrás
+        </Link>
+      </div>
     </section>
   );
 }

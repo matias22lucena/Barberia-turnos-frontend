@@ -1,0 +1,149 @@
+.reserva-stepper {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+
+  margin-bottom: 28px;
+
+  overflow: visible;
+}
+
+/* Stepper de escritorio */
+
+.reserva-stepper__list {
+  width: 100%;
+  min-width: 0;
+
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+.reserva-stepper__item {
+  min-width: 0;
+  padding: 9px 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+
+  background-color: var(--color-surface);
+  color: var(--color-text-muted);
+
+  font-size: 13px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.reserva-stepper__number {
+  flex-shrink: 0;
+}
+
+.reserva-stepper__item--active {
+  border-color: var(--color-primary);
+
+  background-color: rgba(239, 179, 66, 0.14);
+  color: var(--color-primary);
+}
+
+.reserva-stepper__item--completed {
+  border-color: var(--color-primary-dark);
+  color: var(--color-primary);
+}
+
+/* Oculto en escritorio */
+
+.reserva-stepper__mobile {
+  display: none;
+}
+
+/* Versión para celular */
+
+@media (max-width: 700px) {
+  .reserva-stepper {
+    margin-bottom: 26px;
+  }
+
+  .reserva-stepper__list {
+    display: none;
+  }
+
+  .reserva-stepper__mobile {
+    width: 100%;
+    min-width: 0;
+
+    display: block;
+    padding: 14px 16px;
+
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+
+    background-color: var(--color-surface);
+  }
+
+  .reserva-stepper__mobile-info {
+    width: 100%;
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+
+    margin-bottom: 12px;
+  }
+
+  .reserva-stepper__mobile-count {
+    display: block;
+    margin-bottom: 2px;
+
+    color: var(--color-text-muted);
+    font-size: 12px;
+  }
+
+  .reserva-stepper__mobile-title {
+    display: block;
+
+    color: var(--color-text);
+    font-size: 16px;
+    line-height: 1.3;
+
+    overflow-wrap: anywhere;
+  }
+
+  .reserva-stepper__mobile-percentage {
+    flex-shrink: 0;
+
+    color: var(--color-primary);
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .reserva-stepper__progress {
+    width: 100%;
+    height: 6px;
+
+    overflow: hidden;
+
+    border-radius: 999px;
+    background-color: #302b27;
+  }
+
+  .reserva-stepper__progress-bar {
+    height: 100%;
+
+    border-radius: inherit;
+    background-color: var(--color-primary);
+
+    transition: width 0.3s ease;
+  }
+}

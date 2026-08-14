@@ -4,12 +4,15 @@ import { obtenerServicios } from "../services/servicios.service.js";
 import { obtenerBarberosPorServicio } from "../services/barberos.service.js";
 import { crearTurno } from "../services/turnos.service.js";
 
+import ReservaHeader from "../components/reserva/ReservaHeader.jsx";
 import ReservaStepper from "../components/reserva/ReservaStepper.jsx";
 import PasoServicio from "../components/reserva/PasoServicio.jsx";
 import PasoDia from "../components/reserva/PasoDia.jsx";
 import PasoHora from "../components/reserva/PasoHora.jsx";
 import PasoDatos from "../components/reserva/PasoDatos.jsx";
 import PasoConfirmacion from "../components/reserva/PasoConfirmacion.jsx";
+
+import "./ReservaPage.css";
 
 function ReservaPage() {
   const [pasoActual, setPasoActual] = useState(1);
@@ -203,185 +206,122 @@ function ReservaPage() {
 
   if (cargando) {
     return (
-      <main
-        style={{
-          maxWidth: "1000px",
-          margin: "0 auto",
-          padding: "40px 20px",
-        }}
-      >
-        <h1>Reservar turno</h1>
-        <p>Cargando servicios...</p>
+      <main className="reserva-page">
+        <ReservaHeader />
+
+        <div className="reserva-page__content">
+          <section className="reserva-page__loading">
+            <h1>Reservar turno</h1>
+            <p>Cargando servicios...</p>
+          </section>
+        </div>
       </main>
     );
   }
 
   if (turnoConfirmado) {
     return (
-      <main
-        style={{
-          maxWidth: "700px",
-          margin: "0 auto",
-          padding: "40px 20px",
-        }}
-      >
-        <section
-          style={{
-            padding: "32px",
-            border: "1px solid #3d3733",
-            borderRadius: "12px",
-            backgroundColor: "#1c1917",
-            textAlign: "center",
-          }}
-        >
-          <div
-            style={{
-              width: "64px",
-              height: "64px",
-              margin: "0 auto 20px",
-              display: "grid",
-              placeItems: "center",
-              borderRadius: "50%",
-              backgroundColor: "#3a2a10",
-              color: "#f0b23e",
-              fontSize: "32px",
-            }}
-          >
-            ✓
-          </div>
+      <main className="reserva-page">
+        <ReservaHeader />
 
-          <h1>¡Turno reservado!</h1>
+        <div className="reserva-page__content">
+          <section className="reserva-page__success">
+            <div className="reserva-page__success-icon">✓</div>
 
-          <p>
-            Tu reserva fue guardada correctamente.
-          </p>
+            <h1>¡Turno reservado!</h1>
 
-          <div
-            style={{
-              marginTop: "28px",
-              padding: "24px",
-              border: "1px solid #3d3733",
-              borderRadius: "10px",
-              backgroundColor: "#151311",
-              textAlign: "left",
-            }}
-          >
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr auto",
-                gap: "16px",
-              }}
-            >
-              <span style={{ color: "#aaa" }}>Código</span>
-              <strong>{turnoConfirmado.codigo}</strong>
+            <p>Tu reserva fue guardada correctamente.</p>
 
-              <span style={{ color: "#aaa" }}>Servicio</span>
-              <strong>{turnoConfirmado.servicioNombre}</strong>
+            <div className="reserva-page__success-card">
+              <div className="reserva-page__summary-grid">
+                <span>Código</span>
+                <strong>{turnoConfirmado.codigo}</strong>
 
-              <span style={{ color: "#aaa" }}>Profesional</span>
-              <strong>{turnoConfirmado.barberoNombre}</strong>
+                <span>Servicio</span>
+                <strong>{turnoConfirmado.servicioNombre}</strong>
 
-              <span style={{ color: "#aaa" }}>Fecha</span>
-              <strong>{turnoConfirmado.fecha}</strong>
+                <span>Profesional</span>
+                <strong>{turnoConfirmado.barberoNombre}</strong>
 
-              <span style={{ color: "#aaa" }}>Horario</span>
-              <strong>{turnoConfirmado.horaInicio}</strong>
+                <span>Fecha</span>
+                <strong>{turnoConfirmado.fecha}</strong>
 
-              <span style={{ color: "#aaa" }}>Estado</span>
-              <strong>{turnoConfirmado.estado}</strong>
+                <span>Horario</span>
+                <strong>{turnoConfirmado.horaInicio}</strong>
+
+                <span>Estado</span>
+                <strong>{turnoConfirmado.estado}</strong>
+              </div>
             </div>
-          </div>
 
-          <button
-            type="button"
-            onClick={comenzarNuevaReserva}
-            style={{
-              width: "100%",
-              marginTop: "24px",
-              padding: "14px 18px",
-              border: "none",
-              borderRadius: "8px",
-              backgroundColor: "#f0b23e",
-              color: "#111",
-              cursor: "pointer",
-              fontWeight: 700,
-              fontSize: "16px",
-            }}
-          >
-            Reservar otro turno
-          </button>
-        </section>
+            <button
+              type="button"
+              className="btn reserva-page__primary-button"
+              onClick={comenzarNuevaReserva}
+            >
+              Reservar otro turno
+            </button>
+          </section>
+        </div>
       </main>
     );
   }
 
   return (
-    <main
-      style={{
-        maxWidth: "1000px",
-        margin: "0 auto",
-        padding: "40px 20px",
-      }}
-    >
-      <ReservaStepper pasoActual={pasoActual} />
+    <main className="reserva-page">
+      <ReservaHeader />
 
-      {error && (
-        <div
-          role="alert"
-          style={{
-            padding: "14px",
-            marginBottom: "24px",
-            border: "1px solid #b94a48",
-            borderRadius: "8px",
-            backgroundColor: "#351a1a",
-          }}
-        >
-          {error}
-        </div>
-      )}
+      <div className="reserva-page__content">
+        <ReservaStepper pasoActual={pasoActual} />
 
-      {pasoActual === 1 && (
-        <PasoServicio
-          servicios={servicios}
-          servicioSeleccionado={reserva.servicio}
-          cargandoBarbero={cargandoBarbero}
-          onSeleccionarServicio={seleccionarServicio}
-        />
-      )}
+        {error && (
+          <div role="alert" className="reserva-page__error">
+            {error}
+          </div>
+        )}
 
-      {pasoActual === 2 && (
-        <PasoDia
-          reserva={reserva}
-          onSeleccionarFecha={seleccionarFecha}
-          onVolver={volverAServicios}
-        />
-      )}
+        {pasoActual === 1 && (
+          <PasoServicio
+            servicios={servicios}
+            servicioSeleccionado={reserva.servicio}
+            cargandoBarbero={cargandoBarbero}
+            onSeleccionarServicio={seleccionarServicio}
+          />
+        )}
 
-      {pasoActual === 3 && (
-        <PasoHora
-          reserva={reserva}
-          onSeleccionarHora={seleccionarHora}
-          onVolver={volverADias}
-        />
-      )}
+        {pasoActual === 2 && (
+          <PasoDia
+            reserva={reserva}
+            onSeleccionarFecha={seleccionarFecha}
+            onVolver={volverAServicios}
+          />
+        )}
 
-      {pasoActual === 4 && (
-        <PasoDatos
-          reserva={reserva}
-          onContinuar={guardarDatosCliente}
-          onVolver={volverAHorarios}
-        />
-      )}
+        {pasoActual === 3 && (
+          <PasoHora
+            reserva={reserva}
+            onSeleccionarHora={seleccionarHora}
+            onVolver={volverADias}
+          />
+        )}
 
-      {pasoActual === 5 && (
-        <PasoConfirmacion
-          reserva={reserva}
-          confirmando={confirmandoTurno}
-          onConfirmar={confirmarTurno}
-          onVolver={volverADatos}
-        />
-      )}
+        {pasoActual === 4 && (
+          <PasoDatos
+            reserva={reserva}
+            onContinuar={guardarDatosCliente}
+            onVolver={volverAHorarios}
+          />
+        )}
+
+        {pasoActual === 5 && (
+          <PasoConfirmacion
+            reserva={reserva}
+            confirmando={confirmandoTurno}
+            onConfirmar={confirmarTurno}
+            onVolver={volverADatos}
+          />
+        )}
+      </div>
     </main>
   );
 }

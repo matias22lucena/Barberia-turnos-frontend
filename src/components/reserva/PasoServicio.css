@@ -1,0 +1,253 @@
+.paso-servicio {
+  width: 100%;
+  min-width: 0;
+}
+
+.paso-servicio__header {
+  width: 100%;
+  min-width: 0;
+  margin-bottom: 24px;
+}
+
+.paso-servicio__title {
+  margin: 0 0 8px;
+
+  color: var(--color-text);
+
+  font-size: clamp(24px, 5vw, 32px);
+  line-height: 1.2;
+
+  overflow-wrap: anywhere;
+}
+
+.paso-servicio__description {
+  margin: 0;
+
+  color: var(--color-text-muted);
+  line-height: 1.5;
+
+  overflow-wrap: anywhere;
+}
+
+.paso-servicio__grid {
+  width: 100%;
+  min-width: 0;
+
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.paso-servicio__card {
+  width: 100%;
+  min-width: 0;
+  padding: 20px;
+
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+
+  background-color: var(--color-surface);
+  color: var(--color-text);
+
+  text-align: left;
+
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.paso-servicio__card:hover:not(:disabled) {
+  border-color: var(--color-primary-dark);
+
+  background-color: var(--color-surface-hover);
+
+  transform: translateY(-2px);
+}
+
+.paso-servicio__card:focus-visible {
+  outline: 3px solid rgba(239, 179, 66, 0.3);
+  outline-offset: 2px;
+}
+
+.paso-servicio__card:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.paso-servicio__card--selected {
+  border: 2px solid var(--color-primary);
+
+  background-color: rgba(239, 179, 66, 0.12);
+}
+
+.paso-servicio__card-header {
+  width: 100%;
+  min-width: 0;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.paso-servicio__card-title {
+  min-width: 0;
+  margin: 0;
+
+  color: var(--color-text);
+
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.25;
+
+  overflow-wrap: anywhere;
+}
+
+.paso-servicio__card-price {
+  flex-shrink: 0;
+
+  color: var(--color-primary);
+
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.paso-servicio__card-description {
+  margin: 12px 0 16px;
+
+  color: var(--color-text-muted);
+  line-height: 1.45;
+
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.paso-servicio__card-duration {
+  margin: 0;
+
+  color: var(--color-text);
+
+  font-size: 14px;
+
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.paso-servicio__loading {
+  width: 100%;
+  margin-top: 20px;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  color: var(--color-text-muted);
+}
+
+.paso-servicio__loading .spinner-border {
+  color: var(--color-primary);
+}
+
+.paso-servicio__actions {
+  width: 100%;
+  margin-top: 28px;
+
+  display: flex;
+  justify-content: flex-start;
+}
+
+.paso-servicio__back-button {
+  min-height: 42px;
+  padding: 10px 18px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+
+  background-color: transparent;
+  color: var(--color-text);
+
+  font-weight: 600;
+  text-decoration: none;
+
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.paso-servicio__back-button:hover {
+  border-color: var(--color-primary-dark);
+
+  background-color: var(--color-surface-hover);
+  color: var(--color-primary);
+
+  transform: translateY(-1px);
+}
+
+.paso-servicio__back-button:focus-visible {
+  outline: 3px solid rgba(239, 179, 66, 0.3);
+  outline-offset: 2px;
+}
+
+@media (max-width: 700px) {
+  .paso-servicio__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 576px) {
+  .paso-servicio__header {
+    margin-bottom: 20px;
+  }
+
+  .paso-servicio__title {
+    font-size: 24px;
+  }
+
+  .paso-servicio__grid {
+    gap: 12px;
+  }
+
+  .paso-servicio__card {
+    padding: 16px;
+  }
+
+  .paso-servicio__card-header {
+    gap: 10px;
+  }
+
+  .paso-servicio__card-title {
+    font-size: 19px;
+  }
+
+  .paso-servicio__card-price {
+    font-size: 14px;
+  }
+
+  .paso-servicio__actions {
+    margin-top: 24px;
+  }
+
+  .paso-servicio__back-button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 380px) {
+  .paso-servicio__card-header {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .paso-servicio__card-price {
+    white-space: normal;
+  }
+}
