@@ -1,0 +1,347 @@
+.admin-turnos-page {
+  width: 100%;
+  min-height: 100vh;
+
+  padding: 42px clamp(16px, 5vw, 70px);
+
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(239, 179, 66, 0.07),
+      transparent 28%
+    ),
+    #0f0e0d;
+
+  color: #f4f1ed;
+}
+
+.admin-turnos-header,
+.admin-turnos-filtros,
+.admin-turnos-lista,
+.admin-turnos-error,
+.admin-turnos-estado {
+  width: 100%;
+  max-width: 1150px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.admin-turnos-header {
+  margin-bottom: 32px;
+}
+
+.admin-turnos-volver {
+  margin-bottom: 26px;
+
+  padding: 0;
+
+  border: none;
+  background: transparent;
+
+  color: #a9a29c;
+
+  cursor: pointer;
+}
+
+.admin-turnos-volver:hover {
+  color: #efb342;
+}
+
+.admin-turnos-eyebrow {
+  margin: 0 0 8px;
+
+  color: #efb342;
+
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.admin-turnos-header h1 {
+  margin: 0 0 8px;
+
+  font-size: clamp(
+    2rem,
+    5vw,
+    3.2rem
+  );
+}
+
+.admin-turnos-header p:last-child {
+  margin: 0;
+  color: #a9a29c;
+}
+
+.admin-turnos-filtros {
+  margin-bottom: 26px;
+
+  padding: 20px;
+
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+
+  background: #1b1816;
+
+  border: 1px solid #3a342f;
+  border-radius: 14px;
+}
+
+.admin-turnos-filtro {
+  flex: 1 1 220px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.admin-turnos-filtro label,
+.admin-turno-acciones label {
+  color: #a9a29c;
+
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.admin-turnos-filtro input,
+.admin-turnos-filtro select,
+.admin-turno-acciones select {
+  min-height: 46px;
+
+  padding: 0 12px;
+
+  background: #12100f;
+
+  border: 1px solid #3a342f;
+  border-radius: 9px;
+
+  color: #f4f1ed;
+
+  outline: none;
+}
+
+.admin-turnos-filtro input:focus,
+.admin-turnos-filtro select:focus,
+.admin-turno-acciones select:focus {
+  border-color: #efb342;
+}
+
+.admin-turnos-limpiar {
+  min-height: 46px;
+
+  padding: 0 18px;
+
+  border: 1px solid #3a342f;
+  border-radius: 9px;
+
+  background: transparent;
+
+  color: #f4f1ed;
+
+  cursor: pointer;
+}
+
+.admin-turnos-limpiar:hover {
+  border-color: #efb342;
+  color: #efb342;
+}
+
+.admin-turnos-error {
+  margin-bottom: 20px;
+
+  padding: 14px 16px;
+
+  background: rgba(214, 91, 91, 0.08);
+
+  border: 1px solid rgba(214, 91, 91, 0.35);
+  border-radius: 10px;
+
+  color: #ef8888;
+}
+
+.admin-turnos-estado {
+  padding: 50px 20px;
+
+  background: #1b1816;
+
+  border: 1px solid #3a342f;
+  border-radius: 14px;
+
+  color: #a9a29c;
+
+  text-align: center;
+}
+
+.admin-turnos-lista {
+  display: grid;
+  gap: 18px;
+}
+
+.admin-turno-card {
+  padding: 24px;
+
+  background: #1b1816;
+
+  border: 1px solid #3a342f;
+  border-radius: 16px;
+}
+
+.admin-turno-principal {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+
+  margin-bottom: 22px;
+}
+
+.admin-turno-codigo {
+  display: block;
+
+  margin-bottom: 6px;
+
+  color: #efb342;
+
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.admin-turno-principal h2 {
+  margin: 0 0 5px;
+
+  font-size: 1.35rem;
+}
+
+.admin-turno-principal p {
+  margin: 0;
+  color: #a9a29c;
+}
+
+.admin-turno-estado {
+  padding: 7px 11px;
+
+  border-radius: 999px;
+
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.admin-turno-estado--confirmado {
+  background: rgba(239, 179, 66, 0.12);
+  color: #efb342;
+}
+
+.admin-turno-estado--completado {
+  background: rgba(91, 190, 123, 0.12);
+  color: #78cf91;
+}
+
+.admin-turno-estado--cancelado {
+  background: rgba(214, 91, 91, 0.12);
+  color: #ef8888;
+}
+
+.admin-turno-estado--ausente {
+  background: rgba(169, 162, 156, 0.12);
+  color: #bdb6b0;
+}
+
+.admin-turno-datos {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 14px;
+
+  margin-bottom: 20px;
+}
+
+.admin-turno-datos div {
+  padding: 14px;
+
+  background: #12100f;
+
+  border: 1px solid #302b27;
+  border-radius: 10px;
+}
+
+.admin-turno-datos span,
+.admin-turno-observacion span {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color: #8e8781;
+
+  font-size: 0.78rem;
+}
+
+.admin-turno-datos strong {
+  color: #f4f1ed;
+
+  font-size: 0.95rem;
+}
+
+.admin-turno-observacion {
+  margin-bottom: 20px;
+
+  padding: 14px;
+
+  background: #12100f;
+
+  border: 1px solid #302b27;
+  border-radius: 10px;
+}
+
+.admin-turno-observacion p {
+  margin: 0;
+
+  color: #d3cdc7;
+
+  line-height: 1.5;
+}
+
+.admin-turno-acciones {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.admin-turno-acciones select {
+  min-width: 180px;
+}
+
+@media (max-width: 800px) {
+  .admin-turno-datos {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .admin-turnos-page {
+    padding: 28px 14px;
+  }
+
+  .admin-turno-principal {
+    flex-direction: column;
+  }
+
+  .admin-turno-datos {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-turno-acciones {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .admin-turno-acciones select {
+    width: 100%;
+  }
+}
