@@ -6,16 +6,52 @@ function PasoConfirmacion({
   onConfirmar,
   confirmando,
 }) {
-  const precioFormateado = Number(
-    reserva.servicio?.precio || 0
-  ).toLocaleString("es-AR", {
-    style: "currency",
-    currency: "ARS",
-  });
+  const esPromocion =
+    Boolean(
+      reserva.promocion
+    );
 
-  const nombreBarbero = reserva.barbero?.apellido
-    ? `${reserva.barbero.nombre} ${reserva.barbero.apellido}`
-    : reserva.barbero?.nombre;
+  const nombreReserva =
+    reserva.promocion
+      ?.titulo ||
+    reserva.servicio
+      ?.nombre ||
+    "";
+
+  const precioReserva =
+    reserva.promocion
+      ?.precio ??
+    reserva.servicio
+      ?.precio ??
+    0;
+
+  const duracionReserva =
+    reserva.promocion
+      ?.duracionMinutos ??
+    reserva.servicio
+      ?.duracionMinutos ??
+    0;
+
+  const precioFormateado =
+    Number(
+      precioReserva
+    ).toLocaleString(
+      "es-AR",
+      {
+        style: "currency",
+        currency: "ARS",
+        minimumFractionDigits:
+          0,
+        maximumFractionDigits:
+          0,
+      }
+    );
+
+  const nombreBarbero =
+    reserva.barbero?.apellido
+      ? `${reserva.barbero.nombre} ${reserva.barbero.apellido}`
+      : reserva.barbero
+          ?.nombre;
 
   return (
     <section className="paso-confirmacion">
@@ -25,64 +61,101 @@ function PasoConfirmacion({
         </h1>
 
         <p className="paso-confirmacion__description">
-          Verificá que todos los datos sean correctos antes de confirmar.
+          Verificá que los
+          datos sean correctos
+          antes de confirmar.
         </p>
       </header>
 
       <div className="paso-confirmacion__card">
         <div className="paso-confirmacion__section">
           <div className="paso-confirmacion__row">
-            <span>Servicio</span>
-            <strong>{reserva.servicio?.nombre}</strong>
-          </div>
+            <span>
+              {esPromocion
+                ? "Promoción"
+                : "Servicio"}
+            </span>
 
-          <div className="paso-confirmacion__row">
-            <span>Profesional</span>
-            <strong>{nombreBarbero}</strong>
-          </div>
-
-          <div className="paso-confirmacion__row">
-            <span>Día</span>
-            <strong>{reserva.fecha?.textoCompleto}</strong>
-          </div>
-
-          <div className="paso-confirmacion__row">
-            <span>Horario</span>
-            <strong>{reserva.hora}</strong>
-          </div>
-
-          <div className="paso-confirmacion__row">
-            <span>Duración</span>
             <strong>
-              {reserva.servicio?.duracionMinutos} minutos
+              {
+                nombreReserva
+              }
+            </strong>
+          </div>
+
+          {esPromocion && (
+            <div className="paso-confirmacion__row">
+              <span>
+                Servicio base
+              </span>
+
+              <strong>
+                {
+                  reserva
+                    .servicio
+                    ?.nombre
+                }
+              </strong>
+            </div>
+          )}
+
+          <div className="paso-confirmacion__row">
+            <span>
+              Profesional
+            </span>
+
+            <strong>
+              {nombreBarbero}
             </strong>
           </div>
 
           <div className="paso-confirmacion__row">
-            <span>Precio</span>
-            <strong>{precioFormateado}</strong>
+            <span>
+              Día
+            </span>
+
+            <strong>
+              {
+                reserva.fecha
+                  ?.textoCompleto
+              }
+            </strong>
           </div>
-        </div>
 
-        <div className="paso-confirmacion__divider" />
-
-        <div className="paso-confirmacion__section">
           <div className="paso-confirmacion__row">
-            <span>A nombre de</span>
-            <strong>{reserva.cliente.nombre}</strong>
+            <span>
+              Horario
+            </span>
+
+            <strong>
+              {reserva.hora}
+            </strong>
           </div>
 
           <div className="paso-confirmacion__row">
-            <span>Teléfono</span>
-            <strong>{reserva.cliente.telefono}</strong>
+            <span>
+              Duración
+            </span>
+
+            <strong>
+              {
+                duracionReserva
+              }{" "}
+              minutos
+            </strong>
           </div>
 
-          {reserva.cliente.observacion && (
-            <div className="paso-confirmacion__row paso-confirmacion__row--observation">
-              <span>Observación</span>
-              <strong>{reserva.cliente.observacion}</strong>
-            </div>
-          )}
+          <div className="paso-confirmacion__row">
+            <span>
+              Precio
+            </span>
+
+            <strong>
+              {
+                precioFormateado
+              }
+            </strong>
+          </div>
         </div>
       </div>
 
@@ -90,8 +163,12 @@ function PasoConfirmacion({
         <button
           type="button"
           className="paso-confirmacion__confirm-button"
-          onClick={onConfirmar}
-          disabled={confirmando}
+          onClick={
+            onConfirmar
+          }
+          disabled={
+            confirmando
+          }
         >
           {confirmando
             ? "Confirmando turno..."
@@ -102,9 +179,16 @@ function PasoConfirmacion({
           type="button"
           className="paso-confirmacion__back-button"
           onClick={onVolver}
-          disabled={confirmando}
+          disabled={
+            confirmando
+          }
         >
-          <span aria-hidden="true">←</span>
+          <span
+            aria-hidden="true"
+          >
+            ←
+          </span>
+
           Atrás
         </button>
       </div>

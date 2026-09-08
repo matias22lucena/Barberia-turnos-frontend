@@ -4,53 +4,77 @@ import "./PasoServicio.css";
 
 function PasoServicio({
   servicios,
+  promociones,
   servicioSeleccionado,
+  promocionSeleccionada,
   cargandoBarbero,
   onSeleccionarServicio,
+  onSeleccionarPromocion,
 }) {
   const formatearPrecio = (precio) => {
-    return Number(precio).toLocaleString("es-AR", {
-      style: "currency",
-      currency: "ARS",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    });
+    if (
+      precio === null ||
+      precio === undefined
+    ) {
+      return "Consultar";
+    }
+
+    return Number(
+      precio
+    ).toLocaleString(
+      "es-AR",
+      {
+        style: "currency",
+        currency: "ARS",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }
+    );
   };
 
   return (
     <section className="paso-servicio">
       <header className="paso-servicio__header">
         <h1 className="paso-servicio__title">
-          ¿Qué servicio querés?
+          ¿Qué querés reservar?
         </h1>
 
         <p className="paso-servicio__description">
-          Seleccioná una opción para continuar con la reserva.
+          Elegí un servicio o aprovechá
+          alguna de nuestras promociones.
         </p>
       </header>
+
+      <div className="paso-servicio__section-title">
+        <span>SERVICIOS</span>
+        <h2>Servicios disponibles</h2>
+      </div>
 
       <div className="paso-servicio__grid">
         {servicios.map((servicio) => {
           const seleccionado =
-            servicioSeleccionado?.id === servicio.id;
-
-          const clasesTarjeta = [
-            "paso-servicio__card",
-            seleccionado
-              ? "paso-servicio__card--selected"
-              : "",
-          ]
-            .filter(Boolean)
-            .join(" ");
+            !promocionSeleccionada &&
+            servicioSeleccionado?.id ===
+              servicio.id;
 
           return (
             <button
-              key={servicio.id}
+              key={`servicio-${servicio.id}`}
               type="button"
-              className={clasesTarjeta}
+              className={[
+                "paso-servicio__card",
+                seleccionado
+                  ? "paso-servicio__card--selected"
+                  : "",
+              ]
+                .filter(Boolean)
+                .join(" ")}
               disabled={cargandoBarbero}
-              onClick={() => onSeleccionarServicio(servicio)}
-              aria-pressed={seleccionado}
+              onClick={() =>
+                onSeleccionarServicio(
+                  servicio
+                )
+              }
             >
               <div className="paso-servicio__card-header">
                 <h2 className="paso-servicio__card-title">
@@ -58,7 +82,9 @@ function PasoServicio({
                 </h2>
 
                 <strong className="paso-servicio__card-price">
-                  {formatearPrecio(servicio.precio)}
+                  {formatearPrecio(
+                    servicio.precio
+                  )}
                 </strong>
               </div>
 
@@ -67,22 +93,105 @@ function PasoServicio({
               </p>
 
               <p className="paso-servicio__card-duration">
-                Duración: {servicio.duracionMinutos} minutos
+                Duración:{" "}
+                {servicio.duracionMinutos}{" "}
+                minutos
               </p>
             </button>
           );
         })}
       </div>
 
+      {promociones.length > 0 && (
+        <>
+          <div className="paso-servicio__section-title paso-servicio__section-title--promos">
+            <span>PROMOCIONES</span>
+
+            <h2>Promociones especiales</h2>
+          </div>
+
+          <div className="paso-servicio__grid">
+            {promociones.map(
+              (promocion) => {
+                const seleccionado =
+                  promocionSeleccionada?.id ===
+                  promocion.id;
+
+                return (
+                  <button
+                    key={`promocion-${promocion.id}`}
+                    type="button"
+                    className={[
+                      "paso-servicio__card",
+                      "paso-servicio__card--promo",
+
+                      seleccionado
+                        ? "paso-servicio__card--selected"
+                        : "",
+                    ]
+                      .filter(Boolean)
+                      .join(" ")}
+                    disabled={
+                      cargandoBarbero
+                    }
+                    onClick={() =>
+                      onSeleccionarPromocion(
+                        promocion
+                      )
+                    }
+                  >
+                    <span className="paso-servicio__promo-badge">
+                      PROMO
+                    </span>
+
+                    <div className="paso-servicio__card-header">
+                      <h2 className="paso-servicio__card-title">
+                        {
+                          promocion.titulo
+                        }
+                      </h2>
+
+                      <strong className="paso-servicio__card-price">
+                        {formatearPrecio(
+                          promocion.precio
+                        )}
+                      </strong>
+                    </div>
+
+                    {promocion.descripcion && (
+                      <p className="paso-servicio__card-description">
+                        {
+                          promocion.descripcion
+                        }
+                      </p>
+                    )}
+
+                    <p className="paso-servicio__card-duration">
+                      Duración:{" "}
+                      {
+                        promocion.duracionMinutos
+                      }{" "}
+                      minutos
+                    </p>
+                  </button>
+                );
+              }
+            )}
+          </div>
+        </>
+      )}
+
       {cargandoBarbero && (
         <div className="paso-servicio__loading">
           <div
             className="spinner-border spinner-border-sm"
             role="status"
-            aria-hidden="true"
           />
 
-          <span>Verificando profesional disponible...</span>
+          <span>
+            Verificando profesional
+            disponible...
+          </span>
         </div>
       )}
 
@@ -91,8 +200,7 @@ function PasoServicio({
           to="/"
           className="paso-servicio__back-button"
         >
-          <span aria-hidden="true">←</span>
-          Atrás
+          ← Atrás
         </Link>
       </div>
     </section>

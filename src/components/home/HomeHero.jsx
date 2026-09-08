@@ -1,11 +1,23 @@
 import { Link } from "react-router-dom";
-import  logobarber from "../../../public/Pitbull-Barber-Shop.png"
+
+import logobarber from "../../../public/Pitbull-Barber-Shop.png";
+
 import "./HomeHero.css";
 
 function HomeHero() {
   return (
     <section className="home-hero">
       <div className="home-hero__container">
+        <div className="home-hero__logo-wrapper">
+          <div className="home-hero__logo-frame">
+            <img
+              src={logobarber}
+              alt="Pitbull Barber Shop"
+              className="home-hero__logo"
+            />
+          </div>
+        </div>
+
         <div className="home-hero__content">
           <span className="home-hero__eyebrow">
             Barbería · Estilo · Precisión
@@ -42,28 +54,6 @@ function HomeHero() {
             <span>Atención personalizada</span>
             <span>Menos tiempo de espera</span>
           </div>
-        </div>
-
-        <div className="home-hero__visual">
-          <div className="home-hero__logo-frame">
-            <img
-              src={logobarber}
-              alt="Barbería El Estilo"
-              className="home-hero__logo"
-            />
-          </div>
-
-       {/*    <div className="home-hero__reservation-card">
-            <span>Reserva online</span>
-
-            <strong>
-              Elegí servicio, día y horario
-            </strong>
-
-            <Link to="/reservar">
-              Comenzar reserva →
-            </Link>
-          </div> */}
         </div>
       </div>
     </section>

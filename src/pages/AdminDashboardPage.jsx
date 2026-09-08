@@ -1,165 +1,231 @@
-import { useEffect, useMemo, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+
 import { useNavigate } from "react-router-dom";
 
-import { obtenerTurnosDashboard } from "../services/adminDashboard.service.js";
+import {
+  obtenerTurnosDashboard,
+} from "../services/adminDashboard.service.js";
 
 import "./AdminDashboardPage.css";
 
 function AdminDashboardPage() {
   const navigate = useNavigate();
 
-  const [turnos, setTurnos] = useState([]);
-  const [cargando, setCargando] = useState(true);
-  const [error, setError] = useState("");
+  const [turnos, setTurnos] =
+    useState([]);
+
+  const [cargando, setCargando] =
+    useState(true);
+
+  const [error, setError] =
+    useState("");
 
   const administradorGuardado =
-    sessionStorage.getItem("adminUsuario");
+    sessionStorage.getItem(
+      "adminUsuario"
+    );
 
-  const administrador = administradorGuardado
-    ? JSON.parse(administradorGuardado)
-    : null;
+  const administrador =
+    administradorGuardado
+      ? JSON.parse(
+          administradorGuardado
+        )
+      : null;
 
-  const obtenerFechaHoraArgentina = () => {
-    const ahora = new Date();
+  const obtenerFechaHoraArgentina =
+    () => {
+      const ahora = new Date();
 
-    const partes = new Intl.DateTimeFormat(
-      "es-AR",
-      {
-        timeZone: "America/Argentina/Buenos_Aires",
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-      }
-    ).formatToParts(ahora);
+      const partes =
+        new Intl.DateTimeFormat(
+          "es-AR",
+          {
+            timeZone:
+              "America/Argentina/Buenos_Aires",
 
-    const obtener = (tipo) =>
-      partes.find(
-        (parte) => parte.type === tipo
-      )?.value;
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
 
-    const anio = obtener("year");
-    const mes = obtener("month");
-    const dia = obtener("day");
-    const hora = obtener("hour");
-    const minuto = obtener("minute");
+            hour: "2-digit",
+            minute: "2-digit",
 
-    return {
-      fecha: `${anio}-${mes}-${dia}`,
-      hora: `${hora}:${minuto}`,
+            hour12: false,
+          }
+        ).formatToParts(ahora);
+
+      const obtener = (tipo) =>
+        partes.find(
+          (parte) =>
+            parte.type === tipo
+        )?.value;
+
+      const anio = obtener("year");
+      const mes = obtener("month");
+      const dia = obtener("day");
+
+      const hora = obtener("hour");
+      const minuto =
+        obtener("minute");
+
+      return {
+        fecha: `${anio}-${mes}-${dia}`,
+        hora: `${hora}:${minuto}`,
+      };
     };
-  };
 
-  // ESTA FUNCIÓN TIENE QUE ESTAR AFUERA DE cargarDashboard
-  const convertirHoraAMinutos = (hora) => {
+  const convertirHoraAMinutos = (
+    hora
+  ) => {
     if (!hora) {
       return 0;
     }
 
-    const [horas, minutos] = hora
-      .slice(0, 5)
-      .split(":")
-      .map(Number);
+    const [horas, minutos] =
+      hora
+        .slice(0, 5)
+        .split(":")
+        .map(Number);
 
-    return horas * 60 + minutos;
+    return (
+      horas * 60 +
+      minutos
+    );
   };
 
-  const cargarDashboard = async () => {
-    try {
-      setCargando(true);
-      setError("");
+  const cargarDashboard =
+    async () => {
+      try {
+        setCargando(true);
+        setError("");
 
-      const { fecha } =
-        obtenerFechaHoraArgentina();
+        const { fecha } =
+          obtenerFechaHoraArgentina();
 
-      const respuesta =
-        await obtenerTurnosDashboard(fecha);
+        const respuesta =
+          await obtenerTurnosDashboard(
+            fecha
+          );
 
-      setTurnos(respuesta.data || []);
-    } catch (error) {
-      const mensaje =
-        error.response?.data?.message ||
-        "No se pudo cargar el dashboard.";
+        setTurnos(
+          respuesta.data || []
+        );
+      } catch (error) {
+        const mensaje =
+          error.response?.data
+            ?.message ||
+          "No se pudo cargar el dashboard.";
 
-      setError(mensaje);
+        setError(mensaje);
 
-      if (error.response?.status === 401) {
-        sessionStorage.removeItem("adminToken");
-        sessionStorage.removeItem("adminUsuario");
+        if (
+          error.response?.status ===
+          401
+        ) {
+          sessionStorage.removeItem(
+            "adminToken"
+          );
 
-        navigate("/admin/login");
+          sessionStorage.removeItem(
+            "adminUsuario"
+          );
+
+          navigate(
+            "/admin/login"
+          );
+        }
+      } finally {
+        setCargando(false);
       }
-    } finally {
-      setCargando(false);
-    }
-  };
+    };
 
   useEffect(() => {
     cargarDashboard();
   }, []);
 
-  const estadisticas = useMemo(() => {
-    return {
-      total: turnos.length,
+  const estadisticas =
+    useMemo(() => {
+      return {
+        total: turnos.length,
 
-      confirmados: turnos.filter(
-        (turno) =>
-          turno.estado === "CONFIRMADO"
-      ).length,
+        confirmados:
+          turnos.filter(
+            (turno) =>
+              turno.estado ===
+              "CONFIRMADO"
+          ).length,
 
-      completados: turnos.filter(
-        (turno) =>
-          turno.estado === "COMPLETADO"
-      ).length,
+        completados:
+          turnos.filter(
+            (turno) =>
+              turno.estado ===
+              "COMPLETADO"
+          ).length,
 
-      cancelados: turnos.filter(
-        (turno) =>
-          turno.estado === "CANCELADO"
-      ).length,
-    };
-  }, [turnos]);
+        cancelados:
+          turnos.filter(
+            (turno) =>
+              turno.estado ===
+              "CANCELADO"
+          ).length,
+      };
+    }, [turnos]);
 
-  const proximosTurnos = useMemo(() => {
-    const { hora } =
-      obtenerFechaHoraArgentina();
+  const proximosTurnos =
+    useMemo(() => {
+      const { hora } =
+        obtenerFechaHoraArgentina();
 
-    const minutosActuales =
-      convertirHoraAMinutos(hora);
-
-    return turnos
-      .filter((turno) => {
-        const minutosTurno =
-          convertirHoraAMinutos(
-            turno.horaInicio
-          );
-
-        return (
-          turno.estado === "CONFIRMADO" &&
-          minutosTurno >= minutosActuales
+      const minutosActuales =
+        convertirHoraAMinutos(
+          hora
         );
-      })
-      .sort(
-        (a, b) =>
-          convertirHoraAMinutos(
-            a.horaInicio
-          ) -
-          convertirHoraAMinutos(
-            b.horaInicio
-          )
-      )
-      .slice(0, 5);
-  }, [turnos]);
+
+      return turnos
+        .filter((turno) => {
+          const minutosTurno =
+            convertirHoraAMinutos(
+              turno.horaInicio
+            );
+
+          return (
+            turno.estado ===
+              "CONFIRMADO" &&
+            minutosTurno >=
+              minutosActuales
+          );
+        })
+        .sort(
+          (a, b) =>
+            convertirHoraAMinutos(
+              a.horaInicio
+            ) -
+            convertirHoraAMinutos(
+              b.horaInicio
+            )
+        )
+        .slice(0, 5);
+    }, [turnos]);
 
   const cerrarSesion = () => {
-    sessionStorage.removeItem("adminToken");
-    sessionStorage.removeItem("adminUsuario");
+    sessionStorage.removeItem(
+      "adminToken"
+    );
+
+    sessionStorage.removeItem(
+      "adminUsuario"
+    );
 
     navigate("/admin/login");
   };
 
-  const formatearPrecio = (precio) => {
+  const formatearPrecio = (
+    precio
+  ) => {
     return new Intl.NumberFormat(
       "es-AR",
       {
@@ -178,7 +244,9 @@ function AdminDashboardPage() {
             Administración
           </p>
 
-          <h1>Panel administrativo</h1>
+          <h1>
+            Panel administrativo
+          </h1>
 
           <p>
             Bienvenido,{" "}
@@ -206,7 +274,10 @@ function AdminDashboardPage() {
 
       <section className="admin-dashboard-stats">
         <article>
-          <span>Turnos de hoy</span>
+          <span>
+            Turnos de hoy
+          </span>
+
           <strong>
             {cargando
               ? "..."
@@ -215,7 +286,10 @@ function AdminDashboardPage() {
         </article>
 
         <article>
-          <span>Confirmados</span>
+          <span>
+            Confirmados
+          </span>
+
           <strong>
             {cargando
               ? "..."
@@ -224,7 +298,10 @@ function AdminDashboardPage() {
         </article>
 
         <article>
-          <span>Completados</span>
+          <span>
+            Completados
+          </span>
+
           <strong>
             {cargando
               ? "..."
@@ -233,7 +310,10 @@ function AdminDashboardPage() {
         </article>
 
         <article>
-          <span>Cancelados</span>
+          <span>
+            Cancelados
+          </span>
+
           <strong>
             {cargando
               ? "..."
@@ -247,13 +327,18 @@ function AdminDashboardPage() {
           <div className="admin-dashboard-section-header">
             <div>
               <p>Agenda</p>
-              <h2>Próximos turnos</h2>
+
+              <h2>
+                Próximos turnos
+              </h2>
             </div>
 
             <button
               type="button"
               onClick={() =>
-                navigate("/admin/turnos")
+                navigate(
+                  "/admin/turnos"
+                )
               }
             >
               Ver todos
@@ -264,64 +349,86 @@ function AdminDashboardPage() {
             <div className="admin-dashboard-empty">
               Cargando turnos...
             </div>
-          ) : proximosTurnos.length === 0 ? (
+          ) : proximosTurnos.length ===
+            0 ? (
             <div className="admin-dashboard-empty">
-              No quedan próximos turnos para hoy.
+              No quedan próximos turnos
+              para hoy.
             </div>
           ) : (
             <div className="admin-dashboard-turnos">
-              {proximosTurnos.map((turno) => (
-                <article
-                  key={turno.id}
-                  className="admin-dashboard-turno"
-                >
-                  <div className="admin-dashboard-turno-hora">
-                    {turno.horaInicio}
-                  </div>
+              {proximosTurnos.map(
+                (turno) => (
+                  <article
+                    key={turno.id}
+                    className="admin-dashboard-turno"
+                  >
+                    <div className="admin-dashboard-turno-hora">
+                      {
+                        turno.horaInicio
+                      }
+                    </div>
 
-                  <div className="admin-dashboard-turno-info">
-                    <strong>
-                      {turno.clienteNombre}
-                    </strong>
+                    <div className="admin-dashboard-turno-info">
+                      <strong>
+                        {turno.clienteNombre ||
+                          "Reserva web"}
+                      </strong>
 
-                    <span>
-                      {turno.servicioNombre}
-                    </span>
-                  </div>
+                      <span>
+                        {
+                          turno.servicioNombre
+                        }
+                      </span>
+                    </div>
 
-                  <div className="admin-dashboard-turno-precio">
-                    {formatearPrecio(
-                      turno.precio
-                    )}
-                  </div>
-                </article>
-              ))}
+                    <div className="admin-dashboard-turno-precio">
+                      {formatearPrecio(
+                        turno.precio
+                      )}
+                    </div>
+                  </article>
+                )
+              )}
             </div>
           )}
         </div>
 
         <aside className="admin-dashboard-accesos">
-          <p>Accesos rápidos</p>
+          <p>
+            Accesos rápidos
+          </p>
 
           <button
             type="button"
             onClick={() =>
-              navigate("/admin/turnos")
+              navigate(
+                "/admin/turnos"
+              )
             }
           >
-            <strong>Turnos</strong>
+            <strong>
+              Turnos
+            </strong>
+
             <span>
-              Gestionar agenda y estados
+              Gestionar agenda y
+              estados
             </span>
           </button>
 
           <button
             type="button"
             onClick={() =>
-              navigate("/admin/servicios")
+              navigate(
+                "/admin/servicios"
+              )
             }
           >
-            <strong>Servicios</strong>
+            <strong>
+              Servicios
+            </strong>
+
             <span>
               Precios y duración
             </span>
@@ -330,12 +437,36 @@ function AdminDashboardPage() {
           <button
             type="button"
             onClick={() =>
-              navigate("/admin/horarios")
+              navigate(
+                "/admin/horarios"
+              )
             }
           >
-            <strong>Horarios</strong>
+            <strong>
+              Horarios
+            </strong>
+
             <span>
-              Días y franjas de atención
+              Días y franjas de
+              atención
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() =>
+              navigate(
+                "/admin/promociones"
+              )
+            }
+          >
+            <strong>
+              Promociones
+            </strong>
+
+            <span>
+              Crear y administrar
+              promociones
             </span>
           </button>
         </aside>

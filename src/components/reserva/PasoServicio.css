@@ -6,7 +6,8 @@
 .paso-servicio__header {
   width: 100%;
   min-width: 0;
-  margin-bottom: 24px;
+
+  margin-bottom: 28px;
 }
 
 .paso-servicio__title {
@@ -14,7 +15,12 @@
 
   color: var(--color-text);
 
-  font-size: clamp(24px, 5vw, 32px);
+  font-size: clamp(
+    24px,
+    5vw,
+    32px
+  );
+
   line-height: 1.2;
 
   overflow-wrap: anywhere;
@@ -23,33 +29,93 @@
 .paso-servicio__description {
   margin: 0;
 
-  color: var(--color-text-muted);
+  color:
+    var(--color-text-muted);
+
   line-height: 1.5;
 
   overflow-wrap: anywhere;
 }
+
+/* SECCIONES */
+
+.paso-servicio__section-title {
+  width: 100%;
+
+  margin: 0 0 14px;
+}
+
+.paso-servicio__section-title span {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color:
+    var(--color-primary);
+
+  font-size: 11px;
+  font-weight: 800;
+
+  letter-spacing: 0.13em;
+
+  text-transform: uppercase;
+}
+
+.paso-servicio__section-title h2 {
+  margin: 0;
+
+  color:
+    var(--color-text);
+
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.paso-servicio__section-title--promos {
+  margin-top: 38px;
+}
+
+/* GRILLA */
 
 .paso-servicio__grid {
   width: 100%;
   min-width: 0;
 
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
   gap: 14px;
 }
+
+/* TARJETAS */
 
 .paso-servicio__card {
   width: 100%;
   min-width: 0;
+
   padding: 20px;
 
-  border: 1px solid var(--color-border);
+  position: relative;
+
+  border: 1px solid
+    var(--color-border);
+
   border-radius: 10px;
 
-  background-color: var(--color-surface);
-  color: var(--color-text);
+  background-color:
+    var(--color-surface);
+
+  color:
+    var(--color-text);
 
   text-align: left;
+
+  cursor: pointer;
 
   transition:
     border-color 0.2s ease,
@@ -58,48 +124,185 @@
     opacity 0.2s ease;
 }
 
-.paso-servicio__card:hover:not(:disabled) {
-  border-color: var(--color-primary-dark);
+.paso-servicio__card:hover:not(
+    :disabled
+  ) {
+  border-color:
+    var(--color-primary-dark);
 
-  background-color: var(--color-surface-hover);
+  background-color:
+    var(
+      --color-surface-hover
+    );
 
-  transform: translateY(-2px);
+  transform:
+    translateY(-2px);
 }
 
 .paso-servicio__card:focus-visible {
-  outline: 3px solid rgba(239, 179, 66, 0.3);
+  outline: 3px solid
+    rgba(
+      239,
+      179,
+      66,
+      0.3
+    );
+
   outline-offset: 2px;
 }
 
 .paso-servicio__card:disabled {
   cursor: wait;
+
   opacity: 0.65;
 }
 
 .paso-servicio__card--selected {
-  border: 2px solid var(--color-primary);
+  border: 2px solid
+    var(--color-primary);
 
-  background-color: rgba(239, 179, 66, 0.12);
+  background-color:
+    rgba(
+      239,
+      179,
+      66,
+      0.12
+    );
 }
+
+/* PROMOCIÓN */
+
+.paso-servicio__card--promo {
+  overflow: hidden;
+
+  border-color:
+    rgba(
+      239,
+      179,
+      66,
+      0.35
+    );
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(
+        239,
+        179,
+        66,
+        0.08
+      ),
+      transparent 55%
+    ),
+    var(--color-surface);
+}
+
+.paso-servicio__card--promo:hover:not(
+    :disabled
+  ) {
+  border-color:
+    var(--color-primary);
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(
+        239,
+        179,
+        66,
+        0.12
+      ),
+      transparent 60%
+    ),
+    var(
+      --color-surface-hover
+    );
+}
+
+.paso-servicio__card--promo.paso-servicio__card--selected {
+  border: 2px solid
+    var(--color-primary);
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(
+        239,
+        179,
+        66,
+        0.17
+      ),
+      transparent 65%
+    ),
+    var(--color-surface);
+}
+
+.paso-servicio__promo-badge {
+  width: fit-content;
+
+  margin-bottom: 13px;
+  padding: 5px 9px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid
+    rgba(
+      239,
+      179,
+      66,
+      0.25
+    );
+
+  border-radius: 999px;
+
+  background:
+    rgba(
+      239,
+      179,
+      66,
+      0.12
+    );
+
+  color:
+    var(--color-primary);
+
+  font-size: 9px;
+  font-weight: 800;
+
+  letter-spacing: 0.13em;
+
+  text-transform: uppercase;
+}
+
+/* HEADER TARJETA */
 
 .paso-servicio__card-header {
   width: 100%;
   min-width: 0;
 
   display: flex;
+
   align-items: flex-start;
-  justify-content: space-between;
+
+  justify-content:
+    space-between;
+
   gap: 16px;
 }
 
 .paso-servicio__card-title {
   min-width: 0;
+
   margin: 0;
 
-  color: var(--color-text);
+  color:
+    var(--color-text);
 
   font-size: 20px;
   font-weight: 700;
+
   line-height: 1.25;
 
   overflow-wrap: anywhere;
@@ -108,72 +311,104 @@
 .paso-servicio__card-price {
   flex-shrink: 0;
 
-  color: var(--color-primary);
+  color:
+    var(--color-primary);
 
   font-size: 16px;
+  font-weight: 800;
+
   white-space: nowrap;
 }
 
 .paso-servicio__card-description {
-  margin: 12px 0 16px;
+  margin:
+    12px 0 16px;
 
-  color: var(--color-text-muted);
+  color:
+    var(--color-text-muted);
+
   line-height: 1.45;
 
   white-space: normal;
+
   overflow-wrap: anywhere;
 }
 
 .paso-servicio__card-duration {
   margin: 0;
 
-  color: var(--color-text);
+  color:
+    var(--color-text);
 
   font-size: 14px;
 
   white-space: normal;
+
   overflow-wrap: anywhere;
 }
 
+/* CARGANDO */
+
 .paso-servicio__loading {
   width: 100%;
+
   margin-top: 20px;
 
   display: flex;
+
   align-items: center;
+
   gap: 10px;
 
-  color: var(--color-text-muted);
+  color:
+    var(--color-text-muted);
 }
 
-.paso-servicio__loading .spinner-border {
-  color: var(--color-primary);
+.paso-servicio__loading
+  .spinner-border {
+  color:
+    var(--color-primary);
 }
+
+/* ACCIONES */
 
 .paso-servicio__actions {
   width: 100%;
+
   margin-top: 28px;
 
   display: flex;
-  justify-content: flex-start;
+
+  justify-content:
+    flex-start;
 }
 
 .paso-servicio__back-button {
   min-height: 42px;
+
   padding: 10px 18px;
 
   display: inline-flex;
+
   align-items: center;
+
   justify-content: center;
+
   gap: 7px;
 
-  border: 1px solid var(--color-border);
+  border: 1px solid
+    var(--color-border);
+
   border-radius: 8px;
 
-  background-color: transparent;
-  color: var(--color-text);
+  background-color:
+    transparent;
+
+  color:
+    var(--color-text);
 
   font-weight: 600;
+
   text-decoration: none;
 
   transition:
@@ -184,28 +419,55 @@
 }
 
 .paso-servicio__back-button:hover {
-  border-color: var(--color-primary-dark);
+  border-color:
+    var(--color-primary-dark);
 
-  background-color: var(--color-surface-hover);
-  color: var(--color-primary);
+  background-color:
+    var(
+      --color-surface-hover
+    );
 
-  transform: translateY(-1px);
+  color:
+    var(--color-primary);
+
+  transform:
+    translateY(-1px);
 }
 
 .paso-servicio__back-button:focus-visible {
-  outline: 3px solid rgba(239, 179, 66, 0.3);
+  outline: 3px solid
+    rgba(
+      239,
+      179,
+      66,
+      0.3
+    );
+
   outline-offset: 2px;
 }
 
-@media (max-width: 700px) {
+/* TABLET */
+
+@media (
+  max-width: 700px
+) {
   .paso-servicio__grid {
-    grid-template-columns: 1fr;
+    grid-template-columns:
+      1fr;
+  }
+
+  .paso-servicio__section-title--promos {
+    margin-top: 32px;
   }
 }
 
-@media (max-width: 576px) {
+/* MOBILE */
+
+@media (
+  max-width: 576px
+) {
   .paso-servicio__header {
-    margin-bottom: 20px;
+    margin-bottom: 24px;
   }
 
   .paso-servicio__title {
@@ -220,6 +482,10 @@
     padding: 16px;
   }
 
+  .paso-servicio__promo-badge {
+    margin-bottom: 11px;
+  }
+
   .paso-servicio__card-header {
     gap: 10px;
   }
@@ -232,6 +498,10 @@
     font-size: 14px;
   }
 
+  .paso-servicio__section-title h2 {
+    font-size: 17px;
+  }
+
   .paso-servicio__actions {
     margin-top: 24px;
   }
@@ -241,9 +511,12 @@
   }
 }
 
-@media (max-width: 380px) {
+@media (
+  max-width: 380px
+) {
   .paso-servicio__card-header {
     flex-direction: column;
+
     gap: 6px;
   }
 

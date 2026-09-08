@@ -1,6 +1,6 @@
 .home-hero {
   width: 100%;
-  min-height: calc(100vh - 74px);
+  min-height: calc(100vh - 72px);
 
   display: flex;
   align-items: center;
@@ -11,9 +11,9 @@
 
   background:
     radial-gradient(
-      circle at 78% 42%,
+      circle at 50% 10%,
       rgba(239, 179, 66, 0.12),
-      transparent 28%
+      transparent 30%
     ),
     linear-gradient(
       180deg,
@@ -24,25 +24,74 @@
 
 .home-hero__container {
   width: 100%;
-  max-width: 1180px;
+  max-width: 900px;
   min-width: 0;
 
   margin: 0 auto;
-  padding: 82px 24px 96px;
+  padding: 58px 24px 84px;
 
-  display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(340px, 0.9fr);
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 72px;
+
+  text-align: center;
 }
 
+/* LOGO */
+
+.home-hero__logo-wrapper {
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+
+  margin-bottom: 30px;
+}
+
+.home-hero__logo-frame {
+  width: 230px;
+  height: 230px;
+
+  display: grid;
+  place-items: center;
+
+  border: 1px solid rgba(239, 179, 66, 0.2);
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(239, 179, 66, 0.12),
+      rgba(27, 24, 22, 0.24) 62%,
+      transparent 63%
+    );
+}
+
+.home-hero__logo {
+  width: 86%;
+  height: 86%;
+
+  border: 2px solid rgba(239, 179, 66, 0.35);
+  border-radius: 50%;
+
+  object-fit: cover;
+
+  box-shadow:
+    0 0 45px rgba(239, 179, 66, 0.12),
+    0 18px 45px rgba(0, 0, 0, 0.35);
+}
+
+/* CONTENIDO */
+
 .home-hero__content {
-  min-width: 0;
+  width: 100%;
+  max-width: 760px;
 }
 
 .home-hero__eyebrow {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 9px;
 
   color: var(--color-primary);
@@ -53,23 +102,24 @@
   text-transform: uppercase;
 }
 
-.home-hero__eyebrow::before {
+.home-hero__eyebrow::before,
+.home-hero__eyebrow::after {
   content: "";
 
-  width: 28px;
+  width: 24px;
   height: 1px;
 
   background-color: var(--color-primary);
 }
 
 .home-hero__title {
-  max-width: 700px;
+  max-width: 760px;
 
-  margin: 22px 0 24px;
+  margin: 20px auto 22px;
 
   color: var(--color-text);
 
-  font-size: clamp(46px, 6vw, 76px);
+  font-size: clamp(46px, 6vw, 72px);
   font-weight: 800;
   line-height: 0.98;
   letter-spacing: -0.045em;
@@ -77,13 +127,14 @@
 
 .home-hero__title span {
   display: block;
+
   color: var(--color-primary);
 }
 
 .home-hero__description {
-  max-width: 610px;
+  max-width: 620px;
 
-  margin: 0;
+  margin: 0 auto;
 
   color: var(--color-text-muted);
 
@@ -92,9 +143,10 @@
 }
 
 .home-hero__actions {
-  margin-top: 34px;
+  margin-top: 32px;
 
   display: flex;
+  justify-content: center;
   flex-wrap: wrap;
   gap: 14px;
 }
@@ -111,6 +163,8 @@
   border-radius: 8px;
 
   font-weight: 700;
+
+  text-decoration: none;
 
   transition:
     border-color 0.2s ease,
@@ -150,9 +204,10 @@
 }
 
 .home-hero__features {
-  margin-top: 32px;
+  margin-top: 30px;
 
   display: flex;
+  justify-content: center;
   flex-wrap: wrap;
   gap: 12px 22px;
 }
@@ -171,114 +226,11 @@
   content: "✓";
 
   color: var(--color-primary);
+
   font-weight: 700;
 }
 
-/* Sector visual */
-
-.home-hero__visual {
-  min-width: 0;
-
-  position: relative;
-
-  display: flex;
-  justify-content: center;
-}
-
-.home-hero__logo-frame {
-  width: min(100%, 420px);
-  aspect-ratio: 1;
-
-  display: grid;
-  place-items: center;
-
-  border: 1px solid rgba(239, 179, 66, 0.18);
-  border-radius: 50%;
-
-  background:
-    radial-gradient(
-      circle,
-      rgba(239, 179, 66, 0.1),
-      rgba(27, 24, 22, 0.28) 62%,
-      transparent 63%
-    );
-}
-
-.home-hero__logo {
-  width: 65%;
-  aspect-ratio: 1;
-
-  border: 2px solid rgba(239, 179, 66, 0.35);
-  border-radius: 50%;
-
-  object-fit: cover;
-
-  box-shadow:
-    0 0 50px rgba(239, 179, 66, 0.12),
-    0 24px 60px rgba(0, 0, 0, 0.4);
-}
-
-.home-hero__reservation-card {
-  width: 230px;
-  padding: 18px;
-
-  position: absolute;
-  right: 0;
-  bottom: 18px;
-
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
-
-  background-color: rgba(27, 24, 22, 0.96);
-
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.32);
-}
-
-.home-hero__reservation-card span {
-  display: block;
-  margin-bottom: 5px;
-
-  color: var(--color-text-muted);
-
-  font-size: 11px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.home-hero__reservation-card strong {
-  display: block;
-  margin-bottom: 12px;
-
-  color: var(--color-text);
-
-  font-size: 15px;
-  line-height: 1.4;
-}
-
-.home-hero__reservation-card a {
-  color: var(--color-primary);
-
-  font-size: 13px;
-  font-weight: 700;
-}
-
-@media (max-width: 950px) {
-  .home-hero__container {
-    grid-template-columns: 1fr;
-    gap: 52px;
-  }
-
-  .home-hero__content {
-    max-width: 760px;
-  }
-
-  .home-hero__visual {
-    width: 100%;
-    max-width: 540px;
-
-    margin: 0 auto;
-  }
-}
+/* TABLET Y MOBILE */
 
 @media (max-width: 700px) {
   .home-hero {
@@ -286,21 +238,41 @@
   }
 
   .home-hero__container {
-    padding: 64px 16px 86px;
-    gap: 46px;
+    padding: 40px 16px 64px;
+  }
+
+  .home-hero__logo-wrapper {
+    margin-bottom: 18px;
+  }
+
+  .home-hero__logo-frame {
+    width: 165px;
+    height: 165px;
+  }
+
+  .home-hero__logo {
+    width: 86%;
+    height: 86%;
   }
 
   .home-hero__title {
-    margin-top: 18px;
+    margin-top: 16px;
 
-    font-size: clamp(42px, 12vw, 60px);
+    font-size: clamp(
+      40px,
+      11vw,
+      56px
+    );
   }
 
   .home-hero__description {
-    font-size: 16px;
+    font-size: 15px;
+    line-height: 1.55;
   }
 
   .home-hero__actions {
+    width: 100%;
+
     display: grid;
     grid-template-columns: 1fr;
   }
@@ -311,32 +283,43 @@
   }
 
   .home-hero__features {
+    width: 100%;
+
     display: grid;
     grid-template-columns: 1fr;
-  }
 
-  .home-hero__logo-frame {
-    width: min(100%, 350px);
-  }
+    justify-items: start;
 
-  .home-hero__reservation-card {
-    width: calc(100% - 32px);
-
-    right: 16px;
-    bottom: -30px;
-  }
-
-  .home-hero__visual {
-    padding-bottom: 52px;
+    margin-top: 26px;
   }
 }
 
 @media (max-width: 390px) {
+  .home-hero__container {
+    padding:
+      32px 14px 52px;
+  }
+
+  .home-hero__logo-frame {
+    width: 150px;
+    height: 150px;
+  }
+
+  .home-hero__logo {
+    width: 86%;
+    height: 86%;
+  }
+
   .home-hero__title {
-    font-size: 40px;
+    font-size: 38px;
   }
 
   .home-hero__eyebrow {
-    font-size: 10px;
+    font-size: 9px;
+  }
+
+  .home-hero__eyebrow::before,
+  .home-hero__eyebrow::after {
+    width: 16px;
   }
 }

@@ -1,0 +1,282 @@
+.home-promociones {
+  width: 100%;
+
+  padding: 90px 24px;
+
+  background:
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(239, 179, 66, 0.08),
+      transparent 38%
+    ),
+    #12100e;
+}
+
+.home-promociones__container {
+  width: 100%;
+  max-width: 1180px;
+
+  margin: 0 auto;
+}
+
+.home-promociones__header {
+  max-width: 700px;
+
+  margin: 0 auto 42px;
+
+  text-align: center;
+}
+
+.home-promociones__eyebrow {
+  display: inline-block;
+
+  margin-bottom: 12px;
+
+  color: var(--color-primary);
+
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+
+  text-transform: uppercase;
+}
+
+.home-promociones__title {
+  margin: 0 0 14px;
+
+  color: var(--color-text);
+
+  font-size: clamp(
+    30px,
+    5vw,
+    46px
+  );
+
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.home-promociones__description {
+  margin: 0;
+
+  color: var(--color-text-muted);
+
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.home-promociones__grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 20px;
+}
+
+.home-promociones__card {
+  position: relative;
+
+  min-width: 0;
+
+  padding: 26px;
+
+  overflow: hidden;
+
+  border: 1px solid
+    rgba(239, 179, 66, 0.32);
+
+  border-radius: 16px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(239, 179, 66, 0.07),
+      transparent 45%
+    ),
+    var(--color-surface);
+
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.home-promociones__card:hover {
+  transform: translateY(-3px);
+
+  border-color:
+    rgba(239, 179, 66, 0.65);
+}
+
+.home-promociones__badge {
+  width: fit-content;
+
+  margin-bottom: 18px;
+
+  padding: 6px 10px;
+
+  border-radius: 999px;
+
+  background:
+    rgba(239, 179, 66, 0.12);
+
+  color: var(--color-primary);
+
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.home-promociones__card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 20px;
+}
+
+.home-promociones__duration {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: var(--color-text-muted);
+
+  font-size: 13px;
+}
+
+.home-promociones__card-title {
+  margin: 0;
+
+  color: var(--color-text);
+
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.home-promociones__price {
+  flex-shrink: 0;
+
+  color: var(--color-primary);
+
+  font-size: 21px;
+  font-weight: 800;
+
+  white-space: nowrap;
+}
+
+.home-promociones__card-description {
+  margin: 18px 0 24px;
+
+  color: var(--color-text-muted);
+
+  line-height: 1.55;
+}
+
+.home-promociones__reserve-button {
+  min-height: 46px;
+
+  padding: 11px 17px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 10px;
+
+  border-radius: 8px;
+
+  background:
+    var(--color-primary);
+
+  color: #111;
+
+  font-weight: 800;
+
+  text-decoration: none;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.home-promociones__reserve-button:hover {
+  background: #dca036;
+
+  color: #111;
+
+  transform: translateY(-1px);
+}
+
+.home-promociones__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 10px;
+
+  color: var(--color-text-muted);
+}
+
+.home-promociones__loading
+  .spinner-border {
+  color: var(--color-primary);
+}
+
+.home-promociones__error {
+  max-width: 700px;
+
+  margin: 0 auto;
+
+  padding: 15px;
+
+  border: 1px solid
+    rgba(214, 91, 91, 0.35);
+
+  border-radius: 10px;
+
+  background:
+    rgba(214, 91, 91, 0.08);
+
+  color: #ef8888;
+
+  text-align: center;
+}
+
+@media (max-width: 750px) {
+  .home-promociones {
+    padding: 64px 16px;
+  }
+
+  .home-promociones__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 500px) {
+  .home-promociones {
+    padding: 54px 14px;
+  }
+
+  .home-promociones__header {
+    margin-bottom: 30px;
+  }
+
+  .home-promociones__card {
+    padding: 20px;
+  }
+
+  .home-promociones__card-top {
+    flex-direction: column;
+
+    gap: 10px;
+  }
+
+  .home-promociones__price {
+    white-space: normal;
+  }
+
+  .home-promociones__reserve-button {
+    width: 100%;
+  }
+}

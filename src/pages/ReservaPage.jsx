@@ -1,208 +1,438 @@
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useState,
+} from "react";
 
-import { obtenerServicios } from "../services/servicios.service.js";
-import { obtenerBarberosPorServicio } from "../services/barberos.service.js";
-import { crearTurno } from "../services/turnos.service.js";
+import {
+  obtenerServicios,
+} from "../services/servicios.service.js";
+
+import {
+  obtenerPromociones,
+} from "../services/promociones.service.js";
+
+import {
+  obtenerBarberosPorServicio,
+} from "../services/barberos.service.js";
+
+import {
+  crearTurno,
+} from "../services/turnos.service.js";
 
 import ReservaHeader from "../components/reserva/ReservaHeader.jsx";
 import ReservaStepper from "../components/reserva/ReservaStepper.jsx";
 import PasoServicio from "../components/reserva/PasoServicio.jsx";
-import PasoDia from "../components/reserva/PasoDia.jsx";
-import PasoHora from "../components/reserva/PasoHora.jsx";
-import PasoDatos from "../components/reserva/PasoDatos.jsx";
+import PasoFechaHora from "../components/reserva/PasoFechaHora.jsx";
 import PasoConfirmacion from "../components/reserva/PasoConfirmacion.jsx";
 
 import "./ReservaPage.css";
 
 function ReservaPage() {
-  const [pasoActual, setPasoActual] = useState(1);
+  const [
+    pasoActual,
+    setPasoActual,
+  ] = useState(1);
 
-  const [servicios, setServicios] = useState([]);
-  const [cargando, setCargando] = useState(true);
-  const [cargandoBarbero, setCargandoBarbero] = useState(false);
-  const [confirmandoTurno, setConfirmandoTurno] = useState(false);
+  const [
+    servicios,
+    setServicios,
+  ] = useState([]);
 
-  const [error, setError] = useState("");
-  const [turnoConfirmado, setTurnoConfirmado] = useState(null);
+  const [
+    promociones,
+    setPromociones,
+  ] = useState([]);
 
-  const [reserva, setReserva] = useState({
+  const [
+    cargando,
+    setCargando,
+  ] = useState(true);
+
+  const [
+    cargandoBarbero,
+    setCargandoBarbero,
+  ] = useState(false);
+
+  const [
+    confirmandoTurno,
+    setConfirmandoTurno,
+  ] = useState(false);
+
+  const [
+    error,
+    setError,
+  ] = useState("");
+
+  const [
+    turnoConfirmado,
+    setTurnoConfirmado,
+  ] = useState(null);
+
+  const [
+    reserva,
+    setReserva,
+  ] = useState({
     servicio: null,
+    promocion: null,
     barbero: null,
     fecha: null,
     hora: null,
-    cliente: {
-      nombre: "",
-      telefono: "",
-      observacion: "",
-    },
   });
 
   useEffect(() => {
-    const cargarServicios = async () => {
+    const cargarOpciones =
+      async () => {
+        try {
+          setCargando(true);
+          setError("");
+
+          const [
+            serviciosObtenidos,
+            promocionesObtenidas,
+          ] = await Promise.all([
+            obtenerServicios(),
+            obtenerPromociones(),
+          ]);
+
+          setServicios(
+            serviciosObtenidos ||
+              []
+          );
+
+          /*
+           * Para reservar una promo
+           * necesitamos que tenga un
+           * servicio relacionado.
+           *
+           * Las demás pueden seguir
+           * apareciendo en la Home.
+           */
+          setPromociones(
+            (
+              promocionesObtenidas ||
+              []
+            ).filter(
+              (promocion) =>
+                promocion.servicioId
+            )
+          );
+        } catch (error) {
+          console.error(error);
+
+          setError(
+            "No se pudieron cargar los servicios y promociones."
+          );
+        } finally {
+          setCargando(false);
+        }
+      };
+
+    cargarOpciones();
+  }, []);
+
+  const seleccionarServicio =
+    async (servicio) => {
       try {
-        setCargando(true);
+        setCargandoBarbero(true);
         setError("");
 
-        const serviciosObtenidos = await obtenerServicios();
+        const barberos =
+          await obtenerBarberosPorServicio(
+            servicio.id
+          );
 
-        setServicios(serviciosObtenidos);
+        if (
+          barberos.length === 0
+        ) {
+          setError(
+            "No hay ningún profesional disponible para este servicio."
+          );
+
+          return;
+        }
+
+        setReserva({
+          servicio,
+          promocion: null,
+          barbero: barberos[0],
+          fecha: null,
+          hora: null,
+        });
+
+        setPasoActual(2);
       } catch (error) {
         console.error(error);
-        setError("No se pudieron cargar los servicios.");
+
+        const mensaje =
+          error.response?.data
+            ?.message ||
+          "No se pudo obtener el profesional disponible.";
+
+        setError(mensaje);
       } finally {
-        setCargando(false);
+        setCargandoBarbero(false);
       }
     };
 
-    cargarServicios();
-  }, []);
+  const seleccionarPromocion =
+    async (promocion) => {
+      try {
+        setCargandoBarbero(true);
+        setError("");
 
-  const seleccionarServicio = async (servicio) => {
-    try {
-      setCargandoBarbero(true);
-      setError("");
+        if (
+          !promocion.servicioId
+        ) {
+          setError(
+            "Esta promoción todavía no tiene un servicio relacionado."
+          );
 
-      const barberos = await obtenerBarberosPorServicio(servicio.id);
+          return;
+        }
 
-      if (barberos.length === 0) {
+        const servicioRelacionado =
+          servicios.find(
+            (servicio) =>
+              Number(
+                servicio.id
+              ) ===
+              Number(
+                promocion.servicioId
+              )
+          );
+
+        if (
+          !servicioRelacionado
+        ) {
+          setError(
+            "No se encontró el servicio relacionado con esta promoción."
+          );
+
+          return;
+        }
+
+        const barberos =
+          await obtenerBarberosPorServicio(
+            servicioRelacionado.id
+          );
+
+        if (
+          barberos.length === 0
+        ) {
+          setError(
+            "No hay ningún profesional disponible para esta promoción."
+          );
+
+          return;
+        }
+
+        setReserva({
+          servicio:
+            servicioRelacionado,
+
+          promocion,
+
+          barbero:
+            barberos[0],
+
+          fecha: null,
+          hora: null,
+        });
+
+        setPasoActual(2);
+      } catch (error) {
+        console.error(error);
+
+        const mensaje =
+          error.response?.data
+            ?.message ||
+          "No se pudo preparar la promoción seleccionada.";
+
+        setError(mensaje);
+      } finally {
+        setCargandoBarbero(false);
+      }
+    };
+
+  const seleccionarFechaHora = ({
+    fecha,
+    hora,
+  }) => {
+    setReserva(
+      (
+        reservaAnterior
+      ) => ({
+        ...reservaAnterior,
+        fecha,
+        hora,
+      })
+    );
+
+    setPasoActual(3);
+    setError("");
+  };
+
+  const confirmarTurno =
+    async () => {
+      if (
+        !reserva.barbero?.id ||
+        !reserva.servicio?.id ||
+        !reserva.fecha
+          ?.fechaISO ||
+        !reserva.hora
+      ) {
         setError(
-          "No hay ningún profesional disponible para este servicio."
+          "Faltan datos para confirmar el turno."
         );
+
         return;
       }
 
-      setReserva((reservaAnterior) => ({
-        ...reservaAnterior,
-        servicio,
-        barbero: barberos[0],
-        fecha: null,
-        hora: null,
-        cliente: {
-          nombre: "",
-          telefono: "",
-          observacion: "",
-        },
-      }));
+      try {
+        setConfirmandoTurno(
+          true
+        );
 
+        setError("");
+
+        const turnoCreado =
+          await crearTurno({
+            barberoId:
+              reserva.barbero
+                .id,
+
+            servicioId:
+              reserva.servicio
+                .id,
+
+            promocionId:
+              reserva.promocion
+                ?.id || null,
+
+            fecha:
+              reserva.fecha
+                .fechaISO,
+
+            hora:
+              reserva.hora,
+          });
+
+        setTurnoConfirmado(
+          turnoCreado
+        );
+      } catch (error) {
+        console.error(error);
+
+        const mensaje =
+          error.response?.data
+            ?.message ||
+          "No se pudo confirmar el turno.";
+
+        setError(mensaje);
+      } finally {
+        setConfirmandoTurno(
+          false
+        );
+      }
+    };
+
+  const compartirPorWhatsApp =
+    () => {
+      if (!turnoConfirmado) {
+        return;
+      }
+
+      const numeroWhatsApp =
+        import.meta.env
+          .VITE_WHATSAPP_NUMBER;
+
+      if (!numeroWhatsApp) {
+        window.alert(
+          "No está configurado el número de WhatsApp de la barbería."
+        );
+
+        return;
+      }
+
+      const nombreReserva =
+        turnoConfirmado
+          .promocionTitulo ||
+        reserva.promocion
+          ?.titulo ||
+        turnoConfirmado
+          .servicioNombre ||
+        reserva.servicio
+          ?.nombre ||
+        "";
+
+      const etiqueta =
+        reserva.promocion ||
+        turnoConfirmado
+          .promocionId
+          ? "Promoción"
+          : "Servicio";
+
+      const fecha =
+        reserva.fecha
+          ?.textoCompleto ||
+        turnoConfirmado
+          .fecha ||
+        "";
+
+      const hora =
+        turnoConfirmado
+          .horaInicio ||
+        reserva.hora ||
+        "";
+
+      const mensaje = [
+        "Hola, reservé un turno.",
+        "",
+        `${etiqueta}: ${nombreReserva}`,
+        `Día: ${fecha}`,
+        `Hora: ${hora}`,
+      ].join("\n");
+
+      const urlWhatsApp =
+        `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(
+          mensaje
+        )}`;
+
+      window.open(
+        urlWhatsApp,
+        "_blank",
+        "noopener,noreferrer"
+      );
+    };
+
+  const volverAServicios =
+    () => {
+      setPasoActual(1);
+      setError("");
+    };
+
+  const volverAFechaHora =
+    () => {
       setPasoActual(2);
-    } catch (error) {
-      console.error(error);
+      setError("");
+    };
 
-      const mensaje =
-        error.response?.data?.message ||
-        "No se pudo obtener el profesional disponible.";
+  const comenzarNuevaReserva =
+    () => {
+      setTurnoConfirmado(null);
 
-      setError(mensaje);
-    } finally {
-      setCargandoBarbero(false);
-    }
-  };
+      setPasoActual(1);
 
-  const seleccionarFecha = (fecha) => {
-    setReserva((reservaAnterior) => ({
-      ...reservaAnterior,
-      fecha,
-      hora: null,
-    }));
-
-    setPasoActual(3);
-    setError("");
-  };
-
-  const seleccionarHora = (hora) => {
-    setReserva((reservaAnterior) => ({
-      ...reservaAnterior,
-      hora,
-    }));
-
-    setPasoActual(4);
-    setError("");
-  };
-
-  const guardarDatosCliente = (cliente) => {
-    setReserva((reservaAnterior) => ({
-      ...reservaAnterior,
-      cliente,
-    }));
-
-    setPasoActual(5);
-    setError("");
-  };
-
-  const confirmarTurno = async () => {
-    if (
-      !reserva.barbero?.id ||
-      !reserva.servicio?.id ||
-      !reserva.fecha?.fechaISO ||
-      !reserva.hora
-    ) {
-      setError("Faltan datos para confirmar el turno.");
-      return;
-    }
-
-    try {
-      setConfirmandoTurno(true);
       setError("");
 
-      const turnoCreado = await crearTurno({
-        barberoId: reserva.barbero.id,
-        servicioId: reserva.servicio.id,
-        fecha: reserva.fecha.fechaISO,
-        hora: reserva.hora,
-        cliente: reserva.cliente,
+      setReserva({
+        servicio: null,
+        promocion: null,
+        barbero: null,
+        fecha: null,
+        hora: null,
       });
-
-      setTurnoConfirmado(turnoCreado);
-    } catch (error) {
-      console.error(error);
-
-      const mensaje =
-        error.response?.data?.message ||
-        "No se pudo confirmar el turno.";
-
-      setError(mensaje);
-    } finally {
-      setConfirmandoTurno(false);
-    }
-  };
-
-  const volverAServicios = () => {
-    setPasoActual(1);
-    setError("");
-  };
-
-  const volverADias = () => {
-    setPasoActual(2);
-    setError("");
-  };
-
-  const volverAHorarios = () => {
-    setPasoActual(3);
-    setError("");
-  };
-
-  const volverADatos = () => {
-    setPasoActual(4);
-    setError("");
-  };
-
-  const comenzarNuevaReserva = () => {
-    setTurnoConfirmado(null);
-    setPasoActual(1);
-    setError("");
-
-    setReserva({
-      servicio: null,
-      barbero: null,
-      fecha: null,
-      hora: null,
-      cliente: {
-        nombre: "",
-        telefono: "",
-        observacion: "",
-      },
-    });
-  };
+    };
 
   if (cargando) {
     return (
@@ -211,8 +441,14 @@ function ReservaPage() {
 
         <div className="reserva-page__content">
           <section className="reserva-page__loading">
-            <h1>Reservar turno</h1>
-            <p>Cargando servicios...</p>
+            <h1>
+              Reservar turno
+            </h1>
+
+            <p>
+              Cargando servicios
+              y promociones...
+            </p>
           </section>
         </div>
       </main>
@@ -220,47 +456,148 @@ function ReservaPage() {
   }
 
   if (turnoConfirmado) {
+    const nombreReserva =
+      turnoConfirmado
+        .promocionTitulo ||
+      reserva.promocion
+        ?.titulo ||
+      turnoConfirmado
+        .servicioNombre ||
+      reserva.servicio?.nombre;
+
+    const etiquetaReserva =
+      turnoConfirmado
+        .promocionId ||
+      reserva.promocion
+        ? "Promoción"
+        : "Servicio";
+
     return (
       <main className="reserva-page">
         <ReservaHeader />
 
         <div className="reserva-page__content">
           <section className="reserva-page__success">
-            <div className="reserva-page__success-icon">✓</div>
+            <div className="reserva-page__success-icon">
+              ✓
+            </div>
 
-            <h1>¡Turno reservado!</h1>
+            <h1>
+              ¡Turno reservado!
+            </h1>
 
-            <p>Tu reserva fue guardada correctamente.</p>
+            <p>
+              Tu reserva fue
+              guardada
+              correctamente.
+            </p>
 
             <div className="reserva-page__success-card">
               <div className="reserva-page__summary-grid">
-                <span>Código</span>
-                <strong>{turnoConfirmado.codigo}</strong>
+                <span>
+                  Código
+                </span>
 
-                <span>Servicio</span>
-                <strong>{turnoConfirmado.servicioNombre}</strong>
+                <strong>
+                  {
+                    turnoConfirmado
+                      .codigo
+                  }
+                </strong>
 
-                <span>Profesional</span>
-                <strong>{turnoConfirmado.barberoNombre}</strong>
+                <span>
+                  {
+                    etiquetaReserva
+                  }
+                </span>
 
-                <span>Fecha</span>
-                <strong>{turnoConfirmado.fecha}</strong>
+                <strong>
+                  {
+                    nombreReserva
+                  }
+                </strong>
 
-                <span>Horario</span>
-                <strong>{turnoConfirmado.horaInicio}</strong>
+                <span>
+                  Profesional
+                </span>
 
-                <span>Estado</span>
-                <strong>{turnoConfirmado.estado}</strong>
+                <strong>
+                  {
+                    turnoConfirmado
+                      .barberoNombre
+                  }
+                </strong>
+
+                <span>
+                  Fecha
+                </span>
+
+                <strong>
+                  {reserva.fecha
+                    ?.textoCompleto ||
+                    turnoConfirmado
+                      .fecha}
+                </strong>
+
+                <span>
+                  Horario
+                </span>
+
+                <strong>
+                  {
+                    turnoConfirmado
+                      .horaInicio
+                  }
+                </strong>
+
+                <span>
+                  Duración
+                </span>
+
+                <strong>
+                  {
+                    turnoConfirmado
+                      .duracionMinutos
+                  }{" "}
+                  minutos
+                </strong>
+
+                <span>
+                  Estado
+                </span>
+
+                <strong>
+                  {
+                    turnoConfirmado
+                      .estado
+                  }
+                </strong>
               </div>
             </div>
 
-            <button
-              type="button"
-              className="btn reserva-page__primary-button"
-              onClick={comenzarNuevaReserva}
-            >
-              Reservar otro turno
-            </button>
+            <div className="reserva-page__success-actions">
+              <button
+                type="button"
+                className="btn reserva-page__whatsapp-button"
+                onClick={
+                  compartirPorWhatsApp
+                }
+              >
+                Compartir por
+                WhatsApp
+              </button>
+
+              <button
+                type="button"
+                className="btn reserva-page__secondary-button"
+                onClick={
+                  comenzarNuevaReserva
+                }
+              >
+                Reservar otro
+                turno
+              </button>
+            </div>
           </section>
         </div>
       </main>
@@ -272,53 +609,75 @@ function ReservaPage() {
       <ReservaHeader />
 
       <div className="reserva-page__content">
-        <ReservaStepper pasoActual={pasoActual} />
+        <ReservaStepper
+          pasoActual={
+            pasoActual
+          }
+        />
 
         {error && (
-          <div role="alert" className="reserva-page__error">
+          <div
+            role="alert"
+            className="reserva-page__error"
+          >
             {error}
           </div>
         )}
 
         {pasoActual === 1 && (
           <PasoServicio
-            servicios={servicios}
-            servicioSeleccionado={reserva.servicio}
-            cargandoBarbero={cargandoBarbero}
-            onSeleccionarServicio={seleccionarServicio}
+            servicios={
+              servicios
+            }
+            promociones={
+              promociones
+            }
+            servicioSeleccionado={
+              reserva.servicio
+            }
+            promocionSeleccionada={
+              reserva.promocion
+            }
+            cargandoBarbero={
+              cargandoBarbero
+            }
+            onSeleccionarServicio={
+              seleccionarServicio
+            }
+            onSeleccionarPromocion={
+              seleccionarPromocion
+            }
           />
         )}
 
         {pasoActual === 2 && (
-          <PasoDia
-            reserva={reserva}
-            onSeleccionarFecha={seleccionarFecha}
-            onVolver={volverAServicios}
+          <PasoFechaHora
+            reserva={
+              reserva
+            }
+            onSeleccionarFechaHora={
+              seleccionarFechaHora
+            }
+            onVolver={
+              volverAServicios
+            }
           />
         )}
 
         {pasoActual === 3 && (
-          <PasoHora
-            reserva={reserva}
-            onSeleccionarHora={seleccionarHora}
-            onVolver={volverADias}
-          />
-        )}
-
-        {pasoActual === 4 && (
-          <PasoDatos
-            reserva={reserva}
-            onContinuar={guardarDatosCliente}
-            onVolver={volverAHorarios}
-          />
-        )}
-
-        {pasoActual === 5 && (
           <PasoConfirmacion
-            reserva={reserva}
-            confirmando={confirmandoTurno}
-            onConfirmar={confirmarTurno}
-            onVolver={volverADatos}
+            reserva={
+              reserva
+            }
+            confirmando={
+              confirmandoTurno
+            }
+            onConfirmar={
+              confirmarTurno
+            }
+            onVolver={
+              volverAFechaHora
+            }
           />
         )}
       </div>

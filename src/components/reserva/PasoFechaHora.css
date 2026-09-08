@@ -1,0 +1,559 @@
+.paso-fecha-hora {
+  width: 100%;
+}
+
+.paso-fecha-hora__header {
+  margin-bottom: 28px;
+}
+
+.paso-fecha-hora__header h1 {
+  margin: 0 0 8px;
+
+  color: #f4f1ed;
+
+  font-size: clamp(
+    1.8rem,
+    4vw,
+    2.4rem
+  );
+}
+
+.paso-fecha-hora__header p {
+  margin: 0;
+
+  color: #a9a29c;
+}
+
+.paso-fecha-hora__header strong {
+  color: #f4f1ed;
+}
+
+.paso-fecha-hora__layout {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1.1fr)
+    minmax(320px, 0.9fr);
+
+  gap: 20px;
+}
+
+/* CALENDARIO */
+
+.paso-fecha-hora__calendar-card,
+.paso-fecha-hora__hours-card {
+  padding: 22px;
+
+  background: #1b1816;
+
+  border: 1px solid #3a342f;
+  border-radius: 16px;
+}
+
+.paso-fecha-hora__calendar-header {
+  margin-bottom: 20px;
+
+  display: grid;
+  grid-template-columns:
+    44px 1fr 44px;
+
+  align-items: center;
+  gap: 10px;
+}
+
+.paso-fecha-hora__calendar-header h2 {
+  margin: 0;
+
+  color: #f4f1ed;
+
+  font-size: 1.15rem;
+  font-weight: 700;
+
+  text-align: center;
+  text-transform: capitalize;
+}
+
+.paso-fecha-hora__calendar-header button {
+  width: 42px;
+  height: 42px;
+
+  display: grid;
+  place-items: center;
+
+  border: 1px solid #3a342f;
+  border-radius: 9px;
+
+  background: #12100f;
+
+  color: #f4f1ed;
+
+  font-size: 1.6rem;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease,
+    background 0.2s ease;
+}
+
+.paso-fecha-hora__calendar-header button:hover:not(:disabled) {
+  border-color: #efb342;
+
+  color: #efb342;
+}
+
+.paso-fecha-hora__calendar-header button:disabled {
+  opacity: 0.25;
+
+  cursor: not-allowed;
+}
+
+.paso-fecha-hora__weekdays {
+  margin-bottom: 8px;
+
+  display: grid;
+  grid-template-columns:
+    repeat(7, minmax(0, 1fr));
+
+  gap: 6px;
+}
+
+.paso-fecha-hora__weekdays span {
+  padding: 6px 0;
+
+  color: #8e8781;
+
+  font-size: 0.72rem;
+  font-weight: 700;
+
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.paso-fecha-hora__calendar-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(7, minmax(0, 1fr));
+
+  gap: 7px;
+}
+
+.paso-fecha-hora__calendar-empty {
+  aspect-ratio: 1;
+}
+
+.paso-fecha-hora__day {
+  width: 100%;
+
+  aspect-ratio: 1;
+
+  display: grid;
+  place-items: center;
+
+  border: 1px solid #3a342f;
+  border-radius: 9px;
+
+  background: #12100f;
+
+  color: #f4f1ed;
+
+  font-size: 0.92rem;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.15s ease,
+    border-color 0.15s ease,
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.paso-fecha-hora__day:hover:not(:disabled) {
+  transform: translateY(-1px);
+
+  border-color: #efb342;
+
+  color: #efb342;
+}
+
+.paso-fecha-hora__day--selected {
+  border-color: #efb342;
+
+  background: #efb342;
+
+  color: #16120d;
+}
+
+.paso-fecha-hora__day--selected:hover:not(:disabled) {
+  color: #16120d;
+}
+
+.paso-fecha-hora__day--past,
+.paso-fecha-hora__day--closed {
+  opacity: 0.25;
+
+  cursor: not-allowed;
+}
+
+.paso-fecha-hora__legend {
+  margin-top: 18px;
+
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+
+  color: #8e8781;
+
+  font-size: 0.76rem;
+}
+
+.paso-fecha-hora__legend span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.paso-fecha-hora__legend-dot {
+  width: 8px;
+  height: 8px;
+
+  border-radius: 50%;
+}
+
+.paso-fecha-hora__legend-dot--available {
+  background: #f4f1ed;
+}
+
+.paso-fecha-hora__legend-dot--selected {
+  background: #efb342;
+}
+
+/* HORARIOS */
+
+.paso-fecha-hora__hours-card {
+  min-height: 440px;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.paso-fecha-hora__hours-header {
+  padding-bottom: 18px;
+
+  border-bottom: 1px solid #302b27;
+}
+
+.paso-fecha-hora__hours-header > span {
+  display: block;
+
+  margin-bottom: 6px;
+
+  color: #efb342;
+
+  font-size: 0.72rem;
+  font-weight: 800;
+
+  letter-spacing: 0.1em;
+}
+
+.paso-fecha-hora__hours-header h2 {
+  margin: 0;
+
+  color: #f4f1ed;
+
+  font-size: 1.05rem;
+
+  text-transform: capitalize;
+}
+
+.paso-fecha-hora__hours-placeholder {
+  flex: 1;
+
+  min-height: 280px;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 30px 20px;
+
+  color: #8e8781;
+
+  text-align: center;
+}
+
+.paso-fecha-hora__hours-placeholder-icon {
+  width: 42px;
+  height: 42px;
+
+  margin-bottom: 12px;
+
+  display: grid;
+  place-items: center;
+
+  border: 1px solid #3a342f;
+  border-radius: 50%;
+
+  color: #efb342;
+
+  font-size: 1.2rem;
+}
+
+.paso-fecha-hora__hours-placeholder strong {
+  margin-bottom: 5px;
+
+  color: #f4f1ed;
+}
+
+.paso-fecha-hora__hours-placeholder p {
+  margin: 0;
+
+  color: #8e8781;
+}
+
+.paso-fecha-hora__hours-grid {
+  margin-top: 20px;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  gap: 9px;
+}
+
+.paso-fecha-hora__hour {
+  min-height: 48px;
+
+  border: 1px solid #3a342f;
+  border-radius: 9px;
+
+  background: #12100f;
+
+  color: #f4f1ed;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.paso-fecha-hora__hour:hover {
+  transform: translateY(-1px);
+
+  border-color: #efb342;
+
+  color: #efb342;
+}
+
+.paso-fecha-hora__hour--selected {
+  border-color: #efb342;
+
+  background: #efb342;
+
+  color: #16120d;
+}
+
+.paso-fecha-hora__hour--selected:hover {
+  color: #16120d;
+}
+
+/* RESUMEN */
+
+.paso-fecha-hora__summary {
+  margin-top: 20px;
+
+  padding: 18px;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  gap: 12px;
+
+  background: #1b1816;
+
+  border: 1px solid #3a342f;
+  border-radius: 14px;
+}
+
+.paso-fecha-hora__summary div {
+  min-width: 0;
+}
+
+.paso-fecha-hora__summary span {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color: #8e8781;
+
+  font-size: 0.74rem;
+  font-weight: 600;
+
+  text-transform: uppercase;
+}
+
+.paso-fecha-hora__summary strong {
+  display: block;
+
+  overflow: hidden;
+
+  color: #f4f1ed;
+
+  font-size: 0.9rem;
+
+  text-overflow: ellipsis;
+}
+
+/* BOTONES */
+
+.paso-fecha-hora__actions {
+  margin-top: 26px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.paso-fecha-hora__back,
+.paso-fecha-hora__continue {
+  min-height: 46px;
+
+  padding: 0 20px;
+
+  border-radius: 9px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.paso-fecha-hora__back {
+  border: 1px solid #3a342f;
+
+  background: transparent;
+
+  color: #f4f1ed;
+}
+
+.paso-fecha-hora__back:hover {
+  border-color: #efb342;
+
+  color: #efb342;
+}
+
+.paso-fecha-hora__continue {
+  min-width: 150px;
+
+  border: none;
+
+  background: #efb342;
+
+  color: #16120d;
+}
+
+.paso-fecha-hora__continue:hover:not(:disabled) {
+  background: #f6be50;
+}
+
+.paso-fecha-hora__continue:disabled {
+  opacity: 0.4;
+
+  cursor: not-allowed;
+}
+
+.paso-fecha-hora__error {
+  margin-bottom: 18px;
+
+  padding: 13px 15px;
+
+  border: 1px solid
+    rgba(214, 91, 91, 0.35);
+
+  border-radius: 10px;
+
+  background:
+    rgba(214, 91, 91, 0.08);
+
+  color: #ef8888;
+}
+
+.paso-fecha-hora__loading {
+  padding: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  color: #a9a29c;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 850px) {
+  .paso-fecha-hora__layout {
+    grid-template-columns: 1fr;
+  }
+
+  .paso-fecha-hora__hours-card {
+    min-height: auto;
+  }
+
+  .paso-fecha-hora__hours-placeholder {
+    min-height: 180px;
+  }
+}
+
+@media (max-width: 600px) {
+  .paso-fecha-hora__calendar-card,
+  .paso-fecha-hora__hours-card {
+    padding: 16px;
+  }
+
+  .paso-fecha-hora__calendar-grid {
+    gap: 4px;
+  }
+
+  .paso-fecha-hora__day {
+    border-radius: 7px;
+
+    font-size: 0.82rem;
+  }
+
+  .paso-fecha-hora__weekdays {
+    gap: 4px;
+  }
+
+  .paso-fecha-hora__hours-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .paso-fecha-hora__summary {
+    grid-template-columns: 1fr;
+  }
+
+  .paso-fecha-hora__actions {
+    align-items: stretch;
+    flex-direction: column-reverse;
+  }
+
+  .paso-fecha-hora__back,
+  .paso-fecha-hora__continue {
+    width: 100%;
+  }
+}

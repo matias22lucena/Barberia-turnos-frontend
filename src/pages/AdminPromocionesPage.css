@@ -1,4 +1,4 @@
-.admin-servicios-page {
+.admin-promociones-page {
   width: 100%;
   min-height: 100vh;
 
@@ -15,12 +15,12 @@
   color: #f4f1ed;
 }
 
-.admin-servicios-header,
-.admin-servicio-nuevo,
-.admin-servicios-lista,
-.admin-servicios-error,
-.admin-servicios-mensaje,
-.admin-servicios-estado {
+.admin-promociones-header,
+.admin-promocion-nueva,
+.admin-promociones-lista,
+.admin-promociones-error,
+.admin-promociones-mensaje,
+.admin-promociones-estado {
   width: 100%;
   max-width: 1100px;
 
@@ -30,11 +30,11 @@
 
 /* HEADER */
 
-.admin-servicios-header {
+.admin-promociones-header {
   margin-bottom: 32px;
 }
 
-.admin-servicios-volver {
+.admin-promociones-volver {
   margin-bottom: 26px;
   padding: 0;
 
@@ -48,11 +48,11 @@
   transition: color 0.2s ease;
 }
 
-.admin-servicios-volver:hover {
+.admin-promociones-volver:hover {
   color: #efb342;
 }
 
-.admin-servicios-header__contenido {
+.admin-promociones-header__contenido {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
@@ -60,22 +60,24 @@
   gap: 24px;
 }
 
-.admin-servicios-header__contenido > div {
+.admin-promociones-header__contenido > div {
   min-width: 0;
 }
 
-.admin-servicios-eyebrow {
+.admin-promociones-eyebrow {
   margin: 0 0 8px;
 
   color: #efb342;
 
   font-size: 0.78rem;
   font-weight: 700;
+
   letter-spacing: 0.14em;
+
   text-transform: uppercase;
 }
 
-.admin-servicios-header h1 {
+.admin-promociones-header h1 {
   margin: 0 0 8px;
 
   font-size: clamp(
@@ -85,15 +87,15 @@
   );
 }
 
-.admin-servicios-header p:last-child {
+.admin-promociones-header p:last-child {
   margin: 0;
 
   color: #a9a29c;
 }
 
-/* BOTÓN ABRIR FORMULARIO */
+/* BOTÓN ABRIR */
 
-.admin-servicios-crear-boton {
+.admin-promociones-crear-boton {
   flex-shrink: 0;
 
   min-height: 46px;
@@ -118,7 +120,7 @@
     transform 0.2s ease;
 }
 
-.admin-servicios-crear-boton:hover {
+.admin-promociones-crear-boton:hover {
   background: #f6be50;
 
   transform: translateY(-1px);
@@ -126,15 +128,15 @@
 
 /* MENSAJES */
 
-.admin-servicios-error,
-.admin-servicios-mensaje {
+.admin-promociones-error,
+.admin-promociones-mensaje {
   margin-bottom: 20px;
   padding: 14px 16px;
 
   border-radius: 10px;
 }
 
-.admin-servicios-error {
+.admin-promociones-error {
   background:
     rgba(214, 91, 91, 0.08);
 
@@ -144,7 +146,7 @@
   color: #ef8888;
 }
 
-.admin-servicios-mensaje {
+.admin-promociones-mensaje {
   background:
     rgba(89, 176, 117, 0.08);
 
@@ -154,9 +156,9 @@
   color: #86d69e;
 }
 
-/* NUEVO SERVICIO */
+/* FORMULARIO NUEVO */
 
-.admin-servicio-nuevo {
+.admin-promocion-nueva {
   margin-bottom: 34px;
   padding: 24px;
 
@@ -174,7 +176,7 @@
   border-radius: 16px;
 }
 
-.admin-servicio-nuevo__header {
+.admin-promocion-nueva__header {
   margin-bottom: 22px;
 
   display: flex;
@@ -184,26 +186,28 @@
   gap: 20px;
 }
 
-.admin-servicio-nuevo__header p {
+.admin-promocion-nueva__header p {
   margin: 0 0 5px;
 
   color: #efb342;
 
   font-size: 0.76rem;
   font-weight: 700;
+
   letter-spacing: 0.12em;
+
   text-transform: uppercase;
 }
 
-.admin-servicio-nuevo__header h2 {
+.admin-promocion-nueva__header h2 {
   margin: 0;
 
   font-size: 1.5rem;
 }
 
-/* BOTÓN X */
+/* CERRAR */
 
-.admin-servicio-cerrar {
+.admin-promocion-cerrar {
   width: 38px;
   height: 38px;
 
@@ -230,7 +234,7 @@
     background-color 0.2s ease;
 }
 
-.admin-servicio-cerrar:hover:not(:disabled) {
+.admin-promocion-cerrar:hover:not(:disabled) {
   border-color: #efb342;
 
   background:
@@ -239,15 +243,15 @@
   color: #efb342;
 }
 
-.admin-servicio-cerrar:disabled {
+.admin-promocion-cerrar:disabled {
   opacity: 0.6;
 
   cursor: not-allowed;
 }
 
-/* FOOTER NUEVO SERVICIO */
+/* FOOTER */
 
-.admin-servicio-nuevo__footer {
+.admin-promocion-nueva__footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -255,7 +259,7 @@
   gap: 20px;
 }
 
-.admin-servicio-nuevo__acciones {
+.admin-promocion-nueva__acciones {
   display: flex;
   align-items: center;
 
@@ -264,13 +268,13 @@
 
 /* LISTA */
 
-.admin-servicios-lista {
+.admin-promociones-lista {
   display: grid;
 
   gap: 20px;
 }
 
-.admin-servicios-lista__titulo {
+.admin-promociones-lista__titulo {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -278,7 +282,7 @@
   gap: 15px;
 }
 
-.admin-servicios-lista__titulo p {
+.admin-promociones-lista__titulo p {
   margin: 0;
 
   color: #a9a29c;
@@ -287,7 +291,7 @@
   font-weight: 700;
 }
 
-.admin-servicios-lista__titulo span {
+.admin-promociones-lista__titulo span {
   min-width: 32px;
   min-height: 32px;
 
@@ -305,9 +309,9 @@
   font-weight: 800;
 }
 
-/* TARJETAS */
+/* CARD */
 
-.admin-servicio-card {
+.admin-promocion-card {
   padding: 24px;
 
   background: #1b1816;
@@ -316,7 +320,7 @@
   border-radius: 16px;
 }
 
-.admin-servicio-top {
+.admin-promocion-top {
   margin-bottom: 22px;
 
   display: flex;
@@ -326,7 +330,7 @@
   gap: 20px;
 }
 
-.admin-servicio-top span {
+.admin-promocion-top > div > span {
   display: block;
 
   margin-bottom: 5px;
@@ -337,7 +341,7 @@
   font-weight: 700;
 }
 
-.admin-servicio-top h2 {
+.admin-promocion-top h2 {
   margin: 0;
 
   font-size: 1.5rem;
@@ -345,7 +349,7 @@
 
 /* SWITCH */
 
-.admin-servicio-switch {
+.admin-promocion-switch {
   display: flex;
   align-items: center;
 
@@ -356,14 +360,14 @@
   cursor: pointer;
 }
 
-.admin-servicio-switch input {
+.admin-promocion-switch input {
   width: 18px;
   height: 18px;
 
   accent-color: #efb342;
 }
 
-.admin-servicio-switch span {
+.admin-promocion-switch span {
   color: #f4f1ed;
 
   font-size: 0.9rem;
@@ -372,7 +376,7 @@
 
 /* FORM */
 
-.admin-servicio-form {
+.admin-promocion-form {
   display: grid;
 
   grid-template-columns:
@@ -383,26 +387,27 @@
   margin-bottom: 20px;
 }
 
-.admin-servicio-campo {
+.admin-promocion-campo {
   display: flex;
   flex-direction: column;
 
   gap: 8px;
 }
 
-.admin-servicio-campo--completo {
+.admin-promocion-campo--completo {
   grid-column: 1 / -1;
 }
 
-.admin-servicio-campo label {
+.admin-promocion-campo label {
   color: #a9a29c;
 
   font-size: 0.85rem;
   font-weight: 600;
 }
 
-.admin-servicio-campo input,
-.admin-servicio-campo textarea {
+.admin-promocion-campo input,
+.admin-promocion-campo textarea,
+.admin-promocion-campo select {
   width: 100%;
 
   padding: 12px 14px;
@@ -421,27 +426,40 @@
     background-color 0.2s ease;
 }
 
-.admin-servicio-campo input {
+.admin-promocion-campo input,
+.admin-promocion-campo select {
   min-height: 46px;
 }
 
-.admin-servicio-campo textarea {
+.admin-promocion-campo textarea {
   min-height: 100px;
 
   resize: vertical;
 }
 
-.admin-servicio-campo input:focus,
-.admin-servicio-campo textarea:focus {
+.admin-promocion-campo input:focus,
+.admin-promocion-campo textarea:focus,
+.admin-promocion-campo select:focus {
   border-color: #efb342;
 
   background: #151210;
 }
 
-/* BOTONES CREAR / GUARDAR */
+.admin-promocion-campo select {
+  cursor: pointer;
+}
 
-.admin-servicio-crear,
-.admin-servicio-guardar {
+.admin-promocion-campo option {
+  background: #12100f;
+  color: #f4f1ed;
+}
+
+/* BOTONES */
+
+.admin-promocion-crear,
+.admin-promocion-guardar,
+.admin-promocion-eliminar,
+.admin-promocion-cancelar {
   min-height: 46px;
 
   padding: 0 20px;
@@ -450,11 +468,7 @@
   align-items: center;
   justify-content: center;
 
-  border: none;
   border-radius: 9px;
-
-  background: #efb342;
-  color: #16120d;
 
   font-weight: 800;
 
@@ -462,68 +476,76 @@
 
   transition:
     background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
     transform 0.2s ease;
 }
 
-.admin-servicio-crear:hover:not(:disabled),
-.admin-servicio-guardar:hover:not(:disabled) {
+.admin-promocion-crear,
+.admin-promocion-guardar {
+  border: none;
+
+  background: #efb342;
+  color: #16120d;
+}
+
+.admin-promocion-crear:hover:not(:disabled),
+.admin-promocion-guardar:hover:not(:disabled) {
   background: #f6be50;
 }
 
-.admin-servicio-crear:hover:not(:disabled) {
+.admin-promocion-crear:hover:not(:disabled) {
   transform: translateY(-1px);
 }
 
-.admin-servicio-crear:disabled,
-.admin-servicio-guardar:disabled {
-  opacity: 0.6;
-
-  cursor: not-allowed;
-}
-
-/* BOTÓN CANCELAR */
-
-.admin-servicio-cancelar {
-  min-height: 46px;
-  padding: 0 20px;
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
+.admin-promocion-cancelar {
   border: 1px solid #3a342f;
-  border-radius: 9px;
 
   background: transparent;
   color: #f4f1ed;
-
-  font-weight: 700;
-
-  cursor: pointer;
-
-  transition:
-    border-color 0.2s ease,
-    background-color 0.2s ease,
-    color 0.2s ease;
 }
 
-.admin-servicio-cancelar:hover:not(:disabled) {
+.admin-promocion-cancelar:hover:not(:disabled) {
   border-color: #a9a29c;
 
   background: #211d1a;
-
-  color: #ffffff;
 }
 
-.admin-servicio-cancelar:disabled {
+.admin-promocion-eliminar {
+  border: 1px solid
+    rgba(214, 91, 91, 0.45);
+
+  background:
+    rgba(214, 91, 91, 0.06);
+
+  color: #ef8888;
+}
+
+.admin-promocion-eliminar:hover:not(:disabled) {
+  border-color: #d65b5b;
+
+  background:
+    rgba(214, 91, 91, 0.12);
+}
+
+.admin-promocion-crear:disabled,
+.admin-promocion-guardar:disabled,
+.admin-promocion-eliminar:disabled,
+.admin-promocion-cancelar:disabled {
   opacity: 0.6;
 
   cursor: not-allowed;
+}
+
+.admin-promocion-acciones {
+  display: flex;
+
+  gap: 12px;
 }
 
 /* ESTADO */
 
-.admin-servicios-estado {
+.admin-promociones-estado {
   padding: 50px 20px;
 
   background: #1b1816;
@@ -539,7 +561,7 @@
 /* TABLET */
 
 @media (max-width: 850px) {
-  .admin-servicios-header__contenido {
+  .admin-promociones-header__contenido {
     align-items: flex-start;
   }
 }
@@ -547,65 +569,71 @@
 /* MOBILE */
 
 @media (max-width: 650px) {
-  .admin-servicios-page {
+  .admin-promociones-page {
     padding: 28px 14px;
   }
 
-  .admin-servicios-header__contenido {
+  .admin-promociones-header__contenido {
     align-items: stretch;
     flex-direction: column;
   }
 
-  .admin-servicios-crear-boton {
+  .admin-promociones-crear-boton {
     width: 100%;
   }
 
-  .admin-servicio-form {
+  .admin-promocion-form {
     grid-template-columns: 1fr;
   }
 
-  .admin-servicio-campo--completo {
+  .admin-promocion-campo--completo {
     grid-column: auto;
   }
 
-  .admin-servicio-top {
+  .admin-promocion-top {
     flex-direction: column;
   }
 
-  .admin-servicio-nuevo {
+  .admin-promocion-nueva {
     padding: 20px;
   }
 
-  .admin-servicio-nuevo__footer {
+  .admin-promocion-nueva__footer {
     align-items: stretch;
+
     flex-direction: column;
   }
 
-  .admin-servicio-nuevo__acciones {
+  .admin-promocion-nueva__acciones {
     width: 100%;
 
     flex-direction: column-reverse;
   }
 
-  .admin-servicio-crear,
-  .admin-servicio-cancelar,
-  .admin-servicio-guardar {
+  .admin-promocion-acciones {
+    flex-direction: column;
+  }
+
+  .admin-promocion-crear,
+  .admin-promocion-guardar,
+  .admin-promocion-eliminar,
+  .admin-promocion-cancelar {
     width: 100%;
   }
 }
 
 @media (max-width: 390px) {
-  .admin-servicios-page {
+  .admin-promociones-page {
     padding: 24px 12px;
   }
 
-  .admin-servicio-card,
-  .admin-servicio-nuevo {
+  .admin-promocion-card,
+  .admin-promocion-nueva {
     padding: 18px;
   }
 
-  .admin-servicio-nuevo__header h2,
-  .admin-servicio-top h2 {
+  .admin-promocion-nueva__header h2,
+  .admin-promocion-top h2 {
     font-size: 1.3rem;
   }
 }

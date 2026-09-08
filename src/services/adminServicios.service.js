@@ -19,6 +19,28 @@ export const obtenerServiciosAdmin = async () => {
   return response.data;
 };
 
+export const crearServicioAdmin = async ({
+  nombre,
+  descripcion,
+  duracionMinutos,
+  precio,
+  activo,
+}) => {
+  const response = await api.post(
+    "/admin/servicios",
+    {
+      nombre,
+      descripcion,
+      duracionMinutos: Number(duracionMinutos),
+      precio: Number(precio),
+      activo: Boolean(activo),
+    },
+    obtenerConfiguracion()
+  );
+
+  return response.data;
+};
+
 export const actualizarServicioAdmin = async ({
   servicioId,
   nombre,
