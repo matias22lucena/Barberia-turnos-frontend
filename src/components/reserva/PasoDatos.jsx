@@ -1,4 +1,6 @@
-import { useState } from "react";
+import {
+  useState,
+} from "react";
 
 import "./PasoDatos.css";
 
@@ -7,63 +9,123 @@ function PasoDatos({
   onContinuar,
   onVolver,
 }) {
-  const [formulario, setFormulario] = useState({
-    nombre: reserva.cliente.nombre || "",
-    telefono: reserva.cliente.telefono || "",
-    observacion: reserva.cliente.observacion || "",
+  const [
+    formulario,
+    setFormulario,
+  ] = useState({
+    nombre:
+      reserva.cliente?.nombre ||
+      "",
+
+    telefono:
+      reserva.cliente
+        ?.telefono || "",
   });
 
-  const [errores, setErrores] = useState({});
+  const [
+    errores,
+    setErrores,
+  ] = useState({});
 
-  const manejarCambio = (event) => {
-    const { name, value } = event.target;
+  const manejarCambio = (
+    event
+  ) => {
+    const {
+      name,
+      value,
+    } = event.target;
 
-    setFormulario((formularioAnterior) => ({
-      ...formularioAnterior,
-      [name]: value,
-    }));
+    setFormulario(
+      (
+        formularioAnterior
+      ) => ({
+        ...formularioAnterior,
+        [name]: value,
+      })
+    );
 
-    setErrores((erroresAnteriores) => ({
-      ...erroresAnteriores,
-      [name]: "",
-    }));
+    setErrores(
+      (
+        erroresAnteriores
+      ) => ({
+        ...erroresAnteriores,
+        [name]: "",
+      })
+    );
   };
 
-  const validarFormulario = () => {
-    const nuevosErrores = {};
+  const validarFormulario =
+    () => {
+      const nuevosErrores =
+        {};
 
-    if (!formulario.nombre.trim()) {
-      nuevosErrores.nombre = "El nombre es obligatorio.";
-    } else if (formulario.nombre.trim().length < 3) {
-      nuevosErrores.nombre =
-        "El nombre debe tener al menos 3 caracteres.";
-    }
+      const nombre =
+        formulario.nombre.trim();
 
-    const telefonoLimpio = formulario.telefono.replace(/\D/g, "");
+      const telefonoLimpio =
+        formulario.telefono.replace(
+          /\D/g,
+          ""
+        );
 
-    if (!telefonoLimpio) {
-      nuevosErrores.telefono = "El teléfono es obligatorio.";
-    } else if (telefonoLimpio.length < 8) {
-      nuevosErrores.telefono =
-        "Ingresá un número de teléfono válido.";
-    }
+      if (!nombre) {
+        nuevosErrores.nombre =
+          "El nombre es obligatorio.";
+      } else if (
+        nombre.length < 3
+      ) {
+        nuevosErrores.nombre =
+          "El nombre debe tener al menos 3 caracteres.";
+      }
 
-    setErrores(nuevosErrores);
+      if (!telefonoLimpio) {
+        nuevosErrores.telefono =
+          "El número de celular es obligatorio.";
+      } else if (
+        telefonoLimpio.length <
+        8
+      ) {
+        nuevosErrores.telefono =
+          "Ingresá un número de celular válido.";
+      } else if (
+        telefonoLimpio.length >
+        15
+      ) {
+        nuevosErrores.telefono =
+          "El número de celular es demasiado largo.";
+      }
 
-    return Object.keys(nuevosErrores).length === 0;
-  };
+      setErrores(
+        nuevosErrores
+      );
 
-  const manejarEnvio = (event) => {
+      return (
+        Object.keys(
+          nuevosErrores
+        ).length === 0
+      );
+    };
+
+  const manejarEnvio = (
+    event
+  ) => {
     event.preventDefault();
 
-    if (!validarFormulario()) {
+    if (
+      !validarFormulario()
+    ) {
       return;
     }
 
     onContinuar({
-      nombre: formulario.nombre.trim(),
-      telefono: formulario.telefono.trim(),
-      observacion: formulario.observacion.trim(),
+      nombre:
+        formulario.nombre.trim(),
+
+      telefono:
+        formulario.telefono.replace(
+          /\D/g,
+          ""
+        ),
     });
   };
 
@@ -75,13 +137,17 @@ function PasoDatos({
         </h1>
 
         <p className="paso-datos__description">
-          Completá tus datos para continuar con la reserva.
+          Ingresá tu nombre y
+          número de celular para
+          completar la reserva.
         </p>
       </header>
 
       <form
         className="paso-datos__form"
-        onSubmit={manejarEnvio}
+        onSubmit={
+          manejarEnvio
+        }
         noValidate
       >
         <div className="paso-datos__field">
@@ -96,30 +162,33 @@ function PasoDatos({
             id="nombre"
             name="nombre"
             type="text"
-            value={formulario.nombre}
-            onChange={manejarCambio}
-            placeholder="Ejemplo: Carlos Gómez"
+            value={
+              formulario.nombre
+            }
+            onChange={
+              manejarCambio
+            }
+            placeholder="Ej: Carlos Gómez"
             autoComplete="name"
             className={[
               "paso-datos__input",
+
               errores.nombre
                 ? "paso-datos__input--error"
                 : "",
             ]
               .filter(Boolean)
               .join(" ")}
-            aria-invalid={Boolean(errores.nombre)}
-            aria-describedby={
-              errores.nombre ? "nombre-error" : undefined
-            }
+            aria-invalid={Boolean(
+              errores.nombre
+            )}
           />
 
           {errores.nombre && (
-            <p
-              id="nombre-error"
-              className="paso-datos__error"
-            >
-              {errores.nombre}
+            <p className="paso-datos__error">
+              {
+                errores.nombre
+              }
             </p>
           )}
         </div>
@@ -129,67 +198,51 @@ function PasoDatos({
             htmlFor="telefono"
             className="paso-datos__label"
           >
-            Teléfono / WhatsApp
+            Celular / WhatsApp
           </label>
 
           <input
             id="telefono"
             name="telefono"
             type="tel"
-            value={formulario.telefono}
-            onChange={manejarCambio}
-            placeholder="Ejemplo: 3815555555"
+            value={
+              formulario.telefono
+            }
+            onChange={
+              manejarCambio
+            }
+            placeholder="Ej: 3815555555"
             autoComplete="tel"
             inputMode="tel"
             className={[
               "paso-datos__input",
+
               errores.telefono
                 ? "paso-datos__input--error"
                 : "",
             ]
               .filter(Boolean)
               .join(" ")}
-            aria-invalid={Boolean(errores.telefono)}
-            aria-describedby={
-              errores.telefono ? "telefono-error" : undefined
-            }
+            aria-invalid={Boolean(
+              errores.telefono
+            )}
           />
 
           {errores.telefono && (
-            <p
-              id="telefono-error"
-              className="paso-datos__error"
-            >
-              {errores.telefono}
+            <p className="paso-datos__error">
+              {
+                errores.telefono
+              }
             </p>
           )}
-        </div>
 
-        <div className="paso-datos__field">
-          <label
-            htmlFor="observacion"
-            className="paso-datos__label"
-          >
-            Observación
-            <span className="paso-datos__optional">
-              Opcional
-            </span>
-          </label>
-
-          <textarea
-            id="observacion"
-            name="observacion"
-            value={formulario.observacion}
-            onChange={manejarCambio}
-            placeholder="Información adicional para el barbero"
-            rows="4"
-            maxLength="500"
-            className="paso-datos__textarea"
-          />
-
-          <span className="paso-datos__counter">
-            {formulario.observacion.length}/500
-          </span>
+          <p className="paso-datos__help">
+            Usaremos este número
+            únicamente para
+            identificar tu reserva
+            y contactarte por tu
+            turno.
+          </p>
         </div>
 
         <button
@@ -206,7 +259,12 @@ function PasoDatos({
           className="paso-datos__back-button"
           onClick={onVolver}
         >
-          <span aria-hidden="true">←</span>
+          <span
+            aria-hidden="true"
+          >
+            ←
+          </span>
+
           Atrás
         </button>
       </div>

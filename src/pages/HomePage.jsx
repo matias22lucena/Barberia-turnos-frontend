@@ -1,4 +1,3 @@
-import HomeHeader from "../components/home/HomeHeader.jsx";
 import HomeHero from "../components/home/HomeHero.jsx";
 import HomeServicios from "../components/home/HomeServicios.jsx";
 import HomePromociones from "../components/home/HomePromociones.jsx";
@@ -9,8 +8,6 @@ import "./HomePage.css";
 function HomePage() {
   return (
     <main className="home-page">
-      <HomeHeader />
-
       <HomeHero />
 
       <HomeServicios />

@@ -11,6 +11,17 @@ function PasoConfirmacion({
       reserva.promocion
     );
 
+  const cantidadPromocion =
+    Number(
+      reserva.promocion
+        ?.cantidadServicios ||
+        1
+    );
+
+  const esPaquete =
+    esPromocion &&
+    cantidadPromocion > 1;
+
   const nombreReserva =
     reserva.promocion
       ?.titulo ||
@@ -38,17 +49,23 @@ function PasoConfirmacion({
     ).toLocaleString(
       "es-AR",
       {
-        style: "currency",
-        currency: "ARS",
+        style:
+          "currency",
+
+        currency:
+          "ARS",
+
         minimumFractionDigits:
           0,
+
         maximumFractionDigits:
           0,
       }
     );
 
   const nombreBarbero =
-    reserva.barbero?.apellido
+    reserva.barbero
+      ?.apellido
       ? `${reserva.barbero.nombre} ${reserva.barbero.apellido}`
       : reserva.barbero
           ?.nombre;
@@ -57,7 +74,9 @@ function PasoConfirmacion({
     <section className="paso-confirmacion">
       <header className="paso-confirmacion__header">
         <h1 className="paso-confirmacion__title">
-          Revisá tu turno
+          {esPaquete
+            ? "Revisá tus turnos"
+            : "Revisá tu turno"}
         </h1>
 
         <p className="paso-confirmacion__description">
@@ -105,45 +124,116 @@ function PasoConfirmacion({
             </span>
 
             <strong>
-              {nombreBarbero}
-            </strong>
-          </div>
-
-          <div className="paso-confirmacion__row">
-            <span>
-              Día
-            </span>
-
-            <strong>
               {
-                reserva.fecha
-                  ?.textoCompleto
+                nombreBarbero
               }
             </strong>
           </div>
 
-          <div className="paso-confirmacion__row">
-            <span>
-              Horario
-            </span>
+          {esPaquete ? (
+            <>
+              <div className="paso-confirmacion__row">
+                <span>
+                  Cantidad
+                </span>
 
-            <strong>
-              {reserva.hora}
-            </strong>
-          </div>
+                <strong>
+                  {
+                    cantidadPromocion
+                  }{" "}
+                  turnos
+                </strong>
+              </div>
 
-          <div className="paso-confirmacion__row">
-            <span>
-              Duración
-            </span>
+              {reserva.turnosPromocion.map(
+                (
+                  turno,
+                  indice
+                ) => (
+                  <div
+                    key={
+                      turno
+                        .fecha
+                        .fechaISO
+                    }
+                    className="paso-confirmacion__row"
+                  >
+                    <span>
+                      Corte{" "}
+                      {indice +
+                        1}
+                    </span>
 
-            <strong>
-              {
-                duracionReserva
-              }{" "}
-              minutos
-            </strong>
-          </div>
+                    <strong>
+                      {
+                        turno
+                          .fecha
+                          .textoCompleto
+                      }
+                      {" · "}
+                      {
+                        turno.hora
+                      }
+                    </strong>
+                  </div>
+                )
+              )}
+
+              <div className="paso-confirmacion__row">
+                <span>
+                  Duración de
+                  cada turno
+                </span>
+
+                <strong>
+                  {
+                    duracionReserva
+                  }{" "}
+                  minutos
+                </strong>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="paso-confirmacion__row">
+                <span>
+                  Día
+                </span>
+
+                <strong>
+                  {
+                    reserva.fecha
+                      ?.textoCompleto
+                  }
+                </strong>
+              </div>
+
+              <div className="paso-confirmacion__row">
+                <span>
+                  Horario
+                </span>
+
+                <strong>
+                  {
+                    reserva.hora
+                  }
+                </strong>
+              </div>
+
+              <div className="paso-confirmacion__row">
+                <span>
+                  Duración
+                </span>
+
+                <strong>
+                  {
+                    duracionReserva
+                  }{" "}
+                  minutos
+                </strong>
+              </div>
+            </>
+          )}
 
           <div className="paso-confirmacion__row">
             <span>
@@ -153,6 +243,32 @@ function PasoConfirmacion({
             <strong>
               {
                 precioFormateado
+              }
+            </strong>
+          </div>
+
+          <div className="paso-confirmacion__row">
+            <span>
+              Nombre
+            </span>
+
+            <strong>
+              {
+                reserva.cliente
+                  ?.nombre
+              }
+            </strong>
+          </div>
+
+          <div className="paso-confirmacion__row">
+            <span>
+              Celular
+            </span>
+
+            <strong>
+              {
+                reserva.cliente
+                  ?.telefono
               }
             </strong>
           </div>
@@ -171,14 +287,18 @@ function PasoConfirmacion({
           }
         >
           {confirmando
-            ? "Confirmando turno..."
-            : "Confirmar turno"}
+            ? "Confirmando..."
+            : esPaquete
+              ? `Confirmar ${cantidadPromocion} turnos`
+              : "Confirmar turno"}
         </button>
 
         <button
           type="button"
           className="paso-confirmacion__back-button"
-          onClick={onVolver}
+          onClick={
+            onVolver
+          }
           disabled={
             confirmando
           }

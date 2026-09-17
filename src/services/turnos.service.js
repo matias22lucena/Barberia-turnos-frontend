@@ -6,6 +6,7 @@ export const crearTurno = async ({
   promocionId = null,
   fecha,
   hora,
+  cliente,
 }) => {
   const response =
     await api.post(
@@ -16,6 +17,29 @@ export const crearTurno = async ({
         promocionId,
         fecha,
         hora,
+        cliente,
+      }
+    );
+
+  return response.data.data;
+};
+
+export const crearTurnosPromocion = async ({
+  barberoId,
+  servicioId,
+  promocionId,
+  turnos,
+  cliente,
+}) => {
+  const response =
+    await api.post(
+      "/turnos",
+      {
+        barberoId,
+        servicioId,
+        promocionId,
+        turnos,
+        cliente,
       }
     );
 

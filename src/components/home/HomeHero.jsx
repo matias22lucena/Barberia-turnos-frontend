@@ -25,7 +25,10 @@ function HomeHero() {
 
           <h1 className="home-hero__title">
             Tu imagen merece
-            <span> su mejor versión.</span>
+            <span>
+              {" "}
+              su mejor versión.
+            </span>
           </h1>
 
           <p className="home-hero__description">
@@ -47,12 +50,27 @@ function HomeHero() {
             >
               Ver servicios
             </a>
+
+            <a
+              href="#horarios"
+              className="home-hero__secondary-button"
+            >
+              Ver horarios
+            </a>
           </div>
 
           <div className="home-hero__features">
-            <span>Turnos online</span>
-            <span>Atención personalizada</span>
-            <span>Menos tiempo de espera</span>
+            <span>
+              Turnos online
+            </span>
+
+            <span>
+              Atención personalizada
+            </span>
+
+            <span>
+              Menos tiempo de espera
+            </span>
           </div>
         </div>
       </div>

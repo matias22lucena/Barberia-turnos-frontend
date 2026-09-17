@@ -1,6 +1,6 @@
 .home-hero {
   width: 100%;
-  min-height: calc(100vh - 72px);
+  min-height: 100vh;
 
   display: flex;
   align-items: center;
@@ -24,11 +24,14 @@
 
 .home-hero__container {
   width: 100%;
-  max-width: 900px;
+  max-width: 1000px;
   min-width: 0;
 
   margin: 0 auto;
-  padding: 58px 24px 84px;
+
+  padding:
+    52px 24px
+    76px;
 
   display: flex;
   flex-direction: column;
@@ -37,7 +40,9 @@
   text-align: center;
 }
 
+/* ========================= */
 /* LOGO */
+/* ========================= */
 
 .home-hero__logo-wrapper {
   width: 100%;
@@ -45,61 +50,108 @@
   display: flex;
   justify-content: center;
 
-  margin-bottom: 30px;
+  margin-bottom: 28px;
 }
 
 .home-hero__logo-frame {
-  width: 230px;
-  height: 230px;
+  width: 290px;
+  height: 290px;
 
   display: grid;
   place-items: center;
 
-  border: 1px solid rgba(239, 179, 66, 0.2);
+  border:
+    1px solid
+    rgba(
+      239,
+      179,
+      66,
+      0.22
+    );
+
   border-radius: 50%;
 
   background:
     radial-gradient(
       circle,
-      rgba(239, 179, 66, 0.12),
-      rgba(27, 24, 22, 0.24) 62%,
+      rgba(
+        239,
+        179,
+        66,
+        0.13
+      ),
+      rgba(
+        27,
+        24,
+        22,
+        0.24
+      )
+      62%,
       transparent 63%
     );
 }
 
 .home-hero__logo {
-  width: 86%;
-  height: 86%;
+  width: 88%;
+  height: 88%;
 
-  border: 2px solid rgba(239, 179, 66, 0.35);
+  border:
+    2px solid
+    rgba(
+      239,
+      179,
+      66,
+      0.38
+    );
+
   border-radius: 50%;
 
   object-fit: cover;
 
   box-shadow:
-    0 0 45px rgba(239, 179, 66, 0.12),
-    0 18px 45px rgba(0, 0, 0, 0.35);
+    0 0 55px
+      rgba(
+        239,
+        179,
+        66,
+        0.14
+      ),
+    0 20px 50px
+      rgba(
+        0,
+        0,
+        0,
+        0.4
+      );
 }
 
+/* ========================= */
 /* CONTENIDO */
+/* ========================= */
 
 .home-hero__content {
   width: 100%;
-  max-width: 760px;
+  max-width: 800px;
 }
 
 .home-hero__eyebrow {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+
   gap: 9px;
 
-  color: var(--color-primary);
+  color:
+    var(--color-primary);
 
   font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.13em;
-  text-transform: uppercase;
+
+  letter-spacing:
+    0.13em;
+
+  text-transform:
+    uppercase;
 }
 
 .home-hero__eyebrow::before,
@@ -109,52 +161,78 @@
   width: 24px;
   height: 1px;
 
-  background-color: var(--color-primary);
+  background-color:
+    var(--color-primary);
 }
 
 .home-hero__title {
-  max-width: 760px;
+  max-width: 800px;
 
-  margin: 20px auto 22px;
+  margin:
+    20px auto
+    22px;
 
-  color: var(--color-text);
+  color:
+    var(--color-text);
 
-  font-size: clamp(46px, 6vw, 72px);
+  font-size:
+    clamp(
+      46px,
+      6vw,
+      72px
+    );
+
   font-weight: 800;
+
   line-height: 0.98;
-  letter-spacing: -0.045em;
+
+  letter-spacing:
+    -0.045em;
 }
 
 .home-hero__title span {
   display: block;
 
-  color: var(--color-primary);
+  color:
+    var(--color-primary);
 }
 
 .home-hero__description {
-  max-width: 620px;
+  max-width: 640px;
 
   margin: 0 auto;
 
-  color: var(--color-text-muted);
+  color:
+    var(--color-text-muted);
 
   font-size: 18px;
   line-height: 1.65;
 }
 
+/* ========================= */
+/* BOTONES */
+/* ========================= */
+
 .home-hero__actions {
+  width: 100%;
+
   margin-top: 32px;
 
   display: flex;
+  align-items: center;
   justify-content: center;
+
   flex-wrap: wrap;
-  gap: 14px;
+
+  gap: 12px;
 }
 
 .home-hero__primary-button,
 .home-hero__secondary-button {
   min-height: 50px;
-  padding: 13px 22px;
+
+  padding:
+    13px 22px;
 
   display: inline-flex;
   align-items: center;
@@ -162,62 +240,93 @@
 
   border-radius: 8px;
 
+  font-size: 15px;
   font-weight: 700;
 
   text-decoration: none;
 
   transition:
-    border-color 0.2s ease,
-    background-color 0.2s ease,
-    color 0.2s ease,
-    transform 0.2s ease;
+    border-color
+      0.2s ease,
+    background-color
+      0.2s ease,
+    color
+      0.2s ease,
+    transform
+      0.2s ease;
 }
 
 .home-hero__primary-button {
-  border: 1px solid var(--color-primary);
+  border:
+    1px solid
+    var(--color-primary);
 
-  background-color: var(--color-primary);
+  background-color:
+    var(--color-primary);
+
   color: #111;
 }
 
 .home-hero__primary-button:hover {
-  background-color: #dca036;
+  background-color:
+    #dca036;
+
   color: #111;
 
-  transform: translateY(-2px);
+  transform:
+    translateY(-2px);
 }
 
 .home-hero__secondary-button {
-  border: 1px solid var(--color-border);
+  border:
+    1px solid
+    var(--color-border);
 
-  background-color: transparent;
-  color: var(--color-text);
+  background-color:
+    transparent;
+
+  color:
+    var(--color-text);
 }
 
 .home-hero__secondary-button:hover {
-  border-color: var(--color-primary-dark);
+  border-color:
+    var(--color-primary-dark);
 
-  background-color: var(--color-surface-hover);
-  color: var(--color-primary);
+  background-color:
+    var(--color-surface-hover);
 
-  transform: translateY(-2px);
+  color:
+    var(--color-primary);
+
+  transform:
+    translateY(-2px);
 }
+
+/* ========================= */
+/* BENEFICIOS */
+/* ========================= */
 
 .home-hero__features {
   margin-top: 30px;
 
   display: flex;
   justify-content: center;
+
   flex-wrap: wrap;
-  gap: 12px 22px;
+
+  gap:
+    12px 22px;
 }
 
 .home-hero__features span {
   display: inline-flex;
   align-items: center;
+
   gap: 7px;
 
-  color: var(--color-text-muted);
+  color:
+    var(--color-text-muted);
 
   font-size: 13px;
 }
@@ -225,12 +334,15 @@
 .home-hero__features span::before {
   content: "✓";
 
-  color: var(--color-primary);
+  color:
+    var(--color-primary);
 
   font-weight: 700;
 }
 
+/* ========================= */
 /* TABLET Y MOBILE */
+/* ========================= */
 
 @media (max-width: 700px) {
   .home-hero {
@@ -238,35 +350,39 @@
   }
 
   .home-hero__container {
-    padding: 40px 16px 64px;
+    padding:
+      32px 16px
+      58px;
   }
 
   .home-hero__logo-wrapper {
-    margin-bottom: 18px;
+    margin-bottom: 22px;
   }
 
   .home-hero__logo-frame {
-    width: 165px;
-    height: 165px;
+    width: 215px;
+    height: 215px;
   }
 
   .home-hero__logo {
-    width: 86%;
-    height: 86%;
+    width: 90%;
+    height: 90%;
   }
 
   .home-hero__title {
     margin-top: 16px;
 
-    font-size: clamp(
-      40px,
-      11vw,
-      56px
-    );
+    font-size:
+      clamp(
+        40px,
+        11vw,
+        56px
+      );
   }
 
   .home-hero__description {
     font-size: 15px;
+
     line-height: 1.55;
   }
 
@@ -274,21 +390,30 @@
     width: 100%;
 
     display: grid;
-    grid-template-columns: 1fr;
+
+    grid-template-columns:
+      1fr;
+
+    gap: 10px;
   }
 
   .home-hero__primary-button,
   .home-hero__secondary-button {
     width: 100%;
+
+    min-height: 52px;
   }
 
   .home-hero__features {
     width: 100%;
 
     display: grid;
-    grid-template-columns: 1fr;
 
-    justify-items: start;
+    grid-template-columns:
+      1fr;
+
+    justify-items:
+      start;
 
     margin-top: 26px;
   }
@@ -297,17 +422,18 @@
 @media (max-width: 390px) {
   .home-hero__container {
     padding:
-      32px 14px 52px;
+      28px 14px
+      48px;
   }
 
   .home-hero__logo-frame {
-    width: 150px;
-    height: 150px;
+    width: 195px;
+    height: 195px;
   }
 
   .home-hero__logo {
-    width: 86%;
-    height: 86%;
+    width: 90%;
+    height: 90%;
   }
 
   .home-hero__title {

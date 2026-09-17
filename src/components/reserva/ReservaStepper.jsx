@@ -1,20 +1,30 @@
 import "./ReservaStepper.css";
 
-const pasos = [
-  "Servicio",
-  "Fecha y hora",
-  "Confirmación",
-];
-
 function ReservaStepper({
   pasoActual,
+  esPaquetePromocion = false,
 }) {
+  const pasos = [
+    "Servicio",
+
+    esPaquetePromocion
+      ? "Fechas y horarios"
+      : "Fecha y hora",
+
+    "Tus datos",
+    "Confirmación",
+  ];
+
   const nombrePasoActual =
-    pasos[pasoActual - 1];
+    pasos[
+      pasoActual - 1
+    ];
 
   const progreso =
-    (pasoActual /
-      pasos.length) *
+    (
+      pasoActual /
+      pasos.length
+    ) *
     100;
 
   return (
@@ -24,7 +34,10 @@ function ReservaStepper({
     >
       <ol className="reserva-stepper__list">
         {pasos.map(
-          (nombre, indice) => {
+          (
+            nombre,
+            indice
+          ) => {
             const numeroPaso =
               indice + 1;
 
@@ -47,13 +60,21 @@ function ReservaStepper({
                 ? "reserva-stepper__item--completed"
                 : "",
             ]
-              .filter(Boolean)
-              .join(" ");
+              .filter(
+                Boolean
+              )
+              .join(
+                " "
+              );
 
             return (
               <li
-                key={nombre}
-                className={clases}
+                key={
+                  nombre
+                }
+                className={
+                  clases
+                }
                 aria-current={
                   estaActivo
                     ? "step"
@@ -79,12 +100,16 @@ function ReservaStepper({
         <div className="reserva-stepper__mobile-info">
           <div>
             <span className="reserva-stepper__mobile-count">
-              Paso {pasoActual} de{" "}
+              Paso{" "}
+              {pasoActual}{" "}
+              de{" "}
               {pasos.length}
             </span>
 
             <strong className="reserva-stepper__mobile-title">
-              {nombrePasoActual}
+              {
+                nombrePasoActual
+              }
             </strong>
           </div>
 

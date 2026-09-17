@@ -1,110 +1,156 @@
 import api from "../api/api.js";
 
 const obtenerConfiguracion = () => {
-  const token = sessionStorage.getItem("adminToken");
+  const token =
+    sessionStorage.getItem(
+      "adminToken"
+    );
 
   return {
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization:
+        `Bearer ${token}`,
     },
   };
 };
 
-export const obtenerPromocionesAdmin = async () => {
-  const response = await api.get(
-    "/admin/promociones",
-    obtenerConfiguracion()
-  );
+export const obtenerPromocionesAdmin =
+  async () => {
+    const response =
+      await api.get(
+        "/admin/promociones",
+        obtenerConfiguracion()
+      );
 
-  return response.data;
-};
+    return response.data;
+  };
 
-export const crearPromocionAdmin = async ({
-  servicioId,
-  titulo,
-  descripcion,
-  precio,
-  duracionMinutos,
-  activo,
-}) => {
-  const response = await api.post(
-    "/admin/promociones",
-    {
-      servicioId:
-        servicioId === "" ||
-        servicioId === null ||
-        servicioId === undefined
-          ? null
-          : Number(servicioId),
+export const crearPromocionAdmin =
+  async ({
+    servicioId,
+    titulo,
+    descripcion,
+    precio,
+    duracionMinutos,
+    cantidadServicios,
+    activo,
+  }) => {
+    const response =
+      await api.post(
+        "/admin/promociones",
+        {
+          servicioId:
+            servicioId === "" ||
+            servicioId === null ||
+            servicioId === undefined
+              ? null
+              : Number(
+                  servicioId
+                ),
 
-      titulo,
+          titulo,
 
-      descripcion,
+          descripcion,
 
-      precio:
-        precio === "" ||
-        precio === null ||
-        precio === undefined
-          ? null
-          : Number(precio),
+          precio:
+            precio === "" ||
+            precio === null ||
+            precio === undefined
+              ? null
+              : Number(
+                  precio
+                ),
 
-      duracionMinutos: Number(duracionMinutos),
+          duracionMinutos:
+            Number(
+              duracionMinutos
+            ),
 
-      activo: Boolean(activo),
-    },
-    obtenerConfiguracion()
-  );
+          cantidadServicios:
+            Number(
+              cantidadServicios ||
+                1
+            ),
 
-  return response.data;
-};
+          activo:
+            Boolean(
+              activo
+            ),
+        },
+        obtenerConfiguracion()
+      );
 
-export const actualizarPromocionAdmin = async ({
-  promocionId,
-  servicioId,
-  titulo,
-  descripcion,
-  precio,
-  duracionMinutos,
-  activo,
-}) => {
-  const response = await api.patch(
-    `/admin/promociones/${promocionId}`,
-    {
-      servicioId:
-        servicioId === "" ||
-        servicioId === null ||
-        servicioId === undefined
-          ? null
-          : Number(servicioId),
+    return response.data;
+  };
 
-      titulo,
+export const actualizarPromocionAdmin =
+  async ({
+    promocionId,
+    servicioId,
+    titulo,
+    descripcion,
+    precio,
+    duracionMinutos,
+    cantidadServicios,
+    activo,
+  }) => {
+    const response =
+      await api.patch(
+        `/admin/promociones/${promocionId}`,
+        {
+          servicioId:
+            servicioId === "" ||
+            servicioId === null ||
+            servicioId === undefined
+              ? null
+              : Number(
+                  servicioId
+                ),
 
-      descripcion,
+          titulo,
 
-      precio:
-        precio === "" ||
-        precio === null ||
-        precio === undefined
-          ? null
-          : Number(precio),
+          descripcion,
 
-      duracionMinutos: Number(duracionMinutos),
+          precio:
+            precio === "" ||
+            precio === null ||
+            precio === undefined
+              ? null
+              : Number(
+                  precio
+                ),
 
-      activo: Boolean(activo),
-    },
-    obtenerConfiguracion()
-  );
+          duracionMinutos:
+            Number(
+              duracionMinutos
+            ),
 
-  return response.data;
-};
+          cantidadServicios:
+            Number(
+              cantidadServicios ||
+                1
+            ),
 
-export const eliminarPromocionAdmin = async (
-  promocionId
-) => {
-  const response = await api.delete(
-    `/admin/promociones/${promocionId}`,
-    obtenerConfiguracion()
-  );
+          activo:
+            Boolean(
+              activo
+            ),
+        },
+        obtenerConfiguracion()
+      );
 
-  return response.data;
-};
+    return response.data;
+  };
+
+export const eliminarPromocionAdmin =
+  async (
+    promocionId
+  ) => {
+    const response =
+      await api.delete(
+        `/admin/promociones/${promocionId}`,
+        obtenerConfiguracion()
+      );
+
+    return response.data;
+  };

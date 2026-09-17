@@ -1,4 +1,6 @@
-import { Link } from "react-router-dom";
+import {
+  Link,
+} from "react-router-dom";
 
 import "./PasoServicio.css";
 
@@ -11,7 +13,9 @@ function PasoServicio({
   onSeleccionarServicio,
   onSeleccionarPromocion,
 }) {
-  const formatearPrecio = (precio) => {
+  const formatearPrecio = (
+    precio
+  ) => {
     if (
       precio === null ||
       precio === undefined
@@ -24,10 +28,17 @@ function PasoServicio({
     ).toLocaleString(
       "es-AR",
       {
-        style: "currency",
-        currency: "ARS",
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
+        style:
+          "currency",
+
+        currency:
+          "ARS",
+
+        minimumFractionDigits:
+          0,
+
+        maximumFractionDigits:
+          0,
       }
     );
   };
@@ -40,82 +51,125 @@ function PasoServicio({
         </h1>
 
         <p className="paso-servicio__description">
-          Elegí un servicio o aprovechá
-          alguna de nuestras promociones.
+          Elegí un servicio o
+          aprovechá alguna de
+          nuestras promociones.
         </p>
       </header>
 
       <div className="paso-servicio__section-title">
-        <span>SERVICIOS</span>
-        <h2>Servicios disponibles</h2>
+        <span>
+          SERVICIOS
+        </span>
+
+        <h2>
+          Servicios disponibles
+        </h2>
       </div>
 
       <div className="paso-servicio__grid">
-        {servicios.map((servicio) => {
-          const seleccionado =
-            !promocionSeleccionada &&
-            servicioSeleccionado?.id ===
-              servicio.id;
+        {servicios.map(
+          (
+            servicio
+          ) => {
+            const seleccionado =
+              !promocionSeleccionada &&
+              servicioSeleccionado
+                ?.id ===
+                servicio.id;
 
-          return (
-            <button
-              key={`servicio-${servicio.id}`}
-              type="button"
-              className={[
-                "paso-servicio__card",
-                seleccionado
-                  ? "paso-servicio__card--selected"
-                  : "",
-              ]
-                .filter(Boolean)
-                .join(" ")}
-              disabled={cargandoBarbero}
-              onClick={() =>
-                onSeleccionarServicio(
-                  servicio
-                )
-              }
-            >
-              <div className="paso-servicio__card-header">
-                <h2 className="paso-servicio__card-title">
-                  {servicio.nombre}
-                </h2>
+            return (
+              <button
+                key={`servicio-${servicio.id}`}
+                type="button"
+                className={[
+                  "paso-servicio__card",
 
-                <strong className="paso-servicio__card-price">
-                  {formatearPrecio(
-                    servicio.precio
+                  seleccionado
+                    ? "paso-servicio__card--selected"
+                    : "",
+                ]
+                  .filter(
+                    Boolean
+                  )
+                  .join(
+                    " "
                   )}
-                </strong>
-              </div>
+                disabled={
+                  cargandoBarbero
+                }
+                onClick={() =>
+                  onSeleccionarServicio(
+                    servicio
+                  )
+                }
+              >
+                <div className="paso-servicio__card-header">
+                  <h2 className="paso-servicio__card-title">
+                    {
+                      servicio.nombre
+                    }
+                  </h2>
 
-              <p className="paso-servicio__card-description">
-                {servicio.descripcion}
-              </p>
+                  <strong className="paso-servicio__card-price">
+                    {formatearPrecio(
+                      servicio.precio
+                    )}
+                  </strong>
+                </div>
 
-              <p className="paso-servicio__card-duration">
-                Duración:{" "}
-                {servicio.duracionMinutos}{" "}
-                minutos
-              </p>
-            </button>
-          );
-        })}
+                <p className="paso-servicio__card-description">
+                  {
+                    servicio.descripcion
+                  }
+                </p>
+
+                <p className="paso-servicio__card-duration">
+                  Duración:{" "}
+                  {
+                    servicio.duracionMinutos
+                  }{" "}
+                  minutos
+                </p>
+              </button>
+            );
+          }
+        )}
       </div>
 
-      {promociones.length > 0 && (
+      {promociones.length >
+        0 && (
         <>
           <div className="paso-servicio__section-title paso-servicio__section-title--promos">
-            <span>PROMOCIONES</span>
+            <span>
+              PROMOCIONES
+            </span>
 
-            <h2>Promociones especiales</h2>
+            <h2>
+              Promociones
+              especiales
+            </h2>
           </div>
 
           <div className="paso-servicio__grid">
             {promociones.map(
-              (promocion) => {
+              (
+                promocion
+              ) => {
                 const seleccionado =
-                  promocionSeleccionada?.id ===
+                  promocionSeleccionada
+                    ?.id ===
                   promocion.id;
+
+                const cantidad =
+                  Number(
+                    promocion
+                      .cantidadServicios ||
+                      1
+                  );
+
+                const esPaquete =
+                  cantidad > 1;
 
                 return (
                   <button
@@ -129,8 +183,12 @@ function PasoServicio({
                         ? "paso-servicio__card--selected"
                         : "",
                     ]
-                      .filter(Boolean)
-                      .join(" ")}
+                      .filter(
+                        Boolean
+                      )
+                      .join(
+                        " "
+                      )}
                     disabled={
                       cargandoBarbero
                     }
@@ -141,7 +199,9 @@ function PasoServicio({
                     }
                   >
                     <span className="paso-servicio__promo-badge">
-                      PROMO
+                      {esPaquete
+                        ? `PACK ${cantidad} TURNOS`
+                        : "PROMO"}
                     </span>
 
                     <div className="paso-servicio__card-header">
@@ -166,8 +226,21 @@ function PasoServicio({
                       </p>
                     )}
 
+                    {esPaquete && (
+                      <p className="paso-servicio__package-info">
+                        Incluye{" "}
+                        <strong>
+                          {
+                            cantidad
+                          }{" "}
+                          turnos
+                        </strong>
+                      </p>
+                    )}
+
                     <p className="paso-servicio__card-duration">
-                      Duración:{" "}
+                      Duración por
+                      turno:{" "}
                       {
                         promocion.duracionMinutos
                       }{" "}
@@ -189,7 +262,8 @@ function PasoServicio({
           />
 
           <span>
-            Verificando profesional
+            Verificando
+            profesional
             disponible...
           </span>
         </div>

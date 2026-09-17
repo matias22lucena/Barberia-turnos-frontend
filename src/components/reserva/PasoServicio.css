@@ -524,3 +524,15 @@
     white-space: normal;
   }
 }
+.paso-servicio__package-info {
+  margin: 0 0 10px;
+
+  color:
+    var(--color-primary);
+
+  font-size: 13px;
+}
+
+.paso-servicio__package-info strong {
+  font-weight: 800;
+}

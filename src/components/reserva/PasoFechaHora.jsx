@@ -1,7 +1,16 @@
-import { useEffect, useMemo, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
-import { obtenerHorariosPorBarbero } from "../../services/horarios.service.js";
-import { obtenerDisponibilidad } from "../../services/disponibilidad.service.js";
+import {
+  obtenerHorariosPorBarbero,
+} from "../../services/horarios.service.js";
+
+import {
+  obtenerDisponibilidad,
+} from "../../services/disponibilidad.service.js";
 
 import "./PasoFechaHora.css";
 
@@ -30,39 +39,49 @@ const DIAS_SEMANA = [
   "Dom",
 ];
 
-const formatearFechaISO = (fecha) => {
-  const anio = fecha.getFullYear();
+const formatearFechaISO = (
+  fecha
+) => {
+  const anio =
+    fecha.getFullYear();
 
-  const mes = String(
-    fecha.getMonth() + 1
-  ).padStart(2, "0");
+  const mes =
+    String(
+      fecha.getMonth() + 1
+    ).padStart(
+      2,
+      "0"
+    );
 
-  const dia = String(
-    fecha.getDate()
-  ).padStart(2, "0");
+  const dia =
+    String(
+      fecha.getDate()
+    ).padStart(
+      2,
+      "0"
+    );
 
   return `${anio}-${mes}-${dia}`;
 };
 
-const obtenerDiaSemanaBaseDatos = (fecha) => {
-  const diaJavaScript = fecha.getDay();
-
-  // JS:
-  // domingo = 0
-  // lunes = 1
-  //
-  // BD:
-  // lunes = 1
-  // ...
-  // domingo = 7
+const obtenerDiaSemanaBaseDatos = (
+  fecha
+) => {
+  const diaJavaScript =
+    fecha.getDay();
 
   return diaJavaScript === 0
     ? 7
     : diaJavaScript;
 };
 
-const crearFechaReserva = (fecha) => {
-  const fechaISO = formatearFechaISO(fecha);
+const crearFechaReserva = (
+  fecha
+) => {
+  const fechaISO =
+    formatearFechaISO(
+      fecha
+    );
 
   const textoCompleto =
     new Intl.DateTimeFormat(
@@ -73,18 +92,27 @@ const crearFechaReserva = (fecha) => {
         month: "long",
         year: "numeric",
       }
-    ).format(fecha);
+    ).format(
+      fecha
+    );
 
   return {
     fechaISO,
     textoCompleto,
-    numeroDia: fecha.getDate(),
+
+    numeroDia:
+      fecha.getDate(),
+
     diaSemanaBaseDatos:
-      obtenerDiaSemanaBaseDatos(fecha),
+      obtenerDiaSemanaBaseDatos(
+        fecha
+      ),
   };
 };
 
-const normalizarFecha = (fecha) => {
+const normalizarFecha = (
+  fecha
+) => {
   return new Date(
     fecha.getFullYear(),
     fecha.getMonth(),
@@ -97,257 +125,423 @@ function PasoFechaHora({
   onSeleccionarFechaHora,
   onVolver,
 }) {
-  const hoy = useMemo(
-    () => normalizarFecha(new Date()),
-    []
-  );
-
-  const [mesVisible, setMesVisible] =
-    useState(
-      new Date(
-        hoy.getFullYear(),
-        hoy.getMonth(),
-        1
-      )
+  const hoy =
+    useMemo(
+      () =>
+        normalizarFecha(
+          new Date()
+        ),
+      []
     );
 
-  const [horariosLaborales, setHorariosLaborales] =
-    useState([]);
+  const [
+    mesVisible,
+    setMesVisible,
+  ] = useState(
+    new Date(
+      hoy.getFullYear(),
+      hoy.getMonth(),
+      1
+    )
+  );
 
-  const [fechaSeleccionada, setFechaSeleccionada] =
-    useState(reserva.fecha || null);
+  const [
+    horariosLaborales,
+    setHorariosLaborales,
+  ] = useState([]);
 
-  const [horaSeleccionada, setHoraSeleccionada] =
-    useState(reserva.hora || null);
+  const [
+    fechaSeleccionada,
+    setFechaSeleccionada,
+  ] = useState(
+    reserva.fecha ||
+      null
+  );
 
-  const [horariosDisponibles, setHorariosDisponibles] =
-    useState([]);
+  const [
+    horaSeleccionada,
+    setHoraSeleccionada,
+  ] = useState(
+    reserva.hora ||
+      null
+  );
 
-  const [cargandoCalendario, setCargandoCalendario] =
-    useState(true);
+  const [
+    horariosDisponibles,
+    setHorariosDisponibles,
+  ] = useState([]);
+
+  const [
+    cargandoCalendario,
+    setCargandoCalendario,
+  ] = useState(true);
 
   const [
     cargandoDisponibilidad,
     setCargandoDisponibilidad,
   ] = useState(false);
 
-  const [error, setError] = useState("");
+  const [
+    error,
+    setError,
+  ] = useState("");
 
   /*
-   * Cargar días laborales del barbero
+   * Cargar los días
+   * laborales del barbero.
    */
   useEffect(() => {
-    const cargarHorarios = async () => {
-      const barberoId = reserva.barbero?.id;
+    const cargarHorarios =
+      async () => {
+        const barberoId =
+          reserva.barbero?.id;
 
-      if (!barberoId) {
-        setError(
-          "No se encontró el profesional asignado."
-        );
-
-        setCargandoCalendario(false);
-        return;
-      }
-
-      try {
-        setCargandoCalendario(true);
-        setError("");
-
-        const horarios =
-          await obtenerHorariosPorBarbero(
-            barberoId
+        if (
+          !barberoId
+        ) {
+          setError(
+            "No se encontró el profesional asignado."
           );
 
-        setHorariosLaborales(
-          horarios || []
-        );
-      } catch (error) {
-        console.error(error);
+          setCargandoCalendario(
+            false
+          );
 
-        setError(
-          "No se pudieron cargar los días de atención."
-        );
-      } finally {
-        setCargandoCalendario(false);
-      }
-    };
+          return;
+        }
+
+        try {
+          setCargandoCalendario(
+            true
+          );
+
+          setError("");
+
+          const horarios =
+            await obtenerHorariosPorBarbero(
+              barberoId
+            );
+
+          setHorariosLaborales(
+            horarios ||
+              []
+          );
+        } catch (error) {
+          console.error(
+            error
+          );
+
+          setError(
+            "No se pudieron cargar los días de atención."
+          );
+        } finally {
+          setCargandoCalendario(
+            false
+          );
+        }
+      };
 
     cargarHorarios();
-  }, [reserva.barbero?.id]);
-
-  /*
-   * Días de la semana en los que trabaja.
-   */
-  const diasLaborales = useMemo(() => {
-    return new Set(
-      horariosLaborales.map(
-        (horario) =>
-          Number(horario.diaSemana)
-      )
-    );
-  }, [horariosLaborales]);
-
-  /*
-   * Construcción del calendario mensual.
-   */
-  const diasCalendario = useMemo(() => {
-    const anio = mesVisible.getFullYear();
-    const mes = mesVisible.getMonth();
-
-    const primerDiaMes =
-      new Date(anio, mes, 1);
-
-    const ultimoDiaMes =
-      new Date(anio, mes + 1, 0);
-
-    /*
-     * Convertimos:
-     * domingo 0 -> posición 6
-     * lunes 1 -> posición 0
-     */
-    const espaciosIniciales =
-      primerDiaMes.getDay() === 0
-        ? 6
-        : primerDiaMes.getDay() - 1;
-
-    const dias = [];
-
-    for (
-      let i = 0;
-      i < espaciosIniciales;
-      i += 1
-    ) {
-      dias.push(null);
-    }
-
-    for (
-      let numeroDia = 1;
-      numeroDia <=
-      ultimoDiaMes.getDate();
-      numeroDia += 1
-    ) {
-      const fecha = new Date(
-        anio,
-        mes,
-        numeroDia
-      );
-
-      const fechaNormalizada =
-        normalizarFecha(fecha);
-
-      const diaSemana =
-        obtenerDiaSemanaBaseDatos(fecha);
-
-      const esPasado =
-        fechaNormalizada < hoy;
-
-      const esLaboral =
-        diasLaborales.has(diaSemana);
-
-      dias.push({
-        fecha,
-        fechaISO:
-          formatearFechaISO(fecha),
-        numeroDia,
-        esPasado,
-        esLaboral,
-        habilitado:
-          !esPasado && esLaboral,
-      });
-    }
-
-    return dias;
   }, [
-    mesVisible,
-    hoy,
-    diasLaborales,
+    reserva.barbero?.id,
   ]);
 
   /*
-   * Seleccionar día y consultar horarios.
+   * Días de la semana
+   * en los que trabaja
+   * el barbero.
    */
-  const seleccionarFecha = async (dia) => {
-    if (!dia?.habilitado) {
-      return;
-    }
-
-    const nuevaFecha =
-      crearFechaReserva(dia.fecha);
-
-    setFechaSeleccionada(nuevaFecha);
-    setHoraSeleccionada(null);
-    setHorariosDisponibles([]);
-    setError("");
-
-    try {
-      setCargandoDisponibilidad(true);
-
-      const disponibilidad =
-        await obtenerDisponibilidad({
-          barberoId:
-            reserva.barbero.id,
-
-          servicioId:
-            reserva.servicio.id,
-
-          fecha:
-            nuevaFecha.fechaISO,
-        });
-
-      setHorariosDisponibles(
-        disponibilidad?.horarios || []
+  const diasLaborales =
+    useMemo(() => {
+      return new Set(
+        horariosLaborales.map(
+          (
+            horario
+          ) =>
+            Number(
+              horario.diaSemana
+            )
+        )
       );
-    } catch (error) {
-      console.error(error);
-
-      const mensaje =
-        error.response?.data?.message ||
-        "No se pudieron consultar los horarios disponibles.";
-
-      setError(mensaje);
-    } finally {
-      setCargandoDisponibilidad(false);
-    }
-  };
+    }, [
+      horariosLaborales,
+    ]);
 
   /*
-   * Si volvemos desde datos a este paso,
-   * volvemos a consultar la disponibilidad
-   * de la fecha que ya estaba seleccionada.
+   * Construcción del
+   * calendario mensual.
+   */
+  const diasCalendario =
+    useMemo(() => {
+      const anio =
+        mesVisible.getFullYear();
+
+      const mes =
+        mesVisible.getMonth();
+
+      const primerDiaMes =
+        new Date(
+          anio,
+          mes,
+          1
+        );
+
+      const ultimoDiaMes =
+        new Date(
+          anio,
+          mes + 1,
+          0
+        );
+
+      /*
+       * Domingo = 0
+       * lo mandamos al final.
+       */
+      const espaciosIniciales =
+        primerDiaMes.getDay() ===
+        0
+          ? 6
+          : primerDiaMes.getDay() -
+            1;
+
+      const dias = [];
+
+      for (
+        let i = 0;
+        i <
+        espaciosIniciales;
+        i += 1
+      ) {
+        dias.push(
+          null
+        );
+      }
+
+      for (
+        let numeroDia = 1;
+        numeroDia <=
+        ultimoDiaMes.getDate();
+        numeroDia += 1
+      ) {
+        const fecha =
+          new Date(
+            anio,
+            mes,
+            numeroDia
+          );
+
+        const fechaNormalizada =
+          normalizarFecha(
+            fecha
+          );
+
+        const diaSemana =
+          obtenerDiaSemanaBaseDatos(
+            fecha
+          );
+
+        const esPasado =
+          fechaNormalizada <
+          hoy;
+
+        const esLaboral =
+          diasLaborales.has(
+            diaSemana
+          );
+
+        dias.push({
+          fecha,
+
+          fechaISO:
+            formatearFechaISO(
+              fecha
+            ),
+
+          numeroDia,
+
+          esPasado,
+
+          esLaboral,
+
+          habilitado:
+            !esPasado &&
+            esLaboral,
+        });
+      }
+
+      return dias;
+    }, [
+      mesVisible,
+      hoy,
+      diasLaborales,
+    ]);
+
+  /*
+   * Seleccionar un día
+   * y consultar los horarios.
+   */
+  const seleccionarFecha =
+    async (
+      dia
+    ) => {
+      if (
+        !dia?.habilitado
+      ) {
+        return;
+      }
+
+      const nuevaFecha =
+        crearFechaReserva(
+          dia.fecha
+        );
+
+      setFechaSeleccionada(
+        nuevaFecha
+      );
+
+      setHoraSeleccionada(
+        null
+      );
+
+      setHorariosDisponibles(
+        []
+      );
+
+      setError("");
+
+      try {
+        setCargandoDisponibilidad(
+          true
+        );
+
+        /*
+         * IMPORTANTE:
+         * también mandamos
+         * promocionId.
+         *
+         * De esta manera el
+         * backend puede usar
+         * la duración propia
+         * de la promoción.
+         */
+        const disponibilidad =
+          await obtenerDisponibilidad(
+            {
+              barberoId:
+                reserva
+                  .barbero
+                  .id,
+
+              servicioId:
+                reserva
+                  .servicio
+                  .id,
+
+              promocionId:
+                reserva
+                  .promocion
+                  ?.id ||
+                null,
+
+              fecha:
+                nuevaFecha
+                  .fechaISO,
+            }
+          );
+
+        setHorariosDisponibles(
+          disponibilidad
+            ?.horarios ||
+            []
+        );
+      } catch (error) {
+        console.error(
+          error
+        );
+
+        const mensaje =
+          error.response?.data
+            ?.message ||
+          "No se pudieron consultar los horarios disponibles.";
+
+        setError(
+          mensaje
+        );
+      } finally {
+        setCargandoDisponibilidad(
+          false
+        );
+      }
+    };
+
+  /*
+   * Si volvemos desde
+   * "Tus datos" a este paso,
+   * volvemos a consultar
+   * la disponibilidad.
    */
   useEffect(() => {
     const cargarSeleccionPrevia =
       async () => {
         if (
-          !reserva.fecha?.fechaISO ||
-          !reserva.barbero?.id ||
-          !reserva.servicio?.id
+          !reserva.fecha
+            ?.fechaISO ||
+          !reserva.barbero
+            ?.id ||
+          !reserva.servicio
+            ?.id
         ) {
           return;
         }
 
         try {
-          setCargandoDisponibilidad(true);
+          setCargandoDisponibilidad(
+            true
+          );
 
+          /*
+           * También enviamos
+           * promocionId acá.
+           */
           const disponibilidad =
-            await obtenerDisponibilidad({
-              barberoId:
-                reserva.barbero.id,
+            await obtenerDisponibilidad(
+              {
+                barberoId:
+                  reserva
+                    .barbero
+                    .id,
 
-              servicioId:
-                reserva.servicio.id,
+                servicioId:
+                  reserva
+                    .servicio
+                    .id,
 
-              fecha:
-                reserva.fecha.fechaISO,
-            });
+                promocionId:
+                  reserva
+                    .promocion
+                    ?.id ||
+                  null,
+
+                fecha:
+                  reserva
+                    .fecha
+                    .fechaISO,
+              }
+            );
 
           setHorariosDisponibles(
-            disponibilidad?.horarios || []
+            disponibilidad
+              ?.horarios ||
+              []
           );
         } catch (error) {
-          console.error(error);
+          console.error(
+            error
+          );
         } finally {
-          setCargandoDisponibilidad(false);
+          setCargandoDisponibilidad(
+            false
+          );
         }
       };
 
@@ -355,74 +549,96 @@ function PasoFechaHora({
   }, [
     reserva.barbero?.id,
     reserva.servicio?.id,
+    reserva.promocion?.id,
     reserva.fecha?.fechaISO,
   ]);
 
-  const seleccionarHora = (hora) => {
-    setHoraSeleccionada(hora);
-  };
-
-  const continuar = () => {
-    if (
-      !fechaSeleccionada ||
-      !horaSeleccionada
-    ) {
-      return;
-    }
-
-    onSeleccionarFechaHora({
-      fecha: fechaSeleccionada,
-      hora: horaSeleccionada,
-    });
-  };
-
-  const mesAnterior = () => {
-    const mesAnteriorFecha =
-      new Date(
-        mesVisible.getFullYear(),
-        mesVisible.getMonth() - 1,
-        1
-      );
-
-    const inicioMesActual =
-      new Date(
-        hoy.getFullYear(),
-        hoy.getMonth(),
-        1
-      );
-
-    if (
-      mesAnteriorFecha <
-      inicioMesActual
-    ) {
-      return;
-    }
-
-    setMesVisible(mesAnteriorFecha);
-  };
-
-  const mesSiguiente = () => {
-    setMesVisible(
-      new Date(
-        mesVisible.getFullYear(),
-        mesVisible.getMonth() + 1,
-        1
-      )
+  const seleccionarHora = (
+    hora
+  ) => {
+    setHoraSeleccionada(
+      hora
     );
   };
 
-  const puedeRetrocederMes = !(
-    mesVisible.getFullYear() ===
-      hoy.getFullYear() &&
-    mesVisible.getMonth() ===
-      hoy.getMonth()
-  );
+  const continuar =
+    () => {
+      if (
+        !fechaSeleccionada ||
+        !horaSeleccionada
+      ) {
+        return;
+      }
 
-  if (cargandoCalendario) {
+      onSeleccionarFechaHora(
+        {
+          fecha:
+            fechaSeleccionada,
+
+          hora:
+            horaSeleccionada,
+        }
+      );
+    };
+
+  const mesAnterior =
+    () => {
+      const mesAnteriorFecha =
+        new Date(
+          mesVisible.getFullYear(),
+          mesVisible.getMonth() -
+            1,
+          1
+        );
+
+      const inicioMesActual =
+        new Date(
+          hoy.getFullYear(),
+          hoy.getMonth(),
+          1
+        );
+
+      if (
+        mesAnteriorFecha <
+        inicioMesActual
+      ) {
+        return;
+      }
+
+      setMesVisible(
+        mesAnteriorFecha
+      );
+    };
+
+  const mesSiguiente =
+    () => {
+      setMesVisible(
+        new Date(
+          mesVisible.getFullYear(),
+          mesVisible.getMonth() +
+            1,
+          1
+        )
+      );
+    };
+
+  const puedeRetrocederMes =
+    !(
+      mesVisible.getFullYear() ===
+        hoy.getFullYear() &&
+      mesVisible.getMonth() ===
+        hoy.getMonth()
+    );
+
+  if (
+    cargandoCalendario
+  ) {
     return (
       <section className="paso-fecha-hora">
         <header className="paso-fecha-hora__header">
-          <h1>Elegí fecha y hora</h1>
+          <h1>
+            Elegí fecha y hora
+          </h1>
 
           <p>
             Cargando calendario...
@@ -437,7 +653,8 @@ function PasoFechaHora({
           />
 
           <span>
-            Consultando días de atención...
+            Consultando días
+            de atención...
           </span>
         </div>
       </section>
@@ -447,12 +664,20 @@ function PasoFechaHora({
   return (
     <section className="paso-fecha-hora">
       <header className="paso-fecha-hora__header">
-        <h1>Elegí fecha y hora</h1>
+        <h1>
+          Elegí fecha y hora
+        </h1>
 
         <p>
-          Seleccioná cuándo querés reservar{" "}
+          Seleccioná cuándo
+          querés reservar{" "}
           <strong>
-            {reserva.servicio?.nombre}
+            {reserva
+              .promocion
+              ?.titulo ||
+              reserva
+                .servicio
+                ?.nombre}
           </strong>
           .
         </p>
@@ -474,8 +699,12 @@ function PasoFechaHora({
           <div className="paso-fecha-hora__calendar-header">
             <button
               type="button"
-              onClick={mesAnterior}
-              disabled={!puedeRetrocederMes}
+              onClick={
+                mesAnterior
+              }
+              disabled={
+                !puedeRetrocederMes
+              }
               aria-label="Mes anterior"
             >
               ‹
@@ -487,12 +716,16 @@ function PasoFechaHora({
                   mesVisible.getMonth()
                 ]
               }{" "}
-              {mesVisible.getFullYear()}
+              {
+                mesVisible.getFullYear()
+              }
             </h2>
 
             <button
               type="button"
-              onClick={mesSiguiente}
+              onClick={
+                mesSiguiente
+              }
               aria-label="Mes siguiente"
             >
               ›
@@ -500,17 +733,30 @@ function PasoFechaHora({
           </div>
 
           <div className="paso-fecha-hora__weekdays">
-            {DIAS_SEMANA.map((dia) => (
-              <span key={dia}>
-                {dia}
-              </span>
-            ))}
+            {DIAS_SEMANA.map(
+              (
+                dia
+              ) => (
+                <span
+                  key={
+                    dia
+                  }
+                >
+                  {dia}
+                </span>
+              )
+            )}
           </div>
 
           <div className="paso-fecha-hora__calendar-grid">
             {diasCalendario.map(
-              (dia, indice) => {
-                if (!dia) {
+              (
+                dia,
+                indice
+              ) => {
+                if (
+                  !dia
+                ) {
                   return (
                     <div
                       key={`vacio-${indice}`}
@@ -520,40 +766,57 @@ function PasoFechaHora({
                 }
 
                 const seleccionado =
-                  fechaSeleccionada?.fechaISO ===
+                  fechaSeleccionada
+                    ?.fechaISO ===
                   dia.fechaISO;
 
-                const clases = [
-                  "paso-fecha-hora__day",
-                  seleccionado
-                    ? "paso-fecha-hora__day--selected"
-                    : "",
-                  dia.esPasado
-                    ? "paso-fecha-hora__day--past"
-                    : "",
-                  !dia.esLaboral
-                    ? "paso-fecha-hora__day--closed"
-                    : "",
-                ]
-                  .filter(Boolean)
-                  .join(" ");
+                const clases =
+                  [
+                    "paso-fecha-hora__day",
+
+                    seleccionado
+                      ? "paso-fecha-hora__day--selected"
+                      : "",
+
+                    dia.esPasado
+                      ? "paso-fecha-hora__day--past"
+                      : "",
+
+                    !dia.esLaboral
+                      ? "paso-fecha-hora__day--closed"
+                      : "",
+                  ]
+                    .filter(
+                      Boolean
+                    )
+                    .join(
+                      " "
+                    );
 
                 return (
                   <button
-                    key={dia.fechaISO}
+                    key={
+                      dia.fechaISO
+                    }
                     type="button"
-                    className={clases}
+                    className={
+                      clases
+                    }
                     disabled={
                       !dia.habilitado
                     }
                     onClick={() =>
-                      seleccionarFecha(dia)
+                      seleccionarFecha(
+                        dia
+                      )
                     }
                     aria-pressed={
                       seleccionado
                     }
                   >
-                    {dia.numeroDia}
+                    {
+                      dia.numeroDia
+                    }
                   </button>
                 );
               }
@@ -563,11 +826,13 @@ function PasoFechaHora({
           <div className="paso-fecha-hora__legend">
             <span>
               <i className="paso-fecha-hora__legend-dot paso-fecha-hora__legend-dot--available" />
+
               Disponible
             </span>
 
             <span>
               <i className="paso-fecha-hora__legend-dot paso-fecha-hora__legend-dot--selected" />
+
               Seleccionado
             </span>
           </div>
@@ -577,7 +842,9 @@ function PasoFechaHora({
 
         <div className="paso-fecha-hora__hours-card">
           <div className="paso-fecha-hora__hours-header">
-            <span>HORARIOS</span>
+            <span>
+              HORARIOS
+            </span>
 
             <h2>
               {fechaSeleccionada
@@ -597,7 +864,8 @@ function PasoFechaHora({
               </strong>
 
               <p>
-                Los horarios disponibles
+                Los horarios
+                disponibles
                 aparecerán acá.
               </p>
             </div>
@@ -613,7 +881,8 @@ function PasoFechaHora({
                 />
 
                 <p>
-                  Consultando disponibilidad...
+                  Consultando
+                  disponibilidad...
                 </p>
               </div>
             )}
@@ -628,11 +897,13 @@ function PasoFechaHora({
                 </div>
 
                 <strong>
-                  No hay horarios disponibles
+                  No hay horarios
+                  disponibles
                 </strong>
 
                 <p>
-                  Elegí otra fecha del
+                  Elegí otra
+                  fecha del
                   calendario.
                 </p>
               </div>
@@ -644,30 +915,41 @@ function PasoFechaHora({
               0 && (
               <div className="paso-fecha-hora__hours-grid">
                 {horariosDisponibles.map(
-                  (hora) => {
+                  (
+                    hora
+                  ) => {
                     const seleccionado =
                       horaSeleccionada ===
                       hora;
 
                     return (
                       <button
-                        key={hora}
+                        key={
+                          hora
+                        }
                         type="button"
                         className={[
                           "paso-fecha-hora__hour",
+
                           seleccionado
                             ? "paso-fecha-hora__hour--selected"
                             : "",
                         ]
-                          .filter(Boolean)
-                          .join(" ")}
+                          .filter(
+                            Boolean
+                          )
+                          .join(
+                            " "
+                          )}
                         onClick={() =>
                           seleccionarHora(
                             hora
                           )
                         }
                       >
-                        {hora}
+                        {
+                          hora
+                        }
                       </button>
                     );
                   }
@@ -683,15 +965,27 @@ function PasoFechaHora({
         horaSeleccionada && (
           <div className="paso-fecha-hora__summary">
             <div>
-              <span>Servicio</span>
+              <span>
+                {reserva
+                  .promocion
+                  ? "Promoción"
+                  : "Servicio"}
+              </span>
 
               <strong>
-                {reserva.servicio?.nombre}
+                {reserva
+                  .promocion
+                  ?.titulo ||
+                  reserva
+                    .servicio
+                    ?.nombre}
               </strong>
             </div>
 
             <div>
-              <span>Fecha</span>
+              <span>
+                Fecha
+              </span>
 
               <strong>
                 {
@@ -701,10 +995,14 @@ function PasoFechaHora({
             </div>
 
             <div>
-              <span>Hora</span>
+              <span>
+                Hora
+              </span>
 
               <strong>
-                {horaSeleccionada}
+                {
+                  horaSeleccionada
+                }
               </strong>
             </div>
           </div>
@@ -714,7 +1012,9 @@ function PasoFechaHora({
         <button
           type="button"
           className="paso-fecha-hora__back"
-          onClick={onVolver}
+          onClick={
+            onVolver
+          }
         >
           ← Atrás
         </button>
@@ -726,7 +1026,9 @@ function PasoFechaHora({
             !fechaSeleccionada ||
             !horaSeleccionada
           }
-          onClick={continuar}
+          onClick={
+            continuar
+          }
         >
           Continuar
         </button>

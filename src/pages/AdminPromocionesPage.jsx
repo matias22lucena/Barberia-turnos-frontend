@@ -20,17 +20,28 @@ import {
 
 import "./AdminPromocionesPage.css";
 
-const promocionInicial = {
+const crearPromocionInicial = () => ({
   servicioId: "",
   titulo: "",
   descripcion: "",
   precio: "",
   duracionMinutos: 30,
+
+  /*
+   * Una promoción normal
+   * empieza con 1 servicio.
+   *
+   * Para la mensual
+   * se podrá colocar 5.
+   */
+  cantidadServicios: 1,
+
   activo: true,
-};
+});
 
 function AdminPromocionesPage() {
-  const navigate = useNavigate();
+  const navigate =
+    useNavigate();
 
   const [
     promociones,
@@ -46,7 +57,7 @@ function AdminPromocionesPage() {
     nuevaPromocion,
     setNuevaPromocion,
   ] = useState(
-    promocionInicial
+    crearPromocionInicial
   );
 
   const [
@@ -109,46 +120,53 @@ function AdminPromocionesPage() {
     return false;
   };
 
-  const cargarDatos = async () => {
-    try {
-      setCargando(true);
-      setError("");
+  const cargarDatos =
+    async () => {
+      try {
+        setCargando(
+          true
+        );
 
-      const [
-        respuestaPromociones,
-        respuestaServicios,
-      ] = await Promise.all([
-        obtenerPromocionesAdmin(),
-        obtenerServiciosAdmin(),
-      ]);
+        setError("");
 
-      setPromociones(
-        respuestaPromociones.data ||
-          []
-      );
+        const [
+          respuestaPromociones,
+          respuestaServicios,
+        ] =
+          await Promise.all([
+            obtenerPromocionesAdmin(),
+            obtenerServiciosAdmin(),
+          ]);
 
-      setServicios(
-        respuestaServicios.data ||
-          []
-      );
-    } catch (error) {
-      if (
-        manejarSesionExpirada(
-          error
-        )
-      ) {
-        return;
+        setPromociones(
+          respuestaPromociones.data ||
+            []
+        );
+
+        setServicios(
+          respuestaServicios.data ||
+            []
+        );
+      } catch (error) {
+        if (
+          manejarSesionExpirada(
+            error
+          )
+        ) {
+          return;
+        }
+
+        setError(
+          error.response?.data
+            ?.message ||
+            "No se pudieron cargar las promociones."
+        );
+      } finally {
+        setCargando(
+          false
+        );
       }
-
-      setError(
-        error.response?.data
-          ?.message ||
-          "No se pudieron cargar las promociones."
-      );
-    } finally {
-      setCargando(false);
-    }
-  };
+    };
 
   useEffect(() => {
     cargarDatos();
@@ -159,7 +177,9 @@ function AdminPromocionesPage() {
     valor
   ) => {
     setNuevaPromocion(
-      (anterior) => ({
+      (
+        anterior
+      ) => ({
         ...anterior,
         [campo]: valor,
       })
@@ -172,44 +192,51 @@ function AdminPromocionesPage() {
     valor
   ) => {
     setPromociones(
-      (anteriores) =>
+      (
+        anteriores
+      ) =>
         anteriores.map(
-          (promocion) =>
+          (
+            promocion
+          ) =>
             promocion.id ===
             promocionId
               ? {
                   ...promocion,
-                  [campo]: valor,
+                  [campo]:
+                    valor,
                 }
               : promocion
         )
     );
   };
 
-  const abrirFormulario = () => {
-    setNuevaPromocion(
-      promocionInicial
-    );
+  const abrirFormulario =
+    () => {
+      setNuevaPromocion(
+        crearPromocionInicial()
+      );
 
-    setError("");
-    setMensaje("");
+      setError("");
+      setMensaje("");
 
-    setMostrarFormulario(
-      true
-    );
-  };
+      setMostrarFormulario(
+        true
+      );
+    };
 
-  const cerrarFormulario = () => {
-    setNuevaPromocion(
-      promocionInicial
-    );
+  const cerrarFormulario =
+    () => {
+      setNuevaPromocion(
+        crearPromocionInicial()
+      );
 
-    setMostrarFormulario(
-      false
-    );
+      setMostrarFormulario(
+        false
+      );
 
-    setError("");
-  };
+      setError("");
+    };
 
   const crearPromocion =
     async () => {
@@ -241,8 +268,16 @@ function AdminPromocionesPage() {
                   .precio,
 
               duracionMinutos:
-                nuevaPromocion
-                  .duracionMinutos,
+                Number(
+                  nuevaPromocion
+                    .duracionMinutos
+                ),
+
+              cantidadServicios:
+                Number(
+                  nuevaPromocion
+                    .cantidadServicios
+                ),
 
               activo:
                 nuevaPromocion
@@ -251,14 +286,16 @@ function AdminPromocionesPage() {
           );
 
         setPromociones(
-          (anteriores) => [
+          (
+            anteriores
+          ) => [
             ...anteriores,
             respuesta.data,
           ]
         );
 
         setNuevaPromocion(
-          promocionInicial
+          crearPromocionInicial()
         );
 
         setMostrarFormulario(
@@ -312,7 +349,8 @@ function AdminPromocionesPage() {
                   .servicioId,
 
               titulo:
-                promocion.titulo,
+                promocion
+                  .titulo,
 
               descripcion:
                 promocion
@@ -320,15 +358,26 @@ function AdminPromocionesPage() {
                 "",
 
               precio:
-                promocion.precio,
+                promocion
+                  .precio,
 
               duracionMinutos:
-                promocion
-                  .duracionMinutos,
+                Number(
+                  promocion
+                    .duracionMinutos
+                ),
+
+              cantidadServicios:
+                Number(
+                  promocion
+                    .cantidadServicios ||
+                    1
+                ),
 
               activo:
                 Boolean(
-                  promocion.activo
+                  promocion
+                    .activo
                 ),
             }
           );
@@ -337,9 +386,13 @@ function AdminPromocionesPage() {
           respuesta.data;
 
         setPromociones(
-          (anteriores) =>
+          (
+            anteriores
+          ) =>
             anteriores.map(
-              (item) =>
+              (
+                item
+              ) =>
                 item.id ===
                 actualizada.id
                   ? actualizada
@@ -365,7 +418,9 @@ function AdminPromocionesPage() {
             "No se pudo actualizar la promoción."
         );
       } finally {
-        setGuardandoId(null);
+        setGuardandoId(
+          null
+        );
       }
     };
 
@@ -378,7 +433,9 @@ function AdminPromocionesPage() {
           `¿Seguro que querés eliminar la promoción "${promocion.titulo}"?`
         );
 
-      if (!confirmar) {
+      if (
+        !confirmar
+      ) {
         return;
       }
 
@@ -395,9 +452,13 @@ function AdminPromocionesPage() {
         );
 
         setPromociones(
-          (anteriores) =>
+          (
+            anteriores
+          ) =>
             anteriores.filter(
-              (item) =>
+              (
+                item
+              ) =>
                 item.id !==
                 promocion.id
             )
@@ -421,7 +482,9 @@ function AdminPromocionesPage() {
             "No se pudo eliminar la promoción."
         );
       } finally {
-        setEliminandoId(null);
+        setEliminandoId(
+          null
+        );
       }
     };
 
@@ -432,7 +495,9 @@ function AdminPromocionesPage() {
           type="button"
           className="admin-promociones-volver"
           onClick={() =>
-            navigate("/admin")
+            navigate(
+              "/admin"
+            )
           }
         >
           ← Volver al panel
@@ -517,8 +582,10 @@ function AdminPromocionesPage() {
 
               <input
                 type="text"
-                placeholder="Ej: 2 cortes"
-                maxLength={120}
+                placeholder="Ej: Promo mensual"
+                maxLength={
+                  120
+                }
                 value={
                   nuevaPromocion
                     .titulo
@@ -528,7 +595,8 @@ function AdminPromocionesPage() {
                 ) =>
                   manejarCambioNueva(
                     "titulo",
-                    event.target
+                    event
+                      .target
                       .value
                   )
                 }
@@ -537,8 +605,7 @@ function AdminPromocionesPage() {
 
             <div className="admin-promocion-campo">
               <label>
-                Servicio
-                relacionado
+                Servicio relacionado
               </label>
 
               <select
@@ -551,18 +618,20 @@ function AdminPromocionesPage() {
                 ) =>
                   manejarCambioNueva(
                     "servicioId",
-                    event.target
+                    event
+                      .target
                       .value
                   )
                 }
               >
                 <option value="">
-                  Seleccionar
-                  servicio
+                  Seleccionar servicio
                 </option>
 
                 {servicios.map(
-                  (servicio) => (
+                  (
+                    servicio
+                  ) => (
                     <option
                       key={
                         servicio.id
@@ -586,8 +655,10 @@ function AdminPromocionesPage() {
               </label>
 
               <textarea
-                placeholder="Ej: Promo especial para dos cortes."
-                maxLength={500}
+                placeholder="Ej: Promo mensual con 5 cortes de pelo."
+                maxLength={
+                  500
+                }
                 value={
                   nuevaPromocion
                     .descripcion
@@ -597,7 +668,8 @@ function AdminPromocionesPage() {
                 ) =>
                   manejarCambioNueva(
                     "descripcion",
-                    event.target
+                    event
+                      .target
                       .value
                   )
                 }
@@ -606,14 +678,14 @@ function AdminPromocionesPage() {
 
             <div className="admin-promocion-campo">
               <label>
-                Precio
+                Precio total
               </label>
 
               <input
                 type="number"
                 min="0"
                 step="100"
-                placeholder="Ej: 18000"
+                placeholder="Ej: 30000"
                 value={
                   nuevaPromocion
                     .precio
@@ -623,7 +695,8 @@ function AdminPromocionesPage() {
                 ) =>
                   manejarCambioNueva(
                     "precio",
-                    event.target
+                    event
+                      .target
                       .value
                   )
                 }
@@ -632,7 +705,7 @@ function AdminPromocionesPage() {
 
             <div className="admin-promocion-campo">
               <label>
-                Duración total
+                Duración de cada turno
                 (minutos)
               </label>
 
@@ -648,11 +721,44 @@ function AdminPromocionesPage() {
                 ) =>
                   manejarCambioNueva(
                     "duracionMinutos",
-                    event.target
+                    event
+                      .target
                       .value
                   )
                 }
               />
+            </div>
+
+            <div className="admin-promocion-campo">
+              <label>
+                Cantidad de cortes / turnos
+              </label>
+
+              <input
+                type="number"
+                min="1"
+                max="50"
+                value={
+                  nuevaPromocion
+                    .cantidadServicios
+                }
+                onChange={(
+                  event
+                ) =>
+                  manejarCambioNueva(
+                    "cantidadServicios",
+                    event
+                      .target
+                      .value
+                  )
+                }
+              />
+
+              <small>
+                Ejemplo: para la promo
+                mensual de 5 cortes,
+                colocá 5.
+              </small>
             </div>
           </div>
 
@@ -669,7 +775,8 @@ function AdminPromocionesPage() {
                 ) =>
                   manejarCambioNueva(
                     "activo",
-                    event.target
+                    event
+                      .target
                       .checked
                   )
                 }
@@ -718,21 +825,19 @@ function AdminPromocionesPage() {
 
       {cargando ? (
         <div className="admin-promociones-estado">
-          Cargando
-          promociones...
+          Cargando promociones...
         </div>
       ) : promociones.length ===
         0 ? (
         <div className="admin-promociones-estado">
-          Todavía no hay
-          promociones cargadas.
+          Todavía no hay promociones
+          cargadas.
         </div>
       ) : (
         <section className="admin-promociones-lista">
           <div className="admin-promociones-lista__titulo">
             <p>
-              Promociones
-              cargadas
+              Promociones cargadas
             </p>
 
             <span>
@@ -743,7 +848,9 @@ function AdminPromocionesPage() {
           </div>
 
           {promociones.map(
-            (promocion) => (
+            (
+              promocion
+            ) => (
               <article
                 key={
                   promocion.id
@@ -779,14 +886,16 @@ function AdminPromocionesPage() {
                         manejarCambioExistente(
                           promocion.id,
                           "activo",
-                          event.target
+                          event
+                            .target
                             .checked
                         )
                       }
                     />
 
                     <span>
-                      {promocion.activo
+                      {promocion
+                        .activo
                         ? "Activa"
                         : "Inactiva"}
                     </span>
@@ -801,7 +910,9 @@ function AdminPromocionesPage() {
 
                     <input
                       type="text"
-                      maxLength={120}
+                      maxLength={
+                        120
+                      }
                       value={
                         promocion
                           .titulo
@@ -812,7 +923,8 @@ function AdminPromocionesPage() {
                         manejarCambioExistente(
                           promocion.id,
                           "titulo",
-                          event.target
+                          event
+                            .target
                             .value
                         )
                       }
@@ -821,8 +933,7 @@ function AdminPromocionesPage() {
 
                   <div className="admin-promocion-campo">
                     <label>
-                      Servicio
-                      relacionado
+                      Servicio relacionado
                     </label>
 
                     <select
@@ -837,14 +948,14 @@ function AdminPromocionesPage() {
                         manejarCambioExistente(
                           promocion.id,
                           "servicioId",
-                          event.target
+                          event
+                            .target
                             .value
                         )
                       }
                     >
                       <option value="">
-                        Sin servicio
-                        relacionado
+                        Sin servicio relacionado
                       </option>
 
                       {servicios.map(
@@ -874,7 +985,9 @@ function AdminPromocionesPage() {
                     </label>
 
                     <textarea
-                      maxLength={500}
+                      maxLength={
+                        500
+                      }
                       value={
                         promocion
                           .descripcion ||
@@ -886,7 +999,8 @@ function AdminPromocionesPage() {
                         manejarCambioExistente(
                           promocion.id,
                           "descripcion",
-                          event.target
+                          event
+                            .target
                             .value
                         )
                       }
@@ -895,7 +1009,7 @@ function AdminPromocionesPage() {
 
                   <div className="admin-promocion-campo">
                     <label>
-                      Precio
+                      Precio total
                     </label>
 
                     <input
@@ -913,7 +1027,8 @@ function AdminPromocionesPage() {
                         manejarCambioExistente(
                           promocion.id,
                           "precio",
-                          event.target
+                          event
+                            .target
                             .value
                         )
                       }
@@ -922,7 +1037,7 @@ function AdminPromocionesPage() {
 
                   <div className="admin-promocion-campo">
                     <label>
-                      Duración total
+                      Duración de cada turno
                       (minutos)
                     </label>
 
@@ -939,11 +1054,46 @@ function AdminPromocionesPage() {
                         manejarCambioExistente(
                           promocion.id,
                           "duracionMinutos",
-                          event.target
+                          event
+                            .target
                             .value
                         )
                       }
                     />
+                  </div>
+
+                  <div className="admin-promocion-campo">
+                    <label>
+                      Cantidad de cortes / turnos
+                    </label>
+
+                    <input
+                      type="number"
+                      min="1"
+                      max="50"
+                      value={
+                        promocion
+                          .cantidadServicios ||
+                        1
+                      }
+                      onChange={(
+                        event
+                      ) =>
+                        manejarCambioExistente(
+                          promocion.id,
+                          "cantidadServicios",
+                          event
+                            .target
+                            .value
+                        )
+                      }
+                    />
+
+                    <small>
+                      Cada corte se reservará
+                      con su propio día y
+                      horario.
+                    </small>
                   </div>
                 </div>
 

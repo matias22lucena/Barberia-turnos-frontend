@@ -4,6 +4,10 @@ import {
 } from "react";
 
 import {
+  FaWhatsapp,
+} from "react-icons/fa";
+
+import {
   obtenerServicios,
 } from "../services/servicios.service.js";
 
@@ -17,12 +21,15 @@ import {
 
 import {
   crearTurno,
+  crearTurnosPromocion,
 } from "../services/turnos.service.js";
 
 import ReservaHeader from "../components/reserva/ReservaHeader.jsx";
 import ReservaStepper from "../components/reserva/ReservaStepper.jsx";
 import PasoServicio from "../components/reserva/PasoServicio.jsx";
 import PasoFechaHora from "../components/reserva/PasoFechaHora.jsx";
+import PasoFechasPromocion from "../components/reserva/PasoFechasPromocion.jsx";
+import PasoDatos from "../components/reserva/PasoDatos.jsx";
 import PasoConfirmacion from "../components/reserva/PasoConfirmacion.jsx";
 
 import "./ReservaPage.css";
@@ -75,9 +82,47 @@ function ReservaPage() {
     servicio: null,
     promocion: null,
     barbero: null,
+
     fecha: null,
     hora: null,
+
+    turnosPromocion:
+      [],
+
+    cliente: {
+      nombre: "",
+      telefono: "",
+    },
   });
+
+  const esPaquetePromocion =
+    Boolean(
+      reserva.promocion &&
+      Number(
+        reserva.promocion
+          .cantidadServicios ||
+          1
+      ) > 1
+    );
+
+  /*
+   * Cada vez que cambia el paso
+   * de la reserva, volvemos arriba.
+   *
+   * Esto evita que en celular
+   * el siguiente paso aparezca
+   * manteniendo el scroll anterior.
+   */
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "auto",
+    });
+  }, [
+    pasoActual,
+    turnoConfirmado,
+  ]);
 
   useEffect(() => {
     const cargarOpciones =
@@ -89,35 +134,32 @@ function ReservaPage() {
           const [
             serviciosObtenidos,
             promocionesObtenidas,
-          ] = await Promise.all([
-            obtenerServicios(),
-            obtenerPromociones(),
-          ]);
+          ] =
+            await Promise.all([
+              obtenerServicios(),
+              obtenerPromociones(),
+            ]);
 
           setServicios(
             serviciosObtenidos ||
               []
           );
 
-          /*
-           * Para reservar una promo
-           * necesitamos que tenga un
-           * servicio relacionado.
-           *
-           * Las demás pueden seguir
-           * apareciendo en la Home.
-           */
           setPromociones(
             (
               promocionesObtenidas ||
               []
             ).filter(
-              (promocion) =>
+              (
+                promocion
+              ) =>
                 promocion.servicioId
             )
           );
         } catch (error) {
-          console.error(error);
+          console.error(
+            error
+          );
 
           setError(
             "No se pudieron cargar los servicios y promociones."
@@ -131,9 +173,14 @@ function ReservaPage() {
   }, []);
 
   const seleccionarServicio =
-    async (servicio) => {
+    async (
+      servicio
+    ) => {
       try {
-        setCargandoBarbero(true);
+        setCargandoBarbero(
+          true
+        );
+
         setError("");
 
         const barberos =
@@ -142,7 +189,8 @@ function ReservaPage() {
           );
 
         if (
-          barberos.length === 0
+          barberos.length ===
+          0
         ) {
           setError(
             "No hay ningún profesional disponible para este servicio."
@@ -151,33 +199,54 @@ function ReservaPage() {
           return;
         }
 
-        setReserva({
-          servicio,
-          promocion: null,
-          barbero: barberos[0],
-          fecha: null,
-          hora: null,
-        });
+        setReserva(
+          (
+            anterior
+          ) => ({
+            ...anterior,
+
+            servicio,
+            promocion:
+              null,
+
+            barbero:
+              barberos[0],
+
+            fecha: null,
+            hora: null,
+
+            turnosPromocion:
+              [],
+          })
+        );
 
         setPasoActual(2);
       } catch (error) {
-        console.error(error);
+        console.error(
+          error
+        );
 
-        const mensaje =
+        setError(
           error.response?.data
             ?.message ||
-          "No se pudo obtener el profesional disponible.";
-
-        setError(mensaje);
+            "No se pudo obtener el profesional disponible."
+        );
       } finally {
-        setCargandoBarbero(false);
+        setCargandoBarbero(
+          false
+        );
       }
     };
 
   const seleccionarPromocion =
-    async (promocion) => {
+    async (
+      promocion
+    ) => {
       try {
-        setCargandoBarbero(true);
+        setCargandoBarbero(
+          true
+        );
+
         setError("");
 
         if (
@@ -192,7 +261,9 @@ function ReservaPage() {
 
         const servicioRelacionado =
           servicios.find(
-            (servicio) =>
+            (
+              servicio
+            ) =>
               Number(
                 servicio.id
               ) ===
@@ -217,7 +288,8 @@ function ReservaPage() {
           );
 
         if (
-          barberos.length === 0
+          barberos.length ===
+          0
         ) {
           setError(
             "No hay ningún profesional disponible para esta promoción."
@@ -226,31 +298,43 @@ function ReservaPage() {
           return;
         }
 
-        setReserva({
-          servicio:
-            servicioRelacionado,
+        setReserva(
+          (
+            anterior
+          ) => ({
+            ...anterior,
 
-          promocion,
+            servicio:
+              servicioRelacionado,
 
-          barbero:
-            barberos[0],
+            promocion,
 
-          fecha: null,
-          hora: null,
-        });
+            barbero:
+              barberos[0],
+
+            fecha: null,
+            hora: null,
+
+            turnosPromocion:
+              [],
+          })
+        );
 
         setPasoActual(2);
       } catch (error) {
-        console.error(error);
+        console.error(
+          error
+        );
 
-        const mensaje =
+        setError(
           error.response?.data
             ?.message ||
-          "No se pudo preparar la promoción seleccionada.";
-
-        setError(mensaje);
+            "No se pudo preparar la promoción seleccionada."
+        );
       } finally {
-        setCargandoBarbero(false);
+        setCargandoBarbero(
+          false
+        );
       }
     };
 
@@ -260,15 +344,55 @@ function ReservaPage() {
   }) => {
     setReserva(
       (
-        reservaAnterior
+        anterior
       ) => ({
-        ...reservaAnterior,
+        ...anterior,
         fecha,
         hora,
       })
     );
 
     setPasoActual(3);
+
+    setError("");
+  };
+
+  const seleccionarTurnosPromocion = (
+    turnos
+  ) => {
+    setReserva(
+      (
+        anterior
+      ) => ({
+        ...anterior,
+
+        turnosPromocion:
+          turnos,
+
+        fecha: null,
+        hora: null,
+      })
+    );
+
+    setPasoActual(3);
+
+    setError("");
+  };
+
+  const guardarDatosCliente = (
+    cliente
+  ) => {
+    setReserva(
+      (
+        anterior
+      ) => ({
+        ...anterior,
+        cliente,
+      })
+    );
+
+    setPasoActual(4);
+
     setError("");
   };
 
@@ -277,12 +401,13 @@ function ReservaPage() {
       if (
         !reserva.barbero?.id ||
         !reserva.servicio?.id ||
-        !reserva.fecha
-          ?.fechaISO ||
-        !reserva.hora
+        !reserva.cliente
+          ?.nombre ||
+        !reserva.cliente
+          ?.telefono
       ) {
         setError(
-          "Faltan datos para confirmar el turno."
+          "Faltan datos para confirmar la reserva."
         );
 
         return;
@@ -295,40 +420,127 @@ function ReservaPage() {
 
         setError("");
 
-        const turnoCreado =
-          await crearTurno({
-            barberoId:
-              reserva.barbero
-                .id,
+        let resultado;
 
-            servicioId:
-              reserva.servicio
-                .id,
-
-            promocionId:
+        if (
+          esPaquetePromocion
+        ) {
+          const cantidad =
+            Number(
               reserva.promocion
-                ?.id || null,
+                .cantidadServicios
+            );
 
-            fecha:
-              reserva.fecha
-                .fechaISO,
+          if (
+            reserva
+              .turnosPromocion
+              .length !==
+            cantidad
+          ) {
+            setError(
+              `Debés seleccionar los ${cantidad} turnos de la promoción.`
+            );
 
-            hora:
-              reserva.hora,
-          });
+            return;
+          }
+
+          resultado =
+            await crearTurnosPromocion(
+              {
+                barberoId:
+                  reserva
+                    .barbero
+                    .id,
+
+                servicioId:
+                  reserva
+                    .servicio
+                    .id,
+
+                promocionId:
+                  reserva
+                    .promocion
+                    .id,
+
+                turnos:
+                  reserva
+                    .turnosPromocion
+                    .map(
+                      (
+                        turno
+                      ) => ({
+                        fecha:
+                          turno
+                            .fecha
+                            .fechaISO,
+
+                        hora:
+                          turno
+                            .hora,
+                      })
+                    ),
+
+                cliente:
+                  reserva.cliente,
+              }
+            );
+        } else {
+          if (
+            !reserva.fecha
+              ?.fechaISO ||
+            !reserva.hora
+          ) {
+            setError(
+              "Falta seleccionar fecha y horario."
+            );
+
+            return;
+          }
+
+          resultado =
+            await crearTurno({
+              barberoId:
+                reserva
+                  .barbero
+                  .id,
+
+              servicioId:
+                reserva
+                  .servicio
+                  .id,
+
+              promocionId:
+                reserva
+                  .promocion
+                  ?.id ||
+                null,
+
+              fecha:
+                reserva
+                  .fecha
+                  .fechaISO,
+
+              hora:
+                reserva.hora,
+
+              cliente:
+                reserva.cliente,
+            });
+        }
 
         setTurnoConfirmado(
-          turnoCreado
+          resultado
         );
       } catch (error) {
-        console.error(error);
+        console.error(
+          error
+        );
 
-        const mensaje =
+        setError(
           error.response?.data
             ?.message ||
-          "No se pudo confirmar el turno.";
-
-        setError(mensaje);
+            "No se pudo confirmar la reserva."
+        );
       } finally {
         setConfirmandoTurno(
           false
@@ -338,7 +550,9 @@ function ReservaPage() {
 
   const compartirPorWhatsApp =
     () => {
-      if (!turnoConfirmado) {
+      if (
+        !turnoConfirmado
+      ) {
         return;
       }
 
@@ -346,7 +560,9 @@ function ReservaPage() {
         import.meta.env
           .VITE_WHATSAPP_NUMBER;
 
-      if (!numeroWhatsApp) {
+      if (
+        !numeroWhatsApp
+      ) {
         window.alert(
           "No está configurado el número de WhatsApp de la barbería."
         );
@@ -354,44 +570,58 @@ function ReservaPage() {
         return;
       }
 
-      const nombreReserva =
-        turnoConfirmado
-          .promocionTitulo ||
-        reserva.promocion
-          ?.titulo ||
-        turnoConfirmado
-          .servicioNombre ||
-        reserva.servicio
-          ?.nombre ||
-        "";
+      let mensaje;
 
-      const etiqueta =
-        reserva.promocion ||
-        turnoConfirmado
-          .promocionId
-          ? "Promoción"
-          : "Servicio";
+      if (
+        turnoConfirmado.esPaquete
+      ) {
+        const lineasTurnos =
+          turnoConfirmado.turnos.map(
+            (
+              turno,
+              indice
+            ) =>
+              `${indice + 1}. ${turno.fecha} - ${turno.horaInicio} hs`
+          );
 
-      const fecha =
-        reserva.fecha
-          ?.textoCompleto ||
-        turnoConfirmado
-          .fecha ||
-        "";
+        mensaje = [
+          "Hola, reservé una promoción en Pitbull Barber Shop.",
+          "",
+          `Cliente: ${reserva.cliente.nombre}`,
+          `Promoción: ${turnoConfirmado.promocionTitulo}`,
+          "",
+          "Turnos:",
+          ...lineasTurnos,
+        ].join(
+          "\n"
+        );
+      } else {
+        const nombreReserva =
+          turnoConfirmado
+            .promocionTitulo ||
+          turnoConfirmado
+            .servicioNombre ||
+          reserva.servicio
+            ?.nombre ||
+          "";
 
-      const hora =
-        turnoConfirmado
-          .horaInicio ||
-        reserva.hora ||
-        "";
+        const fecha =
+          reserva.fecha
+            ?.textoCompleto ||
+          turnoConfirmado
+            .fecha;
 
-      const mensaje = [
-        "Hola, reservé un turno.",
-        "",
-        `${etiqueta}: ${nombreReserva}`,
-        `Día: ${fecha}`,
-        `Hora: ${hora}`,
-      ].join("\n");
+        mensaje = [
+          "Hola, reservé un turno.",
+          "",
+          `Cliente: ${reserva.cliente.nombre}`,
+          `Servicio: ${nombreReserva}`,
+          `Día: ${fecha}`,
+          `Hora: ${turnoConfirmado.horaInicio}`,
+        ].join(
+          "\n"
+        );
+      }
 
       const urlWhatsApp =
         `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(
@@ -417,9 +647,17 @@ function ReservaPage() {
       setError("");
     };
 
+  const volverADatos =
+    () => {
+      setPasoActual(3);
+      setError("");
+    };
+
   const comenzarNuevaReserva =
     () => {
-      setTurnoConfirmado(null);
+      setTurnoConfirmado(
+        null
+      );
 
       setPasoActual(1);
 
@@ -429,12 +667,23 @@ function ReservaPage() {
         servicio: null,
         promocion: null,
         barbero: null,
+
         fecha: null,
         hora: null,
+
+        turnosPromocion:
+          [],
+
+        cliente: {
+          nombre: "",
+          telefono: "",
+        },
       });
     };
 
-  if (cargando) {
+  if (
+    cargando
+  ) {
     return (
       <main className="reserva-page">
         <ReservaHeader />
@@ -455,23 +704,9 @@ function ReservaPage() {
     );
   }
 
-  if (turnoConfirmado) {
-    const nombreReserva =
-      turnoConfirmado
-        .promocionTitulo ||
-      reserva.promocion
-        ?.titulo ||
-      turnoConfirmado
-        .servicioNombre ||
-      reserva.servicio?.nombre;
-
-    const etiquetaReserva =
-      turnoConfirmado
-        .promocionId ||
-      reserva.promocion
-        ? "Promoción"
-        : "Servicio";
-
+  if (
+    turnoConfirmado
+  ) {
     return (
       <main className="reserva-page">
         <ReservaHeader />
@@ -483,7 +718,9 @@ function ReservaPage() {
             </div>
 
             <h1>
-              ¡Turno reservado!
+              {turnoConfirmado.esPaquete
+                ? "¡Turnos reservados!"
+                : "¡Turno reservado!"}
             </h1>
 
             <p>
@@ -495,83 +732,128 @@ function ReservaPage() {
             <div className="reserva-page__success-card">
               <div className="reserva-page__summary-grid">
                 <span>
-                  Código
+                  Cliente
                 </span>
 
                 <strong>
                   {
-                    turnoConfirmado
-                      .codigo
+                    reserva.cliente
+                      .nombre
                   }
                 </strong>
 
-                <span>
-                  {
-                    etiquetaReserva
-                  }
-                </span>
+                {turnoConfirmado.esPaquete ? (
+                  <>
+                    <span>
+                      Código
+                    </span>
 
-                <strong>
-                  {
-                    nombreReserva
-                  }
-                </strong>
+                    <strong>
+                      {
+                        turnoConfirmado
+                          .codigoReserva
+                      }
+                    </strong>
 
-                <span>
-                  Profesional
-                </span>
+                    <span>
+                      Promoción
+                    </span>
 
-                <strong>
-                  {
-                    turnoConfirmado
-                      .barberoNombre
-                  }
-                </strong>
+                    <strong>
+                      {
+                        turnoConfirmado
+                          .promocionTitulo
+                      }
+                    </strong>
 
-                <span>
-                  Fecha
-                </span>
+                    <span>
+                      Cantidad
+                    </span>
 
-                <strong>
-                  {reserva.fecha
-                    ?.textoCompleto ||
-                    turnoConfirmado
-                      .fecha}
-                </strong>
+                    <strong>
+                      {
+                        turnoConfirmado
+                          .cantidadTurnos
+                      }{" "}
+                      turnos
+                    </strong>
 
-                <span>
-                  Horario
-                </span>
+                    {turnoConfirmado.turnos.map(
+                      (
+                        turno,
+                        indice
+                      ) => (
+                        <div
+                          key={
+                            turno.id
+                          }
+                        >
+                          <span>
+                            Corte{" "}
+                            {indice +
+                              1}
+                          </span>
 
-                <strong>
-                  {
-                    turnoConfirmado
-                      .horaInicio
-                  }
-                </strong>
+                          <strong>
+                            {
+                              turno.fecha
+                            }
+                            {" · "}
+                            {
+                              turno.horaInicio
+                            }
+                          </strong>
+                        </div>
+                      )
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <span>
+                      Código
+                    </span>
 
-                <span>
-                  Duración
-                </span>
+                    <strong>
+                      {
+                        turnoConfirmado
+                          .codigo
+                      }
+                    </strong>
 
-                <strong>
-                  {
-                    turnoConfirmado
-                      .duracionMinutos
-                  }{" "}
-                  minutos
-                </strong>
+                    <span>
+                      Servicio
+                    </span>
 
-                <span>
-                  Estado
-                </span>
+                    <strong>
+                      {turnoConfirmado
+                        .promocionTitulo ||
+                        turnoConfirmado
+                          .servicioNombre}
+                    </strong>
 
-                <strong>
-                  {
-                    turnoConfirmado
-                      .estado
-                  }
-                </strong>
+                    <span>
+                      Fecha
+                    </span>
+
+                    <strong>
+                      {reserva.fecha
+                        ?.textoCompleto ||
+                        turnoConfirmado
+                          .fecha}
+                    </strong>
+
+                    <span>
+                      Horario
+                    </span>
+
+                    <strong>
+                      {
+                        turnoConfirmado
+                          .horaInicio
+                      }
+                    </strong>
+                  </>
+                )}
               </div>
             </div>
 
@@ -583,8 +865,15 @@ function ReservaPage() {
                   compartirPorWhatsApp
                 }
               >
-                Compartir por
-                WhatsApp
+                <FaWhatsapp
+                  className="reserva-page__whatsapp-icon"
+                  aria-hidden="true"
+                />
+
+                <span>
+                  Compartir por
+                  WhatsApp
+                </span>
               </button>
 
               <button
@@ -613,6 +902,9 @@ function ReservaPage() {
           pasoActual={
             pasoActual
           }
+          esPaquetePromocion={
+            esPaquetePromocion
+          }
         />
 
         {error && (
@@ -624,7 +916,8 @@ function ReservaPage() {
           </div>
         )}
 
-        {pasoActual === 1 && (
+        {pasoActual ===
+          1 && (
           <PasoServicio
             servicios={
               servicios
@@ -650,21 +943,55 @@ function ReservaPage() {
           />
         )}
 
-        {pasoActual === 2 && (
-          <PasoFechaHora
+        {pasoActual ===
+          2 &&
+          !esPaquetePromocion && (
+            <PasoFechaHora
+              reserva={
+                reserva
+              }
+              onSeleccionarFechaHora={
+                seleccionarFechaHora
+              }
+              onVolver={
+                volverAServicios
+              }
+            />
+          )}
+
+        {pasoActual ===
+          2 &&
+          esPaquetePromocion && (
+            <PasoFechasPromocion
+              reserva={
+                reserva
+              }
+              onContinuar={
+                seleccionarTurnosPromocion
+              }
+              onVolver={
+                volverAServicios
+              }
+            />
+          )}
+
+        {pasoActual ===
+          3 && (
+          <PasoDatos
             reserva={
               reserva
             }
-            onSeleccionarFechaHora={
-              seleccionarFechaHora
+            onContinuar={
+              guardarDatosCliente
             }
             onVolver={
-              volverAServicios
+              volverAFechaHora
             }
           />
         )}
 
-        {pasoActual === 3 && (
+        {pasoActual ===
+          4 && (
           <PasoConfirmacion
             reserva={
               reserva
@@ -676,7 +1003,7 @@ function ReservaPage() {
               confirmarTurno
             }
             onVolver={
-              volverAFechaHora
+              volverADatos
             }
           />
         )}

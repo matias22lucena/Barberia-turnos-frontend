@@ -21,7 +21,8 @@
   margin: 0 auto;
 
   padding:
-    32px 20px 64px;
+    32px 20px
+    64px;
 }
 
 .reserva-page__content > * {
@@ -49,7 +50,9 @@
   margin: 8px 0 0;
 
   color:
-    var(--color-text-muted);
+    var(
+      --color-text-muted
+    );
 }
 
 /* ERROR */
@@ -69,16 +72,20 @@
   border-radius: 8px;
 
   background-color:
-    rgba(214, 91, 91, 0.12);
+    rgba(
+      214,
+      91,
+      91,
+      0.12
+    );
 
   color: #ffb6b6;
 
-  overflow-wrap: anywhere;
+  overflow-wrap:
+    anywhere;
 }
 
-/* ============================= */
-/* TURNO CONFIRMADO */
-/* ============================= */
+/* ÉXITO */
 
 .reserva-page__success {
   width: 100%;
@@ -113,7 +120,9 @@
   margin: 0;
 
   color:
-    var(--color-text-muted);
+    var(
+      --color-text-muted
+    );
 }
 
 .reserva-page__success-icon {
@@ -129,7 +138,12 @@
   border-radius: 50%;
 
   background-color:
-    rgba(239, 179, 66, 0.15);
+    rgba(
+      239,
+      179,
+      66,
+      0.15
+    );
 
   color:
     var(--color-primary);
@@ -155,7 +169,8 @@
 
   border-radius: 10px;
 
-  background-color: #151311;
+  background-color:
+    #151311;
 
   text-align: left;
 }
@@ -167,18 +182,30 @@
   display: grid;
 
   grid-template-columns:
-    minmax(0, 1fr)
-    auto;
+    minmax(
+      0,
+      1fr
+    )
+    minmax(
+      0,
+      1.5fr
+    );
 
   gap:
     16px 24px;
+
+  align-items: start;
 }
 
 .reserva-page__summary-grid span {
   min-width: 0;
 
   color:
-    var(--color-text-muted);
+    var(
+      --color-text-muted
+    );
+
+  line-height: 1.45;
 }
 
 .reserva-page__summary-grid strong {
@@ -189,12 +216,20 @@
 
   text-align: right;
 
-  overflow-wrap: anywhere;
+  line-height: 1.45;
+
+  overflow-wrap:
+    anywhere;
 }
 
-/* ============================= */
-/* ACCIONES DE ÉXITO */
-/* ============================= */
+/* permite usar display contents
+   en cada turno del paquete */
+
+.reserva-page__summary-grid > div {
+  display: contents;
+}
+
+/* ACCIONES */
 
 .reserva-page__success-actions {
   width: 100%;
@@ -214,12 +249,26 @@
 
   min-height: 50px;
 
-  padding: 14px 18px;
+  padding:
+    14px 18px;
+
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  gap: 9px;
 
   border: none;
+
   border-radius: 8px;
 
-  background-color: #25d366;
+  background-color:
+    #25d366;
 
   color: #08140d;
 
@@ -229,28 +278,50 @@
   cursor: pointer;
 
   transition:
-    background-color 0.2s ease,
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+    background-color
+      0.2s ease,
+    transform
+      0.2s ease,
+    box-shadow
+      0.2s ease;
+}
+
+.reserva-page__whatsapp-icon {
+  flex-shrink: 0;
+
+  font-size: 23px;
 }
 
 .reserva-page__whatsapp-button:hover {
-  background-color: #20bd5a;
+  background-color:
+    #20bd5a;
 
   color: #08140d;
 
   transform:
-    translateY(-1px);
+    translateY(
+      -1px
+    );
 
   box-shadow:
     0 8px 24px
-    rgba(37, 211, 102, 0.15);
+    rgba(
+      37,
+      211,
+      102,
+      0.15
+    );
 }
 
 .reserva-page__whatsapp-button:focus-visible {
   outline:
     3px solid
-    rgba(37, 211, 102, 0.28);
+    rgba(
+      37,
+      211,
+      102,
+      0.28
+    );
 
   outline-offset: 3px;
 }
@@ -283,9 +354,12 @@
   cursor: pointer;
 
   transition:
-    border-color 0.2s ease,
-    color 0.2s ease,
-    background-color 0.2s ease;
+    border-color
+      0.2s ease,
+    color
+      0.2s ease,
+    background-color
+      0.2s ease;
 }
 
 .reserva-page__secondary-button:hover {
@@ -293,7 +367,12 @@
     var(--color-primary);
 
   background-color:
-    rgba(239, 179, 66, 0.06);
+    rgba(
+      239,
+      179,
+      66,
+      0.06
+    );
 
   color:
     var(--color-primary);
@@ -302,13 +381,15 @@
 .reserva-page__secondary-button:focus-visible {
   outline:
     3px solid
-    rgba(239, 179, 66, 0.25);
+    rgba(
+      239,
+      179,
+      66,
+      0.25
+    );
 
   outline-offset: 3px;
 }
-
-/* Se conserva por si otro lugar
-   todavía utiliza el botón primario */
 
 .reserva-page__primary-button {
   width: 100%;
@@ -320,6 +401,7 @@
     14px 18px;
 
   border: none;
+
   border-radius: 8px;
 
   background-color:
@@ -331,49 +413,64 @@
   font-weight: 700;
 
   transition:
-    background-color 0.2s ease,
-    transform 0.2s ease;
+    background-color
+      0.2s ease,
+    transform
+      0.2s ease;
 }
 
 .reserva-page__primary-button:hover {
-  background-color: #dca036;
+  background-color:
+    #dca036;
 
   color: #111;
 
   transform:
-    translateY(-1px);
+    translateY(
+      -1px
+    );
 }
 
 .reserva-page__primary-button:focus-visible {
   outline:
     3px solid
-    rgba(239, 179, 66, 0.35);
+    rgba(
+      239,
+      179,
+      66,
+      0.35
+    );
 
   outline-offset: 3px;
 }
 
-/* ============================= */
 /* RESPONSIVE */
-/* ============================= */
 
-@media (max-width: 700px) {
+@media (
+  max-width: 700px
+) {
   .reserva-page__content {
     padding:
-      24px 16px 48px;
+      24px 16px
+      48px;
   }
 }
 
-@media (max-width: 576px) {
+@media (
+  max-width: 576px
+) {
   .reserva-page__content {
     padding:
-      20px 12px 40px;
+      20px 12px
+      40px;
   }
 
   .reserva-page__success {
     padding:
       24px 16px;
 
-    border-radius: 10px;
+    border-radius:
+      10px;
   }
 
   .reserva-page__success h1 {
@@ -391,10 +488,16 @@
     gap: 4px;
   }
 
-  .reserva-page__summary-grid strong {
-    margin-bottom: 12px;
+  .reserva-page__summary-grid > div {
+    display: contents;
+  }
 
-    text-align: left;
+  .reserva-page__summary-grid strong {
+    margin-bottom:
+      12px;
+
+    text-align:
+      left;
   }
 
   .reserva-page__success-actions {
@@ -404,5 +507,9 @@
   .reserva-page__whatsapp-button,
   .reserva-page__secondary-button {
     min-height: 52px;
+  }
+
+  .reserva-page__whatsapp-icon {
+    font-size: 24px;
   }
 }
