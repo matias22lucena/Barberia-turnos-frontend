@@ -469,6 +469,23 @@ function AdminDashboardPage() {
               promociones
             </span>
           </button>
+          <button
+  type="button"
+  onClick={() =>
+    navigate(
+      "/admin/carrusel"
+    )
+  }
+>
+  <strong>
+    Carrusel
+  </strong>
+
+  <span>
+    Administrar imágenes
+    del inicio
+  </span>
+</button>
         </aside>
       </section>
     </main>

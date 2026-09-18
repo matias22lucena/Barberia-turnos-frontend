@@ -1,0 +1,395 @@
+    .admin-carrusel-page {
+  min-height: 100vh;
+
+  padding:
+    42px
+    clamp(
+      16px,
+      5vw,
+      70px
+    );
+
+  background:
+    #0f0e0d;
+
+  color: #f4f1ed;
+}
+
+.admin-carrusel-header,
+.admin-carrusel-nueva,
+.admin-carrusel-lista,
+.admin-carrusel-error,
+.admin-carrusel-mensaje {
+  width: 100%;
+  max-width: 1000px;
+
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.admin-carrusel-header {
+  margin-bottom: 28px;
+}
+
+.admin-carrusel-volver {
+  margin-bottom: 24px;
+
+  padding: 0;
+
+  border: none;
+
+  background:
+    transparent;
+
+  color: #a9a29c;
+
+  cursor: pointer;
+}
+
+.admin-carrusel-header > p {
+  margin:
+    0 0 7px;
+
+  color: #efb342;
+
+  font-size: 12px;
+  font-weight: 800;
+
+  letter-spacing:
+    0.13em;
+}
+
+.admin-carrusel-header h1 {
+  margin:
+    0 0 8px;
+
+  font-size:
+    clamp(
+      32px,
+      5vw,
+      48px
+    );
+}
+
+.admin-carrusel-header > span {
+  color: #a9a29c;
+}
+
+.admin-carrusel-nueva,
+.admin-carrusel-card {
+  padding: 22px;
+
+  border:
+    1px solid
+    #3a342f;
+
+  border-radius:
+    16px;
+
+  background:
+    #1b1816;
+}
+
+.admin-carrusel-nueva {
+  margin-bottom: 32px;
+}
+
+.admin-carrusel-nueva h2,
+.admin-carrusel-lista h2 {
+  margin:
+    0 0 20px;
+}
+
+.admin-carrusel-file {
+  min-height: 52px;
+
+  padding:
+    12px 18px;
+
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  border:
+    1px dashed
+    #efb342;
+
+  border-radius:
+    10px;
+
+  color: #efb342;
+
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.admin-carrusel-file input {
+  display: none;
+}
+
+.admin-carrusel-file--small {
+  width: 100%;
+
+  margin-top: 12px;
+}
+
+.admin-carrusel-preview,
+.admin-carrusel-card > img {
+  width: 100%;
+  max-height: 430px;
+
+  margin-top: 18px;
+
+  display: block;
+
+  object-fit: cover;
+
+  border-radius:
+    12px;
+
+  background: #12100f;
+}
+
+.admin-carrusel-form {
+  margin-top: 18px;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    150px;
+
+  gap: 14px;
+}
+
+.admin-carrusel-form > div {
+  display: grid;
+
+  gap: 7px;
+}
+
+.admin-carrusel-form label {
+  color: #a9a29c;
+
+  font-size: 13px;
+}
+
+.admin-carrusel-form input {
+  min-height: 46px;
+
+  padding:
+    0 12px;
+
+  border:
+    1px solid
+    #3a342f;
+
+  border-radius:
+    9px;
+
+  background:
+    #12100f;
+
+  color: #f4f1ed;
+
+  outline: none;
+}
+
+.admin-carrusel-form input:focus {
+  border-color:
+    #efb342;
+}
+
+.admin-carrusel-check {
+  margin-top: 18px;
+
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  gap: 9px;
+
+  color: #d7d0ca;
+}
+
+.admin-carrusel-crear,
+.admin-carrusel-guardar {
+  min-height: 46px;
+
+  padding:
+    0 18px;
+
+  border: none;
+
+  border-radius:
+    9px;
+
+  background:
+    #efb342;
+
+  color: #16120d;
+
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.admin-carrusel-crear {
+  width: 100%;
+
+  margin-top: 20px;
+}
+
+.admin-carrusel-lista {
+  display: grid;
+
+  gap: 16px;
+}
+
+.admin-carrusel-card {
+  margin-bottom: 4px;
+}
+
+.admin-carrusel-actions {
+  margin-top: 20px;
+
+  display: flex;
+
+  gap: 10px;
+}
+
+.admin-carrusel-actions button {
+  flex: 1;
+}
+
+.admin-carrusel-eliminar {
+  min-height: 46px;
+
+  padding:
+    0 18px;
+
+  border:
+    1px solid
+    rgba(
+      214,
+      91,
+      91,
+      0.4
+    );
+
+  border-radius:
+    9px;
+
+  background:
+    rgba(
+      214,
+      91,
+      91,
+      0.08
+    );
+
+  color: #ef8888;
+
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.admin-carrusel-error,
+.admin-carrusel-mensaje {
+  margin-bottom: 18px;
+
+  padding:
+    14px 16px;
+
+  border-radius:
+    10px;
+}
+
+.admin-carrusel-error {
+  border:
+    1px solid
+    rgba(
+      214,
+      91,
+      91,
+      0.35
+    );
+
+  background:
+    rgba(
+      214,
+      91,
+      91,
+      0.08
+    );
+
+  color: #ef8888;
+}
+
+.admin-carrusel-mensaje {
+  border:
+    1px solid
+    rgba(
+      91,
+      190,
+      123,
+      0.35
+    );
+
+  background:
+    rgba(
+      91,
+      190,
+      123,
+      0.08
+    );
+
+  color: #78cf91;
+}
+
+.admin-carrusel-vacio {
+  padding: 40px;
+
+  border:
+    1px solid
+    #3a342f;
+
+  border-radius:
+    12px;
+
+  color: #a9a29c;
+
+  text-align: center;
+}
+
+@media (
+  max-width: 600px
+) {
+  .admin-carrusel-page {
+    padding:
+      28px 14px;
+  }
+
+  .admin-carrusel-form {
+    grid-template-columns:
+      1fr;
+  }
+
+  .admin-carrusel-actions {
+    flex-direction:
+      column;
+  }
+
+  .admin-carrusel-file {
+    width: 100%;
+  }
+}

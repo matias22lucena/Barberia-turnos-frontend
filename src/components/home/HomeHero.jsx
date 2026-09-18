@@ -59,19 +59,7 @@ function HomeHero() {
             </a>
           </div>
 
-          <div className="home-hero__features">
-            <span>
-              Turnos online
-            </span>
 
-            <span>
-              Atención personalizada
-            </span>
-
-            <span>
-              Menos tiempo de espera
-            </span>
-          </div>
         </div>
       </div>
     </section>
