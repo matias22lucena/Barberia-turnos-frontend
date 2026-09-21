@@ -2,72 +2,132 @@
   width: 100%;
   min-width: 0;
 
-  border-bottom: 1px solid var(--color-border);
-  background-color: #0d0c0b;
+  border-bottom:
+    1px solid
+    var(--color-border);
+
+  background-color:
+    #0d0c0b;
 }
 
 .reserva-header__container {
   width: 100%;
   max-width: 900px;
+
   min-height: 72px;
 
   margin: 0 auto;
-  padding: 0 20px;
+
+  padding:
+    0 20px;
 
   display: flex;
   align-items: center;
 }
 
+/* ========================= */
+/* MARCA */
+/* ========================= */
+
 .reserva-header__brand {
   min-width: 0;
 
   display: inline-flex;
+
   align-items: center;
+
   gap: 12px;
 
-  color: var(--color-text);
+  color:
+    var(--color-text);
+
   font-weight: 700;
+
+  text-decoration: none;
 }
 
 .reserva-header__brand:hover {
-  color: var(--color-text);
+  color:
+    var(--color-text);
 }
 
-.reserva-header__icon {
-  width: 38px;
-  height: 38px;
+/* ========================= */
+/* LOGO */
+/* ========================= */
+
+.reserva-header__logo {
+  width: 48px;
+  height: 48px;
+
   flex-shrink: 0;
 
-  display: grid;
-  place-items: center;
+  display: block;
 
-  border-radius: 9px;
+  object-fit: contain;
 
-  background-color: var(--color-primary);
-  color: #111;
+  border-radius: 50%;
 
-  font-size: 20px;
+  border:
+    1px solid
+    rgba(
+      239,
+      179,
+      66,
+      0.35
+    );
+
+  background:
+    #0d0c0b;
+
+  box-shadow:
+    0 0 14px
+    rgba(
+      239,
+      179,
+      66,
+      0.12
+    );
 }
+
+/* ========================= */
+/* NOMBRE */
+/* ========================= */
 
 .reserva-header__name {
   min-width: 0;
 
   font-size: 18px;
+  font-weight: 700;
+
   white-space: nowrap;
+
   overflow: hidden;
-  text-overflow: ellipsis;
+
+  text-overflow:
+    ellipsis;
 }
 
-@media (max-width: 576px) {
+/* ========================= */
+/* MOBILE */
+/* ========================= */
+
+@media (
+  max-width: 576px
+) {
   .reserva-header__container {
     min-height: 64px;
-    padding: 0 12px;
+
+    padding:
+      0 12px;
   }
 
-  .reserva-header__icon {
-    width: 34px;
-    height: 34px;
-    font-size: 18px;
+  .reserva-header__brand {
+    gap: 10px;
+  }
+
+  .reserva-header__logo {
+    width: 44px;
+    height: 44px;
   }
 
   .reserva-header__name {

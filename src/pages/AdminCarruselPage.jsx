@@ -18,6 +18,14 @@ import {
   obtenerUrlImagen,
 } from "../utils/imagenUrl.js";
 
+import {
+  alertaAdvertencia,
+  alertaError,
+  alertaExito,
+  alertaSesionExpirada,
+  confirmarAccion,
+} from "../utils/alertas.js";
+
 import "./AdminCarruselPage.css";
 
 const imagenInicial = {
@@ -65,20 +73,16 @@ function AdminCarruselPage() {
   ] = useState(null);
 
   const [
-    error,
-    setError,
-  ] = useState("");
-
-  const [
-    mensaje,
-    setMensaje,
+    errorCarga,
+    setErrorCarga,
   ] = useState("");
 
   const manejarSesion =
-    (error) => {
+    async (
+      error
+    ) => {
       if (
-        error.response
-          ?.status ===
+        error.response?.status ===
         401
       ) {
         sessionStorage.removeItem(
@@ -88,6 +92,8 @@ function AdminCarruselPage() {
         sessionStorage.removeItem(
           "adminUsuario"
         );
+
+        await alertaSesionExpirada();
 
         navigate(
           "/admin/login"
@@ -102,7 +108,11 @@ function AdminCarruselPage() {
   const cargar =
     async () => {
       try {
-        setCargando(true);
+        setCargando(
+          true
+        );
+
+        setErrorCarga("");
 
         const respuesta =
           await obtenerCarruselAdmin();
@@ -113,17 +123,24 @@ function AdminCarruselPage() {
         );
       } catch (error) {
         if (
-          manejarSesion(
+          await manejarSesion(
             error
           )
         ) {
           return;
         }
 
-        setError(
+        const mensaje =
           error.response?.data
             ?.message ||
-            "No se pudo cargar el carrusel."
+          "No se pudo cargar el carrusel.";
+
+        setErrorCarga(
+          mensaje
+        );
+
+        await alertaError(
+          mensaje
         );
       } finally {
         setCargando(
@@ -137,12 +154,23 @@ function AdminCarruselPage() {
   }, []);
 
   const seleccionarNuevaImagen =
-    (event) => {
+    (
+      event
+    ) => {
       const archivo =
-        event.target.files?.[0];
+        event.target
+          .files?.[0];
 
       if (!archivo) {
         return;
+      }
+
+      if (
+        nueva.preview
+      ) {
+        URL.revokeObjectURL(
+          nueva.preview
+        );
       }
 
       const preview =
@@ -151,8 +179,11 @@ function AdminCarruselPage() {
         );
 
       setNueva(
-        (anterior) => ({
+        (
+          anterior
+        ) => ({
           ...anterior,
+
           archivo,
           preview,
         })
@@ -164,8 +195,8 @@ function AdminCarruselPage() {
       if (
         !nueva.archivo
       ) {
-        setError(
-          "Seleccioná una imagen."
+        await alertaAdvertencia(
+          "Seleccioná una imagen antes de agregarla al carrusel."
         );
 
         return;
@@ -175,9 +206,6 @@ function AdminCarruselPage() {
         setGuardando(
           true
         );
-
-        setError("");
-        setMensaje("");
 
         const respuesta =
           await crearImagenCarruselAdmin({
@@ -197,7 +225,9 @@ function AdminCarruselPage() {
           });
 
         setImagenes(
-          (anteriores) => [
+          (
+            anteriores
+          ) => [
             ...anteriores,
             respuesta.data,
           ]
@@ -215,22 +245,22 @@ function AdminCarruselPage() {
           imagenInicial
         );
 
-        setMensaje(
-          "Imagen agregada correctamente."
+        await alertaExito(
+          "Imagen agregada al carrusel correctamente."
         );
       } catch (error) {
         if (
-          manejarSesion(
+          await manejarSesion(
             error
           )
         ) {
           return;
         }
 
-        setError(
+        await alertaError(
           error.response?.data
             ?.message ||
-            "No se pudo subir la imagen."
+          "No se pudo subir la imagen."
         );
       } finally {
         setGuardando(
@@ -245,12 +275,18 @@ function AdminCarruselPage() {
     valor
   ) => {
     setImagenes(
-      (anteriores) =>
+      (
+        anteriores
+      ) =>
         anteriores.map(
-          (imagen) =>
-            imagen.id === id
+          (
+            imagen
+          ) =>
+            imagen.id ===
+            id
               ? {
                   ...imagen,
+
                   [campo]:
                     valor,
                 }
@@ -265,7 +301,8 @@ function AdminCarruselPage() {
       event
     ) => {
       const archivo =
-        event.target.files?.[0];
+        event.target
+          .files?.[0];
 
       if (!archivo) {
         return;
@@ -277,18 +314,38 @@ function AdminCarruselPage() {
         );
 
       setImagenes(
-        (anteriores) =>
+        (
+          anteriores
+        ) =>
           anteriores.map(
-            (imagen) =>
-              imagen.id === id
-                ? {
-                    ...imagen,
-                    archivoNuevo:
-                      archivo,
-                    previewNuevo:
-                      preview,
-                  }
-                : imagen
+            (
+              imagen
+            ) => {
+              if (
+                imagen.id !==
+                id
+              ) {
+                return imagen;
+              }
+
+              if (
+                imagen.previewNuevo
+              ) {
+                URL.revokeObjectURL(
+                  imagen.previewNuevo
+                );
+              }
+
+              return {
+                ...imagen,
+
+                archivoNuevo:
+                  archivo,
+
+                previewNuevo:
+                  preview,
+              };
+            }
           )
       );
     };
@@ -301,9 +358,6 @@ function AdminCarruselPage() {
         setGuardandoId(
           imagen.id
         );
-
-        setError("");
-        setMensaje("");
 
         const respuesta =
           await actualizarImagenCarruselAdmin({
@@ -338,9 +392,13 @@ function AdminCarruselPage() {
         }
 
         setImagenes(
-          (anteriores) =>
+          (
+            anteriores
+          ) =>
             anteriores.map(
-              (item) =>
+              (
+                item
+              ) =>
                 item.id ===
                 imagen.id
                   ? respuesta.data
@@ -348,22 +406,22 @@ function AdminCarruselPage() {
             )
         );
 
-        setMensaje(
+        await alertaExito(
           "Imagen actualizada correctamente."
         );
       } catch (error) {
         if (
-          manejarSesion(
+          await manejarSesion(
             error
           )
         ) {
           return;
         }
 
-        setError(
+        await alertaError(
           error.response?.data
             ?.message ||
-            "No se pudo actualizar la imagen."
+          "No se pudo actualizar la imagen."
         );
       } finally {
         setGuardandoId(
@@ -377,9 +435,24 @@ function AdminCarruselPage() {
       imagen
     ) => {
       const confirmar =
-        window.confirm(
-          "¿Seguro que querés eliminar esta imagen?"
-        );
+        await confirmarAccion({
+          titulo:
+            "¿Eliminar imagen?",
+
+          texto:
+            imagen.titulo
+              ? `Se eliminará "${imagen.titulo}" del carrusel.`
+              : "Esta imagen será eliminada del carrusel.",
+
+          textoConfirmar:
+            "Sí, eliminar",
+
+          textoCancelar:
+            "Cancelar",
+
+          peligro:
+            true,
+        });
 
       if (!confirmar) {
         return;
@@ -390,30 +463,39 @@ function AdminCarruselPage() {
           imagen.id
         );
 
-        setError("");
-        setMensaje("");
-
         await eliminarImagenCarruselAdmin(
           imagen.id
         );
 
         setImagenes(
-          (anteriores) =>
+          (
+            anteriores
+          ) =>
             anteriores.filter(
-              (item) =>
+              (
+                item
+              ) =>
                 item.id !==
                 imagen.id
             )
         );
 
-        setMensaje(
+        await alertaExito(
           "Imagen eliminada correctamente."
         );
       } catch (error) {
-        setError(
+        if (
+          await manejarSesion(
+            error
+          )
+        ) {
+          return;
+        }
+
+        await alertaError(
           error.response?.data
             ?.message ||
-            "No se pudo eliminar la imagen."
+          "No se pudo eliminar la imagen."
         );
       } finally {
         setEliminandoId(
@@ -452,15 +534,9 @@ function AdminCarruselPage() {
         </span>
       </header>
 
-      {error && (
+      {errorCarga && (
         <div className="admin-carrusel-error">
-          {error}
-        </div>
-      )}
-
-      {mensaje && (
-        <div className="admin-carrusel-mensaje">
-          {mensaje}
+          {errorCarga}
         </div>
       )}
 
@@ -515,9 +591,9 @@ function AdminCarruselPage() {
                     anterior
                   ) => ({
                     ...anterior,
+
                     titulo:
-                      event
-                        .target
+                      event.target
                         .value,
                   })
                 )
@@ -544,9 +620,9 @@ function AdminCarruselPage() {
                     anterior
                   ) => ({
                     ...anterior,
+
                     orden:
-                      event
-                        .target
+                      event.target
                         .value,
                   })
                 )
@@ -569,9 +645,9 @@ function AdminCarruselPage() {
                   anterior
                 ) => ({
                   ...anterior,
+
                   activo:
-                    event
-                      .target
+                    event.target
                       .checked,
                 })
               )
@@ -663,7 +739,9 @@ function AdminCarruselPage() {
 
                     <input
                       type="text"
-                      maxLength={120}
+                      maxLength={
+                        120
+                      }
                       value={
                         imagen.titulo ||
                         ""
@@ -674,8 +752,7 @@ function AdminCarruselPage() {
                         cambiarCampo(
                           imagen.id,
                           "titulo",
-                          event
-                            .target
+                          event.target
                             .value
                         )
                       }
@@ -699,8 +776,7 @@ function AdminCarruselPage() {
                         cambiarCampo(
                           imagen.id,
                           "orden",
-                          event
-                            .target
+                          event.target
                             .value
                         )
                       }
@@ -711,19 +787,16 @@ function AdminCarruselPage() {
                 <label className="admin-carrusel-check">
                   <input
                     type="checkbox"
-                    checked={
-                      Boolean(
-                        imagen.activo
-                      )
-                    }
+                    checked={Boolean(
+                      imagen.activo
+                    )}
                     onChange={(
                       event
                     ) =>
                       cambiarCampo(
                         imagen.id,
                         "activo",
-                        event
-                          .target
+                        event.target
                           .checked
                       )
                     }

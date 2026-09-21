@@ -3,7 +3,9 @@
   min-width: 0;
 }
 
+/* ========================= */
 /* HEADER */
+/* ========================= */
 
 .paso-fechas-promo__header {
   margin-bottom: 24px;
@@ -50,7 +52,9 @@
   color: var(--color-text);
 }
 
+/* ========================= */
 /* SELECTOR DE CORTES */
+/* ========================= */
 
 .paso-fechas-promo__selector {
   width: 100%;
@@ -81,6 +85,7 @@
   gap: 7px;
 
   border: 1px solid #3a342f;
+
   border-radius: 10px;
 
   background: #151311;
@@ -101,7 +106,8 @@
 
   color: #efb342;
 
-  transform: translateY(-1px);
+  transform:
+    translateY(-1px);
 }
 
 .paso-fechas-promo__selector-item > span {
@@ -111,22 +117,57 @@
   flex-shrink: 0;
 
   display: grid;
+
   place-items: center;
 
   border: 1px solid #514941;
+
   border-radius: 50%;
 
   font-size: 0.7rem;
   font-weight: 800;
 }
 
-.paso-fechas-promo__selector-item strong {
+/* TEXTO DEL SELECTOR */
+
+.paso-fechas-promo__selector-text {
   min-width: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: flex-start;
+
+  justify-content: center;
+
+  gap: 2px;
+}
+
+.paso-fechas-promo__selector-text strong {
+  min-width: 0;
+
+  color: inherit;
 
   font-size: 0.76rem;
 
+  line-height: 1.1;
+
   white-space: nowrap;
 }
+
+.paso-fechas-promo__selector-text small {
+  color: #efb342;
+
+  font-size: 0.62rem;
+  font-weight: 800;
+
+  line-height: 1;
+
+  text-transform: uppercase;
+}
+
+/* ACTIVO */
 
 .paso-fechas-promo__selector-item--active {
   border-color: #efb342;
@@ -149,6 +190,14 @@
 
   color: #16120d;
 }
+
+.paso-fechas-promo__selector-item--active
+  .paso-fechas-promo__selector-text
+  small {
+  color: #efb342;
+}
+
+/* COMPLETADO */
 
 .paso-fechas-promo__selector-item--completed:not(
     .paso-fechas-promo__selector-item--active
@@ -181,7 +230,17 @@
   color: #78cf91;
 }
 
+.paso-fechas-promo__selector-item--completed:not(
+    .paso-fechas-promo__selector-item--active
+  )
+  .paso-fechas-promo__selector-text
+  small {
+  color: #78cf91;
+}
+
+/* ========================= */
 /* ERROR */
+/* ========================= */
 
 .paso-fechas-promo__error {
   margin-bottom: 18px;
@@ -209,7 +268,9 @@
   color: #ef8888;
 }
 
+/* ========================= */
 /* LAYOUT */
+/* ========================= */
 
 .paso-fechas-promo__layout {
   width: 100%;
@@ -226,7 +287,9 @@
   gap: 20px;
 }
 
+/* ========================= */
 /* CALENDARIO */
+/* ========================= */
 
 .paso-fechas-promo__calendar-card,
 .paso-fechas-promo__hours-card {
@@ -272,6 +335,7 @@
   height: 42px;
 
   display: grid;
+
   place-items: center;
 
   border: 1px solid #3a342f;
@@ -292,15 +356,15 @@
     background-color 0.2s ease;
 }
 
-.paso-fechas-promo__calendar-header button:hover:not(
-    :disabled
-  ) {
+.paso-fechas-promo__calendar-header
+  button:hover:not(:disabled) {
   border-color: #efb342;
 
   color: #efb342;
 }
 
-.paso-fechas-promo__calendar-header button:disabled {
+.paso-fechas-promo__calendar-header
+  button:disabled {
   opacity: 0.25;
 
   cursor: not-allowed;
@@ -357,6 +421,7 @@
   aspect-ratio: 1;
 
   display: grid;
+
   place-items: center;
 
   border: 1px solid #3a342f;
@@ -382,7 +447,8 @@
 .paso-fechas-promo__day:hover:not(
     :disabled
   ) {
-  transform: translateY(-1px);
+  transform:
+    translateY(-1px);
 
   border-color: #efb342;
 
@@ -434,12 +500,15 @@
   cursor: not-allowed;
 }
 
+/* ========================= */
 /* LEYENDA */
+/* ========================= */
 
 .paso-fechas-promo__legend {
   margin-top: 18px;
 
   display: flex;
+
   flex-wrap: wrap;
 
   gap: 16px;
@@ -451,6 +520,7 @@
 
 .paso-fechas-promo__legend span {
   display: flex;
+
   align-items: center;
 
   gap: 7px;
@@ -475,12 +545,15 @@
   background: #78cf91;
 }
 
+/* ========================= */
 /* HORARIOS */
+/* ========================= */
 
 .paso-fechas-promo__hours-card {
   min-height: 440px;
 
   display: flex;
+
   flex-direction: column;
 }
 
@@ -519,9 +592,11 @@
   min-height: 250px;
 
   display: flex;
+
   flex-direction: column;
 
   align-items: center;
+
   justify-content: center;
 
   padding: 30px 20px;
@@ -538,6 +613,7 @@
   margin-bottom: 12px;
 
   display: grid;
+
   place-items: center;
 
   border: 1px solid #3a342f;
@@ -598,7 +674,8 @@
 }
 
 .paso-fechas-promo__hour:hover {
-  transform: translateY(-1px);
+  transform:
+    translateY(-1px);
 
   border-color: #efb342;
 
@@ -617,7 +694,9 @@
   color: #16120d;
 }
 
+/* ========================= */
 /* RESUMEN */
+/* ========================= */
 
 .paso-fechas-promo__summary {
   width: 100%;
@@ -637,7 +716,9 @@
   margin-bottom: 16px;
 
   display: flex;
+
   align-items: flex-start;
+
   justify-content: space-between;
 
   gap: 16px;
@@ -731,6 +812,7 @@
   height: 30px;
 
   display: grid;
+
   place-items: center;
 
   border: 1px solid #4b443e;
@@ -768,10 +850,14 @@
 }
 
 .paso-fechas-promo__summary-edit {
+  display: block;
+
   color: #efb342;
 
   font-size: 0.73rem;
-  font-weight: 700;
+  font-weight: 800;
+
+  white-space: nowrap;
 }
 
 .paso-fechas-promo__summary-row--completed {
@@ -799,13 +885,17 @@
   color: #78cf91;
 }
 
+/* ========================= */
 /* ACCIONES */
+/* ========================= */
 
 .paso-fechas-promo__actions {
   margin-top: 26px;
 
   display: flex;
+
   align-items: center;
+
   justify-content: space-between;
 
   gap: 12px;
@@ -860,13 +950,17 @@
   cursor: not-allowed;
 }
 
+/* ========================= */
 /* LOADING */
+/* ========================= */
 
 .paso-fechas-promo__loading {
   min-height: 300px;
 
   display: flex;
+
   align-items: center;
+
   justify-content: center;
 
   gap: 10px;
@@ -874,133 +968,6 @@
   color: #a9a29c;
 }
 
-/* TABLET */
-
-@media (
-  max-width: 850px
-) {
-  .paso-fechas-promo__layout {
-    grid-template-columns:
-      1fr;
-  }
-
-  .paso-fechas-promo__hours-card {
-    min-height: auto;
-  }
-
-  .paso-fechas-promo__hours-placeholder {
-    min-height: 180px;
-  }
-}
-
-/* MOBILE */
-
-@media (
-  max-width: 650px
-) {
-  .paso-fechas-promo__selector {
-    grid-template-columns:
-      repeat(
-        5,
-        minmax(0, 1fr)
-      );
-
-    gap: 5px;
-  }
-
-  .paso-fechas-promo__selector-item {
-    min-height: 50px;
-
-    padding: 6px 3px;
-
-    flex-direction: column;
-
-    gap: 3px;
-  }
-
-  .paso-fechas-promo__selector-item > span {
-    width: 20px;
-    height: 20px;
-
-    font-size: 0.64rem;
-  }
-
-  .paso-fechas-promo__selector-item strong {
-    font-size: 0.6rem;
-  }
-
-  .paso-fechas-promo__calendar-card,
-  .paso-fechas-promo__hours-card {
-    padding: 16px;
-  }
-
-  .paso-fechas-promo__calendar-grid {
-    gap: 4px;
-  }
-
-  .paso-fechas-promo__weekdays {
-    gap: 4px;
-  }
-
-  .paso-fechas-promo__day {
-    border-radius: 7px;
-
-    font-size: 0.82rem;
-  }
-
-  .paso-fechas-promo__hours-grid {
-    grid-template-columns:
-      repeat(
-        2,
-        minmax(0, 1fr)
-      );
-  }
-
-  .paso-fechas-promo__summary {
-    padding: 15px;
-  }
-
-  .paso-fechas-promo__summary-row {
-    grid-template-columns:
-      30px
-      minmax(0, 1fr);
-
-    gap: 10px;
-  }
-
-  .paso-fechas-promo__summary-edit {
-    display: none;
-  }
-
-  .paso-fechas-promo__actions {
-    align-items: stretch;
-
-    flex-direction:
-      column-reverse;
-  }
-
-  .paso-fechas-promo__back,
-  .paso-fechas-promo__continue {
-    width: 100%;
-  }
-}
-
-@media (
-  max-width: 390px
-) {
-  .paso-fechas-promo__selector-item strong {
-    font-size: 0;
-    line-height: 0;
-  }
-
-  .paso-fechas-promo__selector-item strong::after {
-    content: "Corte";
-
-    font-size: 0.57rem;
-
-    line-height: 1;
-  }
-}
 /* ========================= */
 /* REVISIÓN FINAL */
 /* ========================= */
@@ -1058,10 +1025,211 @@
   color: #78cf91;
 }
 
+/* ========================= */
+/* TABLET */
+/* ========================= */
+
+@media (max-width: 850px) {
+  .paso-fechas-promo__layout {
+    grid-template-columns:
+      1fr;
+  }
+
+  .paso-fechas-promo__hours-card {
+    min-height: auto;
+  }
+
+  .paso-fechas-promo__hours-placeholder {
+    min-height: 180px;
+  }
+}
+
+/* ========================= */
+/* MOBILE */
+/* ========================= */
+
 @media (max-width: 650px) {
+  .paso-fechas-promo__selector {
+    grid-template-columns:
+      repeat(
+        5,
+        minmax(0, 1fr)
+      );
+
+    gap: 5px;
+  }
+
+  .paso-fechas-promo__selector-item {
+    min-height: 62px;
+
+    padding:
+      5px 2px;
+
+    flex-direction: column;
+
+    gap: 3px;
+  }
+
+  .paso-fechas-promo__selector-item > span {
+    width: 20px;
+    height: 20px;
+
+    font-size: 0.64rem;
+  }
+
+  .paso-fechas-promo__selector-text {
+    align-items: center;
+
+    gap: 1px;
+
+  }
+
+  .paso-fechas-promo__selector-text strong {
+    font-size: 0.58rem;
+    
+    line-height: 1.05;
+  }
+
+  .paso-fechas-promo__selector-text small {
+    font-size: 0.49rem;
+padding-top: 2px;
+    line-height: 1;
+  }
+
+  .paso-fechas-promo__calendar-card,
+  .paso-fechas-promo__hours-card {
+    padding: 16px;
+  }
+
+  .paso-fechas-promo__calendar-grid {
+    gap: 4px;
+  }
+
+  .paso-fechas-promo__weekdays {
+    gap: 4px;
+  }
+
+  .paso-fechas-promo__day {
+    border-radius: 7px;
+
+    font-size: 0.82rem;
+  }
+
+  .paso-fechas-promo__hours-grid {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+  }
+
+  .paso-fechas-promo__summary {
+    padding: 15px;
+  }
+
+  .paso-fechas-promo__summary-row {
+    grid-template-columns:
+      30px
+      minmax(0, 1fr)
+      auto;
+
+    gap: 10px;
+
+    padding: 11px;
+  }
+
+  .paso-fechas-promo__summary-edit {
+    display: block;
+
+    padding-left: 4px;
+
+    color: #efb342;
+
+    font-size: 0.67rem;
+    font-weight: 800;
+
+    white-space: nowrap;
+  }
+
+  .paso-fechas-promo__actions {
+    align-items: stretch;
+
+    flex-direction:
+      column-reverse;
+  }
+
+  .paso-fechas-promo__back,
+  .paso-fechas-promo__continue {
+    width: 100%;
+  }
+
   .paso-fechas-promo__summary--review {
     margin-top: 6px;
 
     padding: 16px;
+  }
+}
+
+/* ========================= */
+/* CELULARES MUY CHICOS */
+/* ========================= */
+
+@media (max-width: 390px) {
+  .paso-fechas-promo__selector {
+    gap: 4px;
+  }
+
+  .paso-fechas-promo__selector-item {
+    min-height: 60px;
+
+    padding:
+      5px 1px;
+  }
+
+  .paso-fechas-promo__selector-item > span {
+    width: 19px;
+    height: 19px;
+  }
+
+  .paso-fechas-promo__selector-text strong {
+    font-size: 0.53rem;
+  }
+
+  .paso-fechas-promo__selector-text small {
+    font-size: 0.46rem;
+  }
+
+  .paso-fechas-promo__summary-row {
+    grid-template-columns:
+      28px
+      minmax(0, 1fr)
+      auto;
+
+    padding: 10px 8px;
+
+    gap: 8px;
+  }
+
+  .paso-fechas-promo__summary-number {
+    width: 27px;
+    height: 27px;
+  }
+
+  .paso-fechas-promo__summary-row
+    > div
+    strong {
+    font-size: 0.8rem;
+  }
+
+  .paso-fechas-promo__summary-row
+    > div
+    span {
+    font-size: 0.68rem;
+  }
+
+  .paso-fechas-promo__summary-edit {
+    font-size: 0.61rem;
+
+    padding-left: 2px;
   }
 }

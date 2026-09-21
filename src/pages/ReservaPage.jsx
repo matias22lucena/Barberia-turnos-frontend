@@ -1,7 +1,12 @@
 import {
   useEffect,
+  useRef,
   useState,
 } from "react";
+
+import {
+  useSearchParams,
+} from "react-router-dom";
 
 import {
   FaWhatsapp,
@@ -35,6 +40,13 @@ import PasoConfirmacion from "../components/reserva/PasoConfirmacion.jsx";
 import "./ReservaPage.css";
 
 function ReservaPage() {
+  const [
+    searchParams,
+  ] = useSearchParams();
+
+  const seleccionInicialProcesada =
+    useRef(false);
+
   const [
     pasoActual,
     setPasoActual,
@@ -86,8 +98,7 @@ function ReservaPage() {
     fecha: null,
     hora: null,
 
-    turnosPromocion:
-      [],
+    turnosPromocion: [],
 
     cliente: {
       nombre: "",
@@ -105,14 +116,6 @@ function ReservaPage() {
       ) > 1
     );
 
-  /*
-   * Cada vez que cambia el paso
-   * de la reserva, volvemos arriba.
-   *
-   * Esto evita que en celular
-   * el siguiente paso aparezca
-   * manteniendo el scroll anterior.
-   */
   useEffect(() => {
     window.scrollTo({
       top: 0,
@@ -189,8 +192,9 @@ function ReservaPage() {
           );
 
         if (
+          !barberos ||
           barberos.length ===
-          0
+            0
         ) {
           setError(
             "No hay ningún profesional disponible para este servicio."
@@ -206,14 +210,18 @@ function ReservaPage() {
             ...anterior,
 
             servicio,
+
             promocion:
               null,
 
             barbero:
               barberos[0],
 
-            fecha: null,
-            hora: null,
+            fecha:
+              null,
+
+            hora:
+              null,
 
             turnosPromocion:
               [],
@@ -288,8 +296,9 @@ function ReservaPage() {
           );
 
         if (
+          !barberos ||
           barberos.length ===
-          0
+            0
         ) {
           setError(
             "No hay ningún profesional disponible para esta promoción."
@@ -312,8 +321,11 @@ function ReservaPage() {
             barbero:
               barberos[0],
 
-            fecha: null,
-            hora: null,
+            fecha:
+              null,
+
+            hora:
+              null,
 
             turnosPromocion:
               [],
@@ -338,6 +350,120 @@ function ReservaPage() {
       }
     };
 
+  /*
+   * SELECCIÓN AUTOMÁTICA DESDE HOME
+   *
+   * Ejemplos:
+   *
+   * /reservar?servicio=1
+   * /reservar?promocion=3
+   */
+  useEffect(() => {
+    if (
+      cargando ||
+      seleccionInicialProcesada.current
+    ) {
+      return;
+    }
+
+    const servicioId =
+      searchParams.get(
+        "servicio"
+      );
+
+    const promocionId =
+      searchParams.get(
+        "promocion"
+      );
+
+    if (
+      !servicioId &&
+      !promocionId
+    ) {
+      seleccionInicialProcesada.current =
+        true;
+
+      return;
+    }
+
+    seleccionInicialProcesada.current =
+      true;
+
+    const procesarSeleccion =
+      async () => {
+        if (
+          promocionId
+        ) {
+          const promocion =
+            promociones.find(
+              (
+                item
+              ) =>
+                Number(
+                  item.id
+                ) ===
+                Number(
+                  promocionId
+                )
+            );
+
+          if (
+            promocion
+          ) {
+            await seleccionarPromocion(
+              promocion
+            );
+
+            return;
+          }
+
+          setError(
+            "La promoción seleccionada ya no está disponible."
+          );
+
+          return;
+        }
+
+        if (
+          servicioId
+        ) {
+          const servicio =
+            servicios.find(
+              (
+                item
+              ) =>
+                Number(
+                  item.id
+                ) ===
+                Number(
+                  servicioId
+                )
+            );
+
+          if (
+            servicio
+          ) {
+            await seleccionarServicio(
+              servicio
+            );
+
+            return;
+          }
+
+          setError(
+            "El servicio seleccionado ya no está disponible."
+          );
+        }
+      };
+
+    procesarSeleccion();
+  }, [
+    cargando,
+    searchParams,
+    servicios,
+    promociones,
+  ]);
+
   const seleccionarFechaHora = ({
     fecha,
     hora,
@@ -347,6 +473,7 @@ function ReservaPage() {
         anterior
       ) => ({
         ...anterior,
+
         fecha,
         hora,
       })
@@ -369,8 +496,11 @@ function ReservaPage() {
         turnosPromocion:
           turnos,
 
-        fecha: null,
-        hora: null,
+        fecha:
+          null,
+
+        hora:
+          null,
       })
     );
 
@@ -638,18 +768,21 @@ function ReservaPage() {
   const volverAServicios =
     () => {
       setPasoActual(1);
+
       setError("");
     };
 
   const volverAFechaHora =
     () => {
       setPasoActual(2);
+
       setError("");
     };
 
   const volverADatos =
     () => {
       setPasoActual(3);
+
       setError("");
     };
 
@@ -664,12 +797,20 @@ function ReservaPage() {
       setError("");
 
       setReserva({
-        servicio: null,
-        promocion: null,
-        barbero: null,
+        servicio:
+          null,
 
-        fecha: null,
-        hora: null,
+        promocion:
+          null,
+
+        barbero:
+          null,
+
+        fecha:
+          null,
+
+        hora:
+          null,
 
         turnosPromocion:
           [],

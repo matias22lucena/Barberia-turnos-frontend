@@ -39,7 +39,9 @@ const DIAS_SEMANA = [
   "Dom",
 ];
 
-const normalizarFecha = (fecha) => {
+const normalizarFecha = (
+  fecha
+) => {
   return new Date(
     fecha.getFullYear(),
     fecha.getMonth(),
@@ -168,7 +170,10 @@ function PasoFechasPromocion({
           length:
             cantidad,
         },
-        (_, indice) => {
+        (
+          _,
+          indice
+        ) => {
           const anterior =
             reserva
               .turnosPromocion
@@ -194,7 +199,9 @@ function PasoFechasPromocion({
     useMemo(() => {
       const indice =
         turnosIniciales.findIndex(
-          (turno) =>
+          (
+            turno
+          ) =>
             !turno.fecha ||
             !turno.hora
         );
@@ -225,8 +232,11 @@ function PasoFechasPromocion({
     setModoRevision,
   ] = useState(
     turnosIniciales.every(
-      (turno) =>
-        turno.fecha?.fechaISO &&
+      (
+        turno
+      ) =>
+        turno.fecha
+          ?.fechaISO &&
         turno.hora
     )
   );
@@ -303,9 +313,12 @@ function PasoFechasPromocion({
     const cargarHorarios =
       async () => {
         const barberoId =
-          reserva.barbero?.id;
+          reserva.barbero
+            ?.id;
 
-        if (!barberoId) {
+        if (
+          !barberoId
+        ) {
           setError(
             "No se encontró el profesional asignado."
           );
@@ -330,9 +343,12 @@ function PasoFechasPromocion({
             );
 
           setHorariosLaborales(
-            horarios || []
+            horarios ||
+              []
           );
-        } catch (error) {
+        } catch (
+          error
+        ) {
           console.error(
             error
           );
@@ -349,14 +365,17 @@ function PasoFechasPromocion({
 
     cargarHorarios();
   }, [
-    reserva.barbero?.id,
+    reserva.barbero
+      ?.id,
   ]);
 
   const diasLaborales =
     useMemo(() => {
       return new Set(
         horariosLaborales.map(
-          (horario) =>
+          (
+            horario
+          ) =>
             Number(
               horario.diaSemana
             )
@@ -403,7 +422,9 @@ function PasoFechasPromocion({
         espaciosIniciales;
         i += 1
       ) {
-        dias.push(null);
+        dias.push(
+          null
+        );
       }
 
       for (
@@ -531,7 +552,9 @@ function PasoFechasPromocion({
             ?.horarios ||
             []
         );
-      } catch (error) {
+      } catch (
+        error
+      ) {
         console.error(
           error
         );
@@ -541,7 +564,8 @@ function PasoFechasPromocion({
         );
 
         setError(
-          error.response?.data
+          error.response
+            ?.data
             ?.message ||
             "No se pudieron consultar los horarios disponibles."
         );
@@ -569,7 +593,8 @@ function PasoFechasPromocion({
       dia
     ) => {
       if (
-        !dia?.habilitado
+        !dia
+          ?.habilitado
       ) {
         return;
       }
@@ -601,7 +626,8 @@ function PasoFechasPromocion({
   const activarTurno =
     async (
       indice,
-      listaTurnos = turnos
+      listaTurnos =
+        turnos
     ) => {
       const turno =
         listaTurnos[
@@ -656,136 +682,134 @@ function PasoFechasPromocion({
       }
     };
 
-  const seleccionarHora =
-    (
+  const seleccionarHora = (
+    hora
+  ) => {
+    if (
+      !fechaSeleccionada
+    ) {
+      return;
+    }
+
+    setHoraSeleccionada(
       hora
-    ) => {
-      if (
-        !fechaSeleccionada
-      ) {
-        return;
-      }
+    );
 
-      setHoraSeleccionada(
-        hora
+    setError("");
+
+    const nuevosTurnos =
+      turnos.map(
+        (
+          turno,
+          indice
+        ) =>
+          indice ===
+          turnoActivo
+            ? {
+                fecha:
+                  fechaSeleccionada,
+
+                hora,
+              }
+            : turno
       );
 
-      setError("");
+    setTurnos(
+      nuevosTurnos
+    );
 
-      const nuevosTurnos =
-        turnos.map(
-          (
-            turno,
-            indice
-          ) =>
-            indice ===
-            turnoActivo
-              ? {
-                  fecha:
-                    fechaSeleccionada,
-
-                  hora,
-                }
-              : turno
-        );
-
-      setTurnos(
-        nuevosTurnos
+    const todosListos =
+      nuevosTurnos.every(
+        (
+          turno
+        ) =>
+          turno.fecha
+            ?.fechaISO &&
+          turno.hora
       );
 
-      const todosListos =
-        nuevosTurnos.every(
-          (turno) =>
-            turno.fecha
-              ?.fechaISO &&
-            turno.hora
-        );
+    if (
+      todosListos
+    ) {
+      setTimeout(
+        () => {
+          setModoRevision(
+            true
+          );
 
-      /*
-       * Si este era el último
-       * pendiente, pasamos
-       * directamente a revisión.
-       */
-      if (
-        todosListos
-      ) {
-        setTimeout(
-          () => {
-            setModoRevision(
-              true
-            );
+          setFechaSeleccionada(
+            null
+          );
 
-            setFechaSeleccionada(
-              null
-            );
+          setHoraSeleccionada(
+            null
+          );
 
-            setHoraSeleccionada(
-              null
-            );
+          setHorariosDisponibles(
+            []
+          );
+        },
+        120
+      );
 
-            setHorariosDisponibles(
-              []
-            );
-          },
-          120
-        );
+      return;
+    }
 
-        return;
-      }
-
-      const siguientePendiente =
-        nuevosTurnos.findIndex(
+    const siguientePendiente =
+      nuevosTurnos.findIndex(
+        (
+          turno,
+          indice
+        ) =>
+          indice >
+            turnoActivo &&
           (
-            turno,
-            indice
-          ) =>
-            indice >
-              turnoActivo &&
-            (
-              !turno.fecha ||
-              !turno.hora
-            )
-        );
-
-      if (
-        siguientePendiente !==
-        -1
-      ) {
-        setTimeout(
-          () => {
-            activarTurno(
-              siguientePendiente,
-              nuevosTurnos
-            );
-          },
-          120
-        );
-
-        return;
-      }
-
-      const pendienteAnterior =
-        nuevosTurnos.findIndex(
-          (turno) =>
             !turno.fecha ||
             !turno.hora
-        );
+          )
+      );
 
-      if (
-        pendienteAnterior !==
-        -1
-      ) {
-        setTimeout(
-          () => {
-            activarTurno(
-              pendienteAnterior,
-              nuevosTurnos
-            );
-          },
-          120
-        );
-      }
-    };
+    if (
+      siguientePendiente !==
+      -1
+    ) {
+      setTimeout(
+        () => {
+          activarTurno(
+            siguientePendiente,
+            nuevosTurnos
+          );
+        },
+        120
+      );
+
+      return;
+    }
+
+    const pendienteAnterior =
+      nuevosTurnos.findIndex(
+        (
+          turno
+        ) =>
+          !turno.fecha ||
+          !turno.hora
+      );
+
+    if (
+      pendienteAnterior !==
+      -1
+    ) {
+      setTimeout(
+        () => {
+          activarTurno(
+            pendienteAnterior,
+            nuevosTurnos
+          );
+        },
+        120
+      );
+    }
+  };
 
   const mesAnterior =
     () => {
@@ -838,7 +862,9 @@ function PasoFechasPromocion({
 
   const todosCompletos =
     turnos.every(
-      (turno) =>
+      (
+        turno
+      ) =>
         turno.fecha
           ?.fechaISO &&
         turno.hora
@@ -858,7 +884,9 @@ function PasoFechasPromocion({
 
       const fechas =
         turnos.map(
-          (turno) =>
+          (
+            turno
+          ) =>
             turno.fecha
               .fechaISO
         );
@@ -878,7 +906,9 @@ function PasoFechasPromocion({
 
       onContinuar(
         turnos.map(
-          (turno) => ({
+          (
+            turno
+          ) => ({
             fecha:
               turno.fecha,
 
@@ -953,7 +983,7 @@ function PasoFechasPromocion({
         </p>
       </header>
 
-      {/* SELECTOR */}
+      {/* SELECTOR SUPERIOR */}
 
       <div className="paso-fechas-promo__selector">
         {turnos.map(
@@ -1008,11 +1038,19 @@ function PasoFechasPromocion({
                       1}
                 </span>
 
-                <strong>
-                  Corte{" "}
-                  {indice +
-                    1}
-                </strong>
+                <div className="paso-fechas-promo__selector-text">
+                  <strong>
+                    Corte{" "}
+                    {indice +
+                      1}
+                  </strong>
+
+                  {completo && (
+                    <small>
+                      Editar
+                    </small>
+                  )}
+                </div>
               </button>
             );
           }
@@ -1071,7 +1109,9 @@ function PasoFechasPromocion({
 
             <div className="paso-fechas-promo__weekdays">
               {DIAS_SEMANA.map(
-                (dia) => (
+                (
+                  dia
+                ) => (
                   <span
                     key={
                       dia
@@ -1089,7 +1129,9 @@ function PasoFechasPromocion({
                   dia,
                   indice
                 ) => {
-                  if (!dia) {
+                  if (
+                    !dia
+                  ) {
                     return (
                       <div
                         key={`vacio-${indice}`}
@@ -1312,8 +1354,12 @@ function PasoFechasPromocion({
             ? "paso-fechas-promo__summary--review"
             : "",
         ]
-          .filter(Boolean)
-          .join(" ")}
+          .filter(
+            Boolean
+          )
+          .join(
+            " "
+          )}
       >
         <div className="paso-fechas-promo__summary-header">
           <div>
@@ -1324,16 +1370,16 @@ function PasoFechasPromocion({
             </span>
 
             <h2>
-              {modoRevision
-                ? "Turnos seleccionados"
-                : "Turnos seleccionados"}
+              Turnos seleccionados
             </h2>
           </div>
 
           <strong>
             {
               turnos.filter(
-                (turno) =>
+                (
+                  turno
+                ) =>
                   turno.fecha &&
                   turno.hora
               ).length
@@ -1352,7 +1398,7 @@ function PasoFechasPromocion({
               const completo =
                 Boolean(
                   turno.fecha &&
-                  turno.hora
+                    turno.hora
                 );
 
               return (

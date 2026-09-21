@@ -18,26 +18,25 @@ import {
   obtenerServiciosAdmin,
 } from "../services/adminServicios.service.js";
 
+import {
+  alertaError,
+  alertaExito,
+  alertaSesionExpirada,
+  confirmarAccion,
+} from "../utils/alertas.js";
+
 import "./AdminPromocionesPage.css";
 
-const crearPromocionInicial = () => ({
-  servicioId: "",
-  titulo: "",
-  descripcion: "",
-  precio: "",
-  duracionMinutos: 30,
-
-  /*
-   * Una promoción normal
-   * empieza con 1 servicio.
-   *
-   * Para la mensual
-   * se podrá colocar 5.
-   */
-  cantidadServicios: 1,
-
-  activo: true,
-});
+const crearPromocionInicial =
+  () => ({
+    servicioId: "",
+    titulo: "",
+    descripcion: "",
+    precio: "",
+    duracionMinutos: 30,
+    cantidadServicios: 1,
+    activo: true,
+  });
 
 function AdminPromocionesPage() {
   const navigate =
@@ -86,39 +85,37 @@ function AdminPromocionesPage() {
   ] = useState(null);
 
   const [
-    error,
-    setError,
+    errorCarga,
+    setErrorCarga,
   ] = useState("");
 
-  const [
-    mensaje,
-    setMensaje,
-  ] = useState("");
+  const manejarSesionExpirada =
+    async (
+      error
+    ) => {
+      if (
+        error.response?.status ===
+        401
+      ) {
+        sessionStorage.removeItem(
+          "adminToken"
+        );
 
-  const manejarSesionExpirada = (
-    error
-  ) => {
-    if (
-      error.response?.status ===
-      401
-    ) {
-      sessionStorage.removeItem(
-        "adminToken"
-      );
+        sessionStorage.removeItem(
+          "adminUsuario"
+        );
 
-      sessionStorage.removeItem(
-        "adminUsuario"
-      );
+        await alertaSesionExpirada();
 
-      navigate(
-        "/admin/login"
-      );
+        navigate(
+          "/admin/login"
+        );
 
-      return true;
-    }
+        return true;
+      }
 
-    return false;
-  };
+      return false;
+    };
 
   const cargarDatos =
     async () => {
@@ -127,7 +124,7 @@ function AdminPromocionesPage() {
           true
         );
 
-        setError("");
+        setErrorCarga("");
 
         const [
           respuestaPromociones,
@@ -149,17 +146,24 @@ function AdminPromocionesPage() {
         );
       } catch (error) {
         if (
-          manejarSesionExpirada(
+          await manejarSesionExpirada(
             error
           )
         ) {
           return;
         }
 
-        setError(
+        const mensaje =
           error.response?.data
             ?.message ||
-            "No se pudieron cargar las promociones."
+          "No se pudieron cargar las promociones.";
+
+        setErrorCarga(
+          mensaje
+        );
+
+        await alertaError(
+          mensaje
         );
       } finally {
         setCargando(
@@ -181,7 +185,9 @@ function AdminPromocionesPage() {
         anterior
       ) => ({
         ...anterior,
-        [campo]: valor,
+
+        [campo]:
+          valor,
       })
     );
   };
@@ -203,6 +209,7 @@ function AdminPromocionesPage() {
             promocionId
               ? {
                   ...promocion,
+
                   [campo]:
                     valor,
                 }
@@ -216,9 +223,6 @@ function AdminPromocionesPage() {
       setNuevaPromocion(
         crearPromocionInicial()
       );
-
-      setError("");
-      setMensaje("");
 
       setMostrarFormulario(
         true
@@ -234,8 +238,6 @@ function AdminPromocionesPage() {
       setMostrarFormulario(
         false
       );
-
-      setError("");
     };
 
   const crearPromocion =
@@ -245,45 +247,40 @@ function AdminPromocionesPage() {
           true
         );
 
-        setError("");
-        setMensaje("");
-
         const respuesta =
-          await crearPromocionAdmin(
-            {
-              servicioId:
+          await crearPromocionAdmin({
+            servicioId:
+              nuevaPromocion
+                .servicioId,
+
+            titulo:
+              nuevaPromocion
+                .titulo,
+
+            descripcion:
+              nuevaPromocion
+                .descripcion,
+
+            precio:
+              nuevaPromocion
+                .precio,
+
+            duracionMinutos:
+              Number(
                 nuevaPromocion
-                  .servicioId,
+                  .duracionMinutos
+              ),
 
-              titulo:
+            cantidadServicios:
+              Number(
                 nuevaPromocion
-                  .titulo,
+                  .cantidadServicios
+              ),
 
-              descripcion:
-                nuevaPromocion
-                  .descripcion,
-
-              precio:
-                nuevaPromocion
-                  .precio,
-
-              duracionMinutos:
-                Number(
-                  nuevaPromocion
-                    .duracionMinutos
-                ),
-
-              cantidadServicios:
-                Number(
-                  nuevaPromocion
-                    .cantidadServicios
-                ),
-
-              activo:
-                nuevaPromocion
-                  .activo,
-            }
-          );
+            activo:
+              nuevaPromocion
+                .activo,
+          });
 
         setPromociones(
           (
@@ -302,22 +299,22 @@ function AdminPromocionesPage() {
           false
         );
 
-        setMensaje(
+        await alertaExito(
           "Promoción creada correctamente."
         );
       } catch (error) {
         if (
-          manejarSesionExpirada(
+          await manejarSesionExpirada(
             error
           )
         ) {
           return;
         }
 
-        setError(
+        await alertaError(
           error.response?.data
             ?.message ||
-            "No se pudo crear la promoción."
+          "No se pudo crear la promoción."
         );
       } finally {
         setGuardandoNueva(
@@ -335,52 +332,44 @@ function AdminPromocionesPage() {
           promocion.id
         );
 
-        setError("");
-        setMensaje("");
-
         const respuesta =
-          await actualizarPromocionAdmin(
-            {
-              promocionId:
-                promocion.id,
+          await actualizarPromocionAdmin({
+            promocionId:
+              promocion.id,
 
-              servicioId:
+            servicioId:
+              promocion
+                .servicioId,
+
+            titulo:
+              promocion.titulo,
+
+            descripcion:
+              promocion
+                .descripcion ||
+              "",
+
+            precio:
+              promocion.precio,
+
+            duracionMinutos:
+              Number(
                 promocion
-                  .servicioId,
+                  .duracionMinutos
+              ),
 
-              titulo:
+            cantidadServicios:
+              Number(
                 promocion
-                  .titulo,
+                  .cantidadServicios ||
+                  1
+              ),
 
-              descripcion:
-                promocion
-                  .descripcion ||
-                "",
-
-              precio:
-                promocion
-                  .precio,
-
-              duracionMinutos:
-                Number(
-                  promocion
-                    .duracionMinutos
-                ),
-
-              cantidadServicios:
-                Number(
-                  promocion
-                    .cantidadServicios ||
-                    1
-                ),
-
-              activo:
-                Boolean(
-                  promocion
-                    .activo
-                ),
-            }
-          );
+            activo:
+              Boolean(
+                promocion.activo
+              ),
+          });
 
         const actualizada =
           respuesta.data;
@@ -400,22 +389,22 @@ function AdminPromocionesPage() {
             )
         );
 
-        setMensaje(
+        await alertaExito(
           "Promoción actualizada correctamente."
         );
       } catch (error) {
         if (
-          manejarSesionExpirada(
+          await manejarSesionExpirada(
             error
           )
         ) {
           return;
         }
 
-        setError(
+        await alertaError(
           error.response?.data
             ?.message ||
-            "No se pudo actualizar la promoción."
+          "No se pudo actualizar la promoción."
         );
       } finally {
         setGuardandoId(
@@ -429,13 +418,24 @@ function AdminPromocionesPage() {
       promocion
     ) => {
       const confirmar =
-        window.confirm(
-          `¿Seguro que querés eliminar la promoción "${promocion.titulo}"?`
-        );
+        await confirmarAccion({
+          titulo:
+            "¿Eliminar promoción?",
 
-      if (
-        !confirmar
-      ) {
+          texto:
+            `Se eliminará "${promocion.titulo}". Esta acción no se puede deshacer.`,
+
+          textoConfirmar:
+            "Sí, eliminar",
+
+          textoCancelar:
+            "Cancelar",
+
+          peligro:
+            true,
+        });
+
+      if (!confirmar) {
         return;
       }
 
@@ -443,9 +443,6 @@ function AdminPromocionesPage() {
         setEliminandoId(
           promocion.id
         );
-
-        setError("");
-        setMensaje("");
 
         await eliminarPromocionAdmin(
           promocion.id
@@ -464,22 +461,22 @@ function AdminPromocionesPage() {
             )
         );
 
-        setMensaje(
+        await alertaExito(
           "Promoción eliminada correctamente."
         );
       } catch (error) {
         if (
-          manejarSesionExpirada(
+          await manejarSesionExpirada(
             error
           )
         ) {
           return;
         }
 
-        setError(
+        await alertaError(
           error.response?.data
             ?.message ||
-            "No se pudo eliminar la promoción."
+          "No se pudo eliminar la promoción."
         );
       } finally {
         setEliminandoId(
@@ -535,15 +532,9 @@ function AdminPromocionesPage() {
         </div>
       </header>
 
-      {error && (
+      {errorCarga && (
         <div className="admin-promociones-error">
-          {error}
-        </div>
-      )}
-
-      {mensaje && (
-        <div className="admin-promociones-mensaje">
-          {mensaje}
+          {errorCarga}
         </div>
       )}
 
@@ -595,8 +586,7 @@ function AdminPromocionesPage() {
                 ) =>
                   manejarCambioNueva(
                     "titulo",
-                    event
-                      .target
+                    event.target
                       .value
                   )
                 }
@@ -618,8 +608,7 @@ function AdminPromocionesPage() {
                 ) =>
                   manejarCambioNueva(
                     "servicioId",
-                    event
-                      .target
+                    event.target
                       .value
                   )
                 }
@@ -668,8 +657,7 @@ function AdminPromocionesPage() {
                 ) =>
                   manejarCambioNueva(
                     "descripcion",
-                    event
-                      .target
+                    event.target
                       .value
                   )
                 }
@@ -695,8 +683,7 @@ function AdminPromocionesPage() {
                 ) =>
                   manejarCambioNueva(
                     "precio",
-                    event
-                      .target
+                    event.target
                       .value
                   )
                 }
@@ -721,8 +708,7 @@ function AdminPromocionesPage() {
                 ) =>
                   manejarCambioNueva(
                     "duracionMinutos",
-                    event
-                      .target
+                    event.target
                       .value
                   )
                 }
@@ -731,7 +717,8 @@ function AdminPromocionesPage() {
 
             <div className="admin-promocion-campo">
               <label>
-                Cantidad de cortes / turnos
+                Cantidad de cortes /
+                turnos
               </label>
 
               <input
@@ -747,17 +734,16 @@ function AdminPromocionesPage() {
                 ) =>
                   manejarCambioNueva(
                     "cantidadServicios",
-                    event
-                      .target
+                    event.target
                       .value
                   )
                 }
               />
 
               <small>
-                Ejemplo: para la promo
-                mensual de 5 cortes,
-                colocá 5.
+                Ejemplo: para la
+                promo mensual de 5
+                cortes, colocá 5.
               </small>
             </div>
           </div>
@@ -775,16 +761,14 @@ function AdminPromocionesPage() {
                 ) =>
                   manejarCambioNueva(
                     "activo",
-                    event
-                      .target
+                    event.target
                       .checked
                   )
                 }
               />
 
               <span>
-                {nuevaPromocion
-                  .activo
+                {nuevaPromocion.activo
                   ? "Activa"
                   : "Inactiva"}
               </span>
@@ -830,8 +814,8 @@ function AdminPromocionesPage() {
       ) : promociones.length ===
         0 ? (
         <div className="admin-promociones-estado">
-          Todavía no hay promociones
-          cargadas.
+          Todavía no hay
+          promociones cargadas.
         </div>
       ) : (
         <section className="admin-promociones-lista">
@@ -877,8 +861,7 @@ function AdminPromocionesPage() {
                     <input
                       type="checkbox"
                       checked={Boolean(
-                        promocion
-                          .activo
+                        promocion.activo
                       )}
                       onChange={(
                         event
@@ -886,16 +869,14 @@ function AdminPromocionesPage() {
                         manejarCambioExistente(
                           promocion.id,
                           "activo",
-                          event
-                            .target
+                          event.target
                             .checked
                         )
                       }
                     />
 
                     <span>
-                      {promocion
-                        .activo
+                      {promocion.activo
                         ? "Activa"
                         : "Inactiva"}
                     </span>
@@ -914,8 +895,7 @@ function AdminPromocionesPage() {
                         120
                       }
                       value={
-                        promocion
-                          .titulo
+                        promocion.titulo
                       }
                       onChange={(
                         event
@@ -923,8 +903,7 @@ function AdminPromocionesPage() {
                         manejarCambioExistente(
                           promocion.id,
                           "titulo",
-                          event
-                            .target
+                          event.target
                             .value
                         )
                       }
@@ -948,8 +927,7 @@ function AdminPromocionesPage() {
                         manejarCambioExistente(
                           promocion.id,
                           "servicioId",
-                          event
-                            .target
+                          event.target
                             .value
                         )
                       }
@@ -999,8 +977,7 @@ function AdminPromocionesPage() {
                         manejarCambioExistente(
                           promocion.id,
                           "descripcion",
-                          event
-                            .target
+                          event.target
                             .value
                         )
                       }
@@ -1017,8 +994,7 @@ function AdminPromocionesPage() {
                       min="0"
                       step="100"
                       value={
-                        promocion
-                          .precio ??
+                        promocion.precio ??
                         ""
                       }
                       onChange={(
@@ -1027,8 +1003,7 @@ function AdminPromocionesPage() {
                         manejarCambioExistente(
                           promocion.id,
                           "precio",
-                          event
-                            .target
+                          event.target
                             .value
                         )
                       }
@@ -1037,8 +1012,8 @@ function AdminPromocionesPage() {
 
                   <div className="admin-promocion-campo">
                     <label>
-                      Duración de cada turno
-                      (minutos)
+                      Duración de cada
+                      turno (minutos)
                     </label>
 
                     <input
@@ -1054,8 +1029,7 @@ function AdminPromocionesPage() {
                         manejarCambioExistente(
                           promocion.id,
                           "duracionMinutos",
-                          event
-                            .target
+                          event.target
                             .value
                         )
                       }
@@ -1064,7 +1038,8 @@ function AdminPromocionesPage() {
 
                   <div className="admin-promocion-campo">
                     <label>
-                      Cantidad de cortes / turnos
+                      Cantidad de cortes /
+                      turnos
                     </label>
 
                     <input
@@ -1082,17 +1057,16 @@ function AdminPromocionesPage() {
                         manejarCambioExistente(
                           promocion.id,
                           "cantidadServicios",
-                          event
-                            .target
+                          event.target
                             .value
                         )
                       }
                     />
 
                     <small>
-                      Cada corte se reservará
-                      con su propio día y
-                      horario.
+                      Cada corte se
+                      reservará con su
+                      propio día y horario.
                     </small>
                   </div>
                 </div>

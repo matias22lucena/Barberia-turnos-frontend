@@ -1,11 +1,23 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {
+  useEffect,
+  useState,
+} from "react";
+
+import {
+  useNavigate,
+} from "react-router-dom";
 
 import {
   actualizarServicioAdmin,
   crearServicioAdmin,
   obtenerServiciosAdmin,
 } from "../services/adminServicios.service.js";
+
+import {
+  alertaError,
+  alertaExito,
+  alertaSesionExpirada,
+} from "../utils/alertas.js";
 
 import "./AdminServiciosPage.css";
 
@@ -18,58 +30,114 @@ const servicioInicial = {
 };
 
 function AdminServiciosPage() {
-  const navigate = useNavigate();
+  const navigate =
+    useNavigate();
 
-  const [servicios, setServicios] = useState([]);
-  const [nuevoServicio, setNuevoServicio] =
-    useState(servicioInicial);
+  const [
+    servicios,
+    setServicios,
+  ] = useState([]);
 
-  const [mostrarFormulario, setMostrarFormulario] =
-    useState(false);
+  const [
+    nuevoServicio,
+    setNuevoServicio,
+  ] = useState(
+    servicioInicial
+  );
 
-  const [cargando, setCargando] = useState(true);
-  const [creando, setCreando] = useState(false);
-  const [guardandoId, setGuardandoId] = useState(null);
+  const [
+    mostrarFormulario,
+    setMostrarFormulario,
+  ] = useState(false);
 
-  const [error, setError] = useState("");
-  const [mensaje, setMensaje] = useState("");
+  const [
+    cargando,
+    setCargando,
+  ] = useState(true);
 
-  const manejarSesionExpirada = (error) => {
-    if (error.response?.status === 401) {
-      sessionStorage.removeItem("adminToken");
-      sessionStorage.removeItem("adminUsuario");
+  const [
+    creando,
+    setCreando,
+  ] = useState(false);
 
-      navigate("/admin/login");
+  const [
+    guardandoId,
+    setGuardandoId,
+  ] = useState(null);
 
-      return true;
-    }
+  const [
+    errorCarga,
+    setErrorCarga,
+  ] = useState("");
 
-    return false;
-  };
+  const manejarSesionExpirada =
+    async (
+      error
+    ) => {
+      if (
+        error.response?.status ===
+        401
+      ) {
+        sessionStorage.removeItem(
+          "adminToken"
+        );
 
-  const cargarServicios = async () => {
-    try {
-      setCargando(true);
-      setError("");
+        sessionStorage.removeItem(
+          "adminUsuario"
+        );
 
-      const respuesta =
-        await obtenerServiciosAdmin();
+        await alertaSesionExpirada();
 
-      setServicios(respuesta.data || []);
-    } catch (error) {
-      if (manejarSesionExpirada(error)) {
-        return;
+        navigate(
+          "/admin/login"
+        );
+
+        return true;
       }
 
-      const mensaje =
-        error.response?.data?.message ||
-        "No se pudieron cargar los servicios.";
+      return false;
+    };
 
-      setError(mensaje);
-    } finally {
-      setCargando(false);
-    }
-  };
+  const cargarServicios =
+    async () => {
+      try {
+        setCargando(true);
+        setErrorCarga("");
+
+        const respuesta =
+          await obtenerServiciosAdmin();
+
+        setServicios(
+          respuesta.data ||
+            []
+        );
+      } catch (error) {
+        if (
+          await manejarSesionExpirada(
+            error
+          )
+        ) {
+          return;
+        }
+
+        const mensaje =
+          error.response?.data
+            ?.message ||
+          "No se pudieron cargar los servicios.";
+
+        setErrorCarga(
+          mensaje
+        );
+
+        await alertaError(
+          mensaje
+        );
+      } finally {
+        setCargando(
+          false
+        );
+      }
+    };
 
   useEffect(() => {
     cargarServicios();
@@ -79,10 +147,16 @@ function AdminServiciosPage() {
     campo,
     valor
   ) => {
-    setNuevoServicio((anterior) => ({
-      ...anterior,
-      [campo]: valor,
-    }));
+    setNuevoServicio(
+      (
+        anterior
+      ) => ({
+        ...anterior,
+
+        [campo]:
+          valor,
+      })
+    );
   };
 
   const manejarCambio = (
@@ -90,127 +164,200 @@ function AdminServiciosPage() {
     campo,
     valor
   ) => {
-    setServicios((anteriores) =>
-      anteriores.map((servicio) =>
-        servicio.id === servicioId
-          ? {
-              ...servicio,
-              [campo]: valor,
-            }
-          : servicio
-      )
+    setServicios(
+      (
+        anteriores
+      ) =>
+        anteriores.map(
+          (
+            servicio
+          ) =>
+            servicio.id ===
+            servicioId
+              ? {
+                  ...servicio,
+
+                  [campo]:
+                    valor,
+                }
+              : servicio
+        )
     );
   };
 
-  const abrirFormulario = () => {
-    setError("");
-    setMensaje("");
-    setNuevoServicio(servicioInicial);
-    setMostrarFormulario(true);
-  };
-
-  const cerrarFormulario = () => {
-    setNuevoServicio(servicioInicial);
-    setMostrarFormulario(false);
-    setError("");
-  };
-
-  const crearServicio = async () => {
-    try {
-      setCreando(true);
-      setError("");
-      setMensaje("");
-
-      const respuesta =
-        await crearServicioAdmin({
-          nombre: nuevoServicio.nombre,
-          descripcion:
-            nuevoServicio.descripcion,
-          duracionMinutos:
-            nuevoServicio.duracionMinutos,
-          precio: nuevoServicio.precio,
-          activo: nuevoServicio.activo,
-        });
-
-      const creado = respuesta.data;
-
-      setServicios((anteriores) => [
-        ...anteriores,
-        creado,
-      ]);
-
-      setNuevoServicio(servicioInicial);
-      setMostrarFormulario(false);
-
-      setMensaje(
-        "Servicio creado correctamente."
+  const abrirFormulario =
+    () => {
+      setNuevoServicio(
+        servicioInicial
       );
-    } catch (error) {
-      if (manejarSesionExpirada(error)) {
-        return;
+
+      setMostrarFormulario(
+        true
+      );
+    };
+
+  const cerrarFormulario =
+    () => {
+      setNuevoServicio(
+        servicioInicial
+      );
+
+      setMostrarFormulario(
+        false
+      );
+    };
+
+  const crearServicio =
+    async () => {
+      try {
+        setCreando(
+          true
+        );
+
+        const respuesta =
+          await crearServicioAdmin({
+            nombre:
+              nuevoServicio.nombre,
+
+            descripcion:
+              nuevoServicio
+                .descripcion,
+
+            duracionMinutos:
+              nuevoServicio
+                .duracionMinutos,
+
+            precio:
+              nuevoServicio.precio,
+
+            activo:
+              nuevoServicio.activo,
+          });
+
+        const creado =
+          respuesta.data;
+
+        setServicios(
+          (
+            anteriores
+          ) => [
+            ...anteriores,
+            creado,
+          ]
+        );
+
+        setNuevoServicio(
+          servicioInicial
+        );
+
+        setMostrarFormulario(
+          false
+        );
+
+        await alertaExito(
+          "Servicio creado correctamente."
+        );
+      } catch (error) {
+        if (
+          await manejarSesionExpirada(
+            error
+          )
+        ) {
+          return;
+        }
+
+        await alertaError(
+          error.response?.data
+            ?.message ||
+          "No se pudo crear el servicio."
+        );
+      } finally {
+        setCreando(
+          false
+        );
       }
+    };
 
-      const mensaje =
-        error.response?.data?.message ||
-        "No se pudo crear el servicio.";
+  const guardarServicio =
+    async (
+      servicio
+    ) => {
+      try {
+        setGuardandoId(
+          servicio.id
+        );
 
-      setError(mensaje);
-    } finally {
-      setCreando(false);
-    }
-  };
+        const respuesta =
+          await actualizarServicioAdmin({
+            servicioId:
+              servicio.id,
 
-  const guardarServicio = async (
-    servicio
-  ) => {
-    try {
-      setGuardandoId(servicio.id);
-      setError("");
-      setMensaje("");
+            nombre:
+              servicio.nombre,
 
-      const respuesta =
-        await actualizarServicioAdmin({
-          servicioId: servicio.id,
-          nombre: servicio.nombre,
-          descripcion:
-            servicio.descripcion || "",
-          duracionMinutos: Number(
-            servicio.duracionMinutos
-          ),
-          precio: Number(servicio.precio),
-          activo: Boolean(
-            servicio.activo
-          ),
-        });
+            descripcion:
+              servicio
+                .descripcion ||
+              "",
 
-      const actualizado =
-        respuesta.data;
+            duracionMinutos:
+              Number(
+                servicio
+                  .duracionMinutos
+              ),
 
-      setServicios((anteriores) =>
-        anteriores.map((item) =>
-          item.id === actualizado.id
-            ? actualizado
-            : item
-        )
-      );
+            precio:
+              Number(
+                servicio.precio
+              ),
 
-      setMensaje(
-        "Servicio actualizado correctamente."
-      );
-    } catch (error) {
-      if (manejarSesionExpirada(error)) {
-        return;
+            activo:
+              Boolean(
+                servicio.activo
+              ),
+          });
+
+        const actualizado =
+          respuesta.data;
+
+        setServicios(
+          (
+            anteriores
+          ) =>
+            anteriores.map(
+              (
+                item
+              ) =>
+                item.id ===
+                actualizado.id
+                  ? actualizado
+                  : item
+            )
+        );
+
+        await alertaExito(
+          "Servicio actualizado correctamente."
+        );
+      } catch (error) {
+        if (
+          await manejarSesionExpirada(
+            error
+          )
+        ) {
+          return;
+        }
+
+        await alertaError(
+          error.response?.data
+            ?.message ||
+          "No se pudo actualizar el servicio."
+        );
+      } finally {
+        setGuardandoId(
+          null
+        );
       }
-
-      const mensaje =
-        error.response?.data?.message ||
-        "No se pudo actualizar el servicio.";
-
-      setError(mensaje);
-    } finally {
-      setGuardandoId(null);
-    }
-  };
+    };
 
   return (
     <main className="admin-servicios-page">
@@ -219,7 +366,9 @@ function AdminServiciosPage() {
           type="button"
           className="admin-servicios-volver"
           onClick={() =>
-            navigate("/admin")
+            navigate(
+              "/admin"
+            )
           }
         >
           ← Volver al panel
@@ -231,12 +380,15 @@ function AdminServiciosPage() {
               Administración
             </p>
 
-            <h1>Servicios</h1>
+            <h1>
+              Servicios
+            </h1>
 
             <p>
               Creá nuevos servicios y
-              modificá precios, duración,
-              descripción y disponibilidad.
+              modificá precios,
+              duración, descripción y
+              disponibilidad.
             </p>
           </div>
 
@@ -244,7 +396,9 @@ function AdminServiciosPage() {
             <button
               type="button"
               className="admin-servicios-crear-boton"
-              onClick={abrirFormulario}
+              onClick={
+                abrirFormulario
+              }
             >
               + Crear servicio
             </button>
@@ -252,15 +406,9 @@ function AdminServiciosPage() {
         </div>
       </header>
 
-      {error && (
+      {errorCarga && (
         <div className="admin-servicios-error">
-          {error}
-        </div>
-      )}
-
-      {mensaje && (
-        <div className="admin-servicios-mensaje">
-          {mensaje}
+          {errorCarga}
         </div>
       )}
 
@@ -268,15 +416,24 @@ function AdminServiciosPage() {
         <section className="admin-servicio-nuevo">
           <div className="admin-servicio-nuevo__header">
             <div>
-              <p>Nuevo servicio</p>
-              <h2>Crear servicio</h2>
+              <p>
+                Nuevo servicio
+              </p>
+
+              <h2>
+                Crear servicio
+              </h2>
             </div>
 
             <button
               type="button"
               className="admin-servicio-cerrar"
-              onClick={cerrarFormulario}
-              disabled={creando}
+              onClick={
+                cerrarFormulario
+              }
+              disabled={
+                creando
+              }
             >
               ✕
             </button>
@@ -284,7 +441,9 @@ function AdminServiciosPage() {
 
           <div className="admin-servicio-form">
             <div className="admin-servicio-campo">
-              <label>Nombre</label>
+              <label>
+                Nombre
+              </label>
 
               <input
                 type="text"
@@ -293,7 +452,9 @@ function AdminServiciosPage() {
                 value={
                   nuevoServicio.nombre
                 }
-                onChange={(event) =>
+                onChange={(
+                  event
+                ) =>
                   manejarCambioNuevo(
                     "nombre",
                     event.target.value
@@ -303,15 +464,20 @@ function AdminServiciosPage() {
             </div>
 
             <div className="admin-servicio-campo admin-servicio-campo--completo">
-              <label>Descripción</label>
+              <label>
+                Descripción
+              </label>
 
               <textarea
                 placeholder="Ej: Corte completo con lavado."
                 maxLength={255}
                 value={
-                  nuevoServicio.descripcion
+                  nuevoServicio
+                    .descripcion
                 }
-                onChange={(event) =>
+                onChange={(
+                  event
+                ) =>
                   manejarCambioNuevo(
                     "descripcion",
                     event.target.value
@@ -332,7 +498,9 @@ function AdminServiciosPage() {
                   nuevoServicio
                     .duracionMinutos
                 }
-                onChange={(event) =>
+                onChange={(
+                  event
+                ) =>
                   manejarCambioNuevo(
                     "duracionMinutos",
                     event.target.value
@@ -342,7 +510,9 @@ function AdminServiciosPage() {
             </div>
 
             <div className="admin-servicio-campo">
-              <label>Precio</label>
+              <label>
+                Precio
+              </label>
 
               <input
                 type="number"
@@ -352,7 +522,9 @@ function AdminServiciosPage() {
                 value={
                   nuevoServicio.precio
                 }
-                onChange={(event) =>
+                onChange={(
+                  event
+                ) =>
                   manejarCambioNuevo(
                     "precio",
                     event.target.value
@@ -369,7 +541,9 @@ function AdminServiciosPage() {
                 checked={
                   nuevoServicio.activo
                 }
-                onChange={(event) =>
+                onChange={(
+                  event
+                ) =>
                   manejarCambioNuevo(
                     "activo",
                     event.target.checked
@@ -388,8 +562,12 @@ function AdminServiciosPage() {
               <button
                 type="button"
                 className="admin-servicio-cancelar"
-                disabled={creando}
-                onClick={cerrarFormulario}
+                disabled={
+                  creando
+                }
+                onClick={
+                  cerrarFormulario
+                }
               >
                 Cancelar
               </button>
@@ -397,8 +575,12 @@ function AdminServiciosPage() {
               <button
                 type="button"
                 className="admin-servicio-crear"
-                disabled={creando}
-                onClick={crearServicio}
+                disabled={
+                  creando
+                }
+                onClick={
+                  crearServicio
+                }
               >
                 {creando
                   ? "Creando..."
@@ -413,15 +595,18 @@ function AdminServiciosPage() {
         <div className="admin-servicios-estado">
           Cargando servicios...
         </div>
-      ) : servicios.length === 0 ? (
+      ) : servicios.length ===
+        0 ? (
         <div className="admin-servicios-estado">
-          Todavía no hay servicios
-          cargados.
+          Todavía no hay
+          servicios cargados.
         </div>
       ) : (
         <section className="admin-servicios-lista">
           <div className="admin-servicios-lista__titulo">
-            <p>Servicios cargados</p>
+            <p>
+              Servicios cargados
+            </p>
 
             <span>
               {servicios.length}
@@ -429,20 +614,28 @@ function AdminServiciosPage() {
           </div>
 
           {servicios.map(
-            (servicio) => (
+            (
+              servicio
+            ) => (
               <article
-                key={servicio.id}
+                key={
+                  servicio.id
+                }
                 className="admin-servicio-card"
               >
                 <div className="admin-servicio-top">
                   <div>
                     <span>
                       Servicio #
-                      {servicio.id}
+                      {
+                        servicio.id
+                      }
                     </span>
 
                     <h2>
-                      {servicio.nombre}
+                      {
+                        servicio.nombre
+                      }
                     </h2>
                   </div>
 
@@ -452,11 +645,14 @@ function AdminServiciosPage() {
                       checked={Boolean(
                         servicio.activo
                       )}
-                      onChange={(event) =>
+                      onChange={(
+                        event
+                      ) =>
                         manejarCambio(
                           servicio.id,
                           "activo",
-                          event.target.checked
+                          event.target
+                            .checked
                         )
                       }
                     />
@@ -471,7 +667,9 @@ function AdminServiciosPage() {
 
                 <div className="admin-servicio-form">
                   <div className="admin-servicio-campo">
-                    <label>Nombre</label>
+                    <label>
+                      Nombre
+                    </label>
 
                     <input
                       type="text"
@@ -479,11 +677,14 @@ function AdminServiciosPage() {
                       value={
                         servicio.nombre
                       }
-                      onChange={(event) =>
+                      onChange={(
+                        event
+                      ) =>
                         manejarCambio(
                           servicio.id,
                           "nombre",
-                          event.target.value
+                          event.target
+                            .value
                         )
                       }
                     />
@@ -497,14 +698,18 @@ function AdminServiciosPage() {
                     <textarea
                       maxLength={255}
                       value={
-                        servicio.descripcion ||
+                        servicio
+                          .descripcion ||
                         ""
                       }
-                      onChange={(event) =>
+                      onChange={(
+                        event
+                      ) =>
                         manejarCambio(
                           servicio.id,
                           "descripcion",
-                          event.target.value
+                          event.target
+                            .value
                         )
                       }
                     />
@@ -512,7 +717,8 @@ function AdminServiciosPage() {
 
                   <div className="admin-servicio-campo">
                     <label>
-                      Duración (minutos)
+                      Duración
+                      (minutos)
                     </label>
 
                     <input
@@ -522,18 +728,23 @@ function AdminServiciosPage() {
                         servicio
                           .duracionMinutos
                       }
-                      onChange={(event) =>
+                      onChange={(
+                        event
+                      ) =>
                         manejarCambio(
                           servicio.id,
                           "duracionMinutos",
-                          event.target.value
+                          event.target
+                            .value
                         )
                       }
                     />
                   </div>
 
                   <div className="admin-servicio-campo">
-                    <label>Precio</label>
+                    <label>
+                      Precio
+                    </label>
 
                     <input
                       type="number"
@@ -542,11 +753,14 @@ function AdminServiciosPage() {
                       value={
                         servicio.precio
                       }
-                      onChange={(event) =>
+                      onChange={(
+                        event
+                      ) =>
                         manejarCambio(
                           servicio.id,
                           "precio",
-                          event.target.value
+                          event.target
+                            .value
                         )
                       }
                     />

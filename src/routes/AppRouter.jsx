@@ -14,6 +14,7 @@ import AdminServiciosPage from "../pages/AdminServiciosPage.jsx";
 import AdminHorariosPage from "../pages/AdminHorariosPage.jsx";
 import AdminPromocionesPage from "../pages/AdminPromocionesPage.jsx";
 import AdminCarruselPage from "../pages/AdminCarruselPage.jsx";
+import AdminHomePage from "../pages/AdminHomePage.jsx";
 
 import AdminRoute from "../components/admin/AdminRoute.jsx";
 
@@ -92,6 +93,15 @@ function AppRouter() {
           element={
             <AdminRoute>
               <AdminCarruselPage />
+            </AdminRoute>
+          }
+        />
+
+        <Route
+          path="/admin/home"
+          element={
+            <AdminRoute>
+              <AdminHomePage />
             </AdminRoute>
           }
         />

@@ -1,5 +1,12 @@
-import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+
+import {
+  useNavigate,
+} from "react-router-dom";
 
 import {
   actualizarHorarioAdmin,
@@ -8,182 +15,524 @@ import {
   obtenerHorariosAdmin,
 } from "../services/adminHorarios.service.js";
 
+import {
+  alertaError,
+  alertaExito,
+  alertaSesionExpirada,
+  confirmarAccion,
+} from "../utils/alertas.js";
+
 import "./AdminHorariosPage.css";
 
 const DIAS = [
-  { numero: 1, nombre: "Lunes" },
-  { numero: 2, nombre: "Martes" },
-  { numero: 3, nombre: "Miércoles" },
-  { numero: 4, nombre: "Jueves" },
-  { numero: 5, nombre: "Viernes" },
-  { numero: 6, nombre: "Sábado" },
-  { numero: 7, nombre: "Domingo" },
+  {
+    numero: 1,
+    nombre: "Lunes",
+    corto: "Lun",
+  },
+  {
+    numero: 2,
+    nombre: "Martes",
+    corto: "Mar",
+  },
+  {
+    numero: 3,
+    nombre: "Miércoles",
+    corto: "Mié",
+  },
+  {
+    numero: 4,
+    nombre: "Jueves",
+    corto: "Jue",
+  },
+  {
+    numero: 5,
+    nombre: "Viernes",
+    corto: "Vie",
+  },
+  {
+    numero: 6,
+    nombre: "Sábado",
+    corto: "Sáb",
+  },
+  {
+    numero: 7,
+    nombre: "Domingo",
+    corto: "Dom",
+  },
 ];
 
+const crearHorarioInicial = (
+  diaSemana = 1
+) => ({
+  diaSemana,
+  horaInicio: "09:00",
+  horaFin: "13:00",
+});
+
 function AdminHorariosPage() {
-  const navigate = useNavigate();
+  const navigate =
+    useNavigate();
 
-  const [horarios, setHorarios] = useState([]);
-  const [cargando, setCargando] = useState(true);
-  const [error, setError] = useState("");
+  const [
+    horarios,
+    setHorarios,
+  ] = useState([]);
 
-  const [editandoId, setEditandoId] =
-    useState(null);
+  const [
+    cargando,
+    setCargando,
+  ] = useState(true);
 
-  const [guardando, setGuardando] =
-    useState(false);
+  const [
+    errorCarga,
+    setErrorCarga,
+  ] = useState("");
 
-  const [nuevoHorario, setNuevoHorario] =
-    useState({
-      diaSemana: 1,
-      horaInicio: "09:00",
-      horaFin: "13:00",
-    });
+  const [
+    diaSeleccionado,
+    setDiaSeleccionado,
+  ] = useState(1);
 
-  const cargarHorarios = async () => {
-    try {
-      setCargando(true);
-      setError("");
+  const [
+    editandoId,
+    setEditandoId,
+  ] = useState(null);
 
-      const respuesta =
-        await obtenerHorariosAdmin();
+  const [
+    mostrarNuevaFranja,
+    setMostrarNuevaFranja,
+  ] = useState(false);
 
-      setHorarios(respuesta.data || []);
-    } catch (error) {
-      const mensaje =
-        error.response?.data?.message ||
-        "No se pudieron cargar los horarios.";
+  const [
+    guardando,
+    setGuardando,
+  ] = useState(false);
 
-      setError(mensaje);
+  const [
+    eliminandoId,
+    setEliminandoId,
+  ] = useState(null);
 
-      if (error.response?.status === 401) {
-        sessionStorage.removeItem("adminToken");
-        sessionStorage.removeItem("adminUsuario");
+  const [
+    nuevoHorario,
+    setNuevoHorario,
+  ] = useState(
+    crearHorarioInicial(1)
+  );
 
-        navigate("/admin/login");
+  const manejarSesionExpirada =
+    async (error) => {
+      if (
+        error.response?.status ===
+        401
+      ) {
+        sessionStorage.removeItem(
+          "adminToken"
+        );
+
+        sessionStorage.removeItem(
+          "adminUsuario"
+        );
+
+        await alertaSesionExpirada();
+
+        navigate(
+          "/admin/login"
+        );
+
+        return true;
       }
-    } finally {
-      setCargando(false);
-    }
-  };
+
+      return false;
+    };
+
+  const cargarHorarios =
+    async () => {
+      try {
+        setCargando(true);
+        setErrorCarga("");
+
+        const respuesta =
+          await obtenerHorariosAdmin();
+
+        setHorarios(
+          respuesta.data ||
+            []
+        );
+      } catch (error) {
+        if (
+          await manejarSesionExpirada(
+            error
+          )
+        ) {
+          return;
+        }
+
+        const mensaje =
+          error.response?.data
+            ?.message ||
+          "No se pudieron cargar los horarios.";
+
+        setErrorCarga(
+          mensaje
+        );
+
+        await alertaError(
+          mensaje
+        );
+      } finally {
+        setCargando(
+          false
+        );
+      }
+    };
 
   useEffect(() => {
     cargarHorarios();
   }, []);
 
-  const horariosPorDia = useMemo(() => {
-    const resultado = {};
+  const horariosPorDia =
+    useMemo(() => {
+      const resultado =
+        {};
 
-    DIAS.forEach((dia) => {
-      resultado[dia.numero] = [];
-    });
-
-    horarios.forEach((horario) => {
-      resultado[horario.diaSemana]?.push(
-        horario
+      DIAS.forEach(
+        (dia) => {
+          resultado[
+            dia.numero
+          ] = [];
+        }
       );
-    });
 
-    return resultado;
-  }, [horarios]);
+      horarios.forEach(
+        (horario) => {
+          const dia =
+            Number(
+              horario.diaSemana
+            );
+
+          if (
+            resultado[dia]
+          ) {
+            resultado[
+              dia
+            ].push(
+              horario
+            );
+          }
+        }
+      );
+
+      Object.keys(
+        resultado
+      ).forEach(
+        (
+          dia
+        ) => {
+          resultado[
+            dia
+          ].sort(
+            (
+              a,
+              b
+            ) =>
+              a.horaInicio.localeCompare(
+                b.horaInicio
+              )
+          );
+        }
+      );
+
+      return resultado;
+    }, [
+      horarios,
+    ]);
+
+  const diaActual =
+    useMemo(
+      () =>
+        DIAS.find(
+          (
+            dia
+          ) =>
+            dia.numero ===
+            diaSeleccionado
+        ),
+      [
+        diaSeleccionado,
+      ]
+    );
+
+  const franjasDiaActual =
+    horariosPorDia[
+      diaSeleccionado
+    ] || [];
+
+  const seleccionarDia = (
+    diaNumero
+  ) => {
+    setDiaSeleccionado(
+      diaNumero
+    );
+
+    setEditandoId(
+      null
+    );
+
+    setMostrarNuevaFranja(
+      false
+    );
+
+    setNuevoHorario(
+      crearHorarioInicial(
+        diaNumero
+      )
+    );
+  };
+
+  const abrirNuevaFranja =
+    () => {
+      setEditandoId(
+        null
+      );
+
+      setNuevoHorario(
+        crearHorarioInicial(
+          diaSeleccionado
+        )
+      );
+
+      setMostrarNuevaFranja(
+        true
+      );
+    };
+
+  const cancelarNuevaFranja =
+    () => {
+      setMostrarNuevaFranja(
+        false
+      );
+
+      setNuevoHorario(
+        crearHorarioInicial(
+          diaSeleccionado
+        )
+      );
+    };
 
   const manejarCambioHorario = (
     horarioId,
     campo,
     valor
   ) => {
-    setHorarios((anteriores) =>
-      anteriores.map((horario) =>
-        horario.id === horarioId
-          ? {
-              ...horario,
-              [campo]: valor,
-            }
-          : horario
-      )
+    setHorarios(
+      (
+        anteriores
+      ) =>
+        anteriores.map(
+          (
+            horario
+          ) =>
+            horario.id ===
+            horarioId
+              ? {
+                  ...horario,
+                  [campo]:
+                    valor,
+                }
+              : horario
+        )
     );
   };
 
-  const guardarHorario = async (horario) => {
-    try {
-      setGuardando(true);
-      setError("");
+  const guardarHorario =
+    async (
+      horario
+    ) => {
+      try {
+        setGuardando(
+          true
+        );
 
-      await actualizarHorarioAdmin({
-        horarioId: horario.id,
-        diaSemana: Number(
-          horario.diaSemana
-        ),
-        horaInicio: horario.horaInicio,
-        horaFin: horario.horaFin,
-        activo: Boolean(horario.activo),
-      });
+        await actualizarHorarioAdmin({
+          horarioId:
+            horario.id,
 
-      setEditandoId(null);
+          diaSemana:
+            Number(
+              horario.diaSemana
+            ),
 
-      await cargarHorarios();
-    } catch (error) {
-      setError(
-        error.response?.data?.message ||
+          horaInicio:
+            horario.horaInicio,
+
+          horaFin:
+            horario.horaFin,
+
+          activo:
+            Boolean(
+              horario.activo
+            ),
+        });
+
+        setEditandoId(
+          null
+        );
+
+        await cargarHorarios();
+
+        await alertaExito(
+          "Horario actualizado correctamente."
+        );
+      } catch (error) {
+        if (
+          await manejarSesionExpirada(
+            error
+          )
+        ) {
+          return;
+        }
+
+        await alertaError(
+          error.response?.data
+            ?.message ||
           "No se pudo modificar el horario."
+        );
+      } finally {
+        setGuardando(
+          false
+        );
+      }
+    };
+
+  const cancelarEdicion =
+    async () => {
+      setEditandoId(
+        null
       );
-    } finally {
-      setGuardando(false);
-    }
-  };
-
-  const agregarHorario = async () => {
-    try {
-      setGuardando(true);
-      setError("");
-
-      await crearHorarioAdmin({
-        barberoId: 1,
-        diaSemana: Number(
-          nuevoHorario.diaSemana
-        ),
-        horaInicio:
-          nuevoHorario.horaInicio,
-        horaFin: nuevoHorario.horaFin,
-      });
 
       await cargarHorarios();
-    } catch (error) {
-      setError(
-        error.response?.data?.message ||
+    };
+
+  const agregarHorario =
+    async () => {
+      try {
+        setGuardando(
+          true
+        );
+
+        await crearHorarioAdmin({
+          barberoId: 1,
+
+          diaSemana:
+            diaSeleccionado,
+
+          horaInicio:
+            nuevoHorario
+              .horaInicio,
+
+          horaFin:
+            nuevoHorario
+              .horaFin,
+        });
+
+        setMostrarNuevaFranja(
+          false
+        );
+
+        setNuevoHorario(
+          crearHorarioInicial(
+            diaSeleccionado
+          )
+        );
+
+        await cargarHorarios();
+
+        await alertaExito(
+          `Franja agregada al ${diaActual?.nombre || "día"} correctamente.`
+        );
+      } catch (error) {
+        if (
+          await manejarSesionExpirada(
+            error
+          )
+        ) {
+          return;
+        }
+
+        await alertaError(
+          error.response?.data
+            ?.message ||
           "No se pudo agregar la franja."
-      );
-    } finally {
-      setGuardando(false);
-    }
-  };
+        );
+      } finally {
+        setGuardando(
+          false
+        );
+      }
+    };
 
-  const eliminarHorario = async (
-    horarioId
-  ) => {
-    const confirmar = window.confirm(
-      "¿Querés eliminar esta franja horaria?"
-    );
+  const eliminarHorario =
+    async (
+      horario
+    ) => {
+      const confirmar =
+        await confirmarAccion({
+          titulo:
+            "¿Eliminar franja horaria?",
 
-    if (!confirmar) {
-      return;
-    }
+          texto:
+            `Se eliminará la franja ${horario.horaInicio} - ${horario.horaFin} del ${diaActual?.nombre || "día seleccionado"}.`,
 
-    try {
-      setError("");
+          textoConfirmar:
+            "Sí, eliminar",
 
-      await eliminarHorarioAdmin(
-        horarioId
-      );
+          textoCancelar:
+            "Cancelar",
 
-      await cargarHorarios();
-    } catch (error) {
-      setError(
-        error.response?.data?.message ||
+          peligro:
+            true,
+        });
+
+      if (!confirmar) {
+        return;
+      }
+
+      try {
+        setEliminandoId(
+          horario.id
+        );
+
+        await eliminarHorarioAdmin(
+          horario.id
+        );
+
+        await cargarHorarios();
+
+        await alertaExito(
+          "Franja horaria eliminada correctamente."
+        );
+      } catch (error) {
+        if (
+          await manejarSesionExpirada(
+            error
+          )
+        ) {
+          return;
+        }
+
+        await alertaError(
+          error.response?.data
+            ?.message ||
           "No se pudo eliminar el horario."
-      );
-    }
-  };
+        );
+      } finally {
+        setEliminandoId(
+          null
+        );
+      }
+    };
 
   return (
     <main className="admin-horarios-page">
@@ -191,7 +540,11 @@ function AdminHorariosPage() {
         <button
           type="button"
           className="admin-horarios-volver"
-          onClick={() => navigate("/admin")}
+          onClick={() =>
+            navigate(
+              "/admin"
+            )
+          }
         >
           ← Volver al panel
         </button>
@@ -200,231 +553,516 @@ function AdminHorariosPage() {
           Administración
         </p>
 
-        <h1>Horarios</h1>
+        <h1>
+          Horarios
+        </h1>
 
         <p>
-          Configurá los días y franjas
-          horarias de atención.
+          Elegí un día para ver,
+          crear, editar o eliminar
+          sus franjas horarias.
         </p>
       </header>
 
-      <section className="admin-horarios-nuevo">
-        <div>
-          <h2>Agregar franja</h2>
+      {errorCarga && (
+        <div className="admin-horarios-error">
+          {errorCarga}
+        </div>
+      )}
+
+      <section className="admin-horarios-selector">
+        <div className="admin-horarios-selector__header">
+          <div>
+            <span>
+              SEMANA
+            </span>
+
+            <h2>
+              Seleccioná un día
+            </h2>
+          </div>
+
           <p>
-            Creá una nueva franja horaria.
+            Administrá cada día
+            por separado.
           </p>
         </div>
 
-        <div className="admin-horarios-nuevo-form">
-          <select
-            value={nuevoHorario.diaSemana}
-            onChange={(event) =>
-              setNuevoHorario(
-                (anterior) => ({
-                  ...anterior,
-                  diaSemana:
-                    event.target.value,
-                })
-              )
-            }
-          >
-            {DIAS.map((dia) => (
-              <option
-                key={dia.numero}
-                value={dia.numero}
-              >
-                {dia.nombre}
-              </option>
-            ))}
-          </select>
+        <div className="admin-horarios-tabs">
+          {DIAS.map(
+            (
+              dia
+            ) => {
+              const cantidad =
+                horariosPorDia[
+                  dia.numero
+                ]?.length ||
+                0;
 
-          <input
-            type="time"
-            value={nuevoHorario.horaInicio}
-            onChange={(event) =>
-              setNuevoHorario(
-                (anterior) => ({
-                  ...anterior,
-                  horaInicio:
-                    event.target.value,
-                })
-              )
-            }
-          />
+              const activo =
+                diaSeleccionado ===
+                dia.numero;
 
-          <input
-            type="time"
-            value={nuevoHorario.horaFin}
-            onChange={(event) =>
-              setNuevoHorario(
-                (anterior) => ({
-                  ...anterior,
-                  horaFin:
-                    event.target.value,
-                })
-              )
-            }
-          />
+              return (
+                <button
+                  key={
+                    dia.numero
+                  }
+                  type="button"
+                  className={
+                    activo
+                      ? "admin-horarios-tab admin-horarios-tab--activo"
+                      : "admin-horarios-tab"
+                  }
+                  onClick={() =>
+                    seleccionarDia(
+                      dia.numero
+                    )
+                  }
+                >
+                  <span className="admin-horarios-tab__corto">
+                    {
+                      dia.corto
+                    }
+                  </span>
 
-          <button
-            type="button"
-            disabled={guardando}
-            onClick={agregarHorario}
-          >
-            Agregar
-          </button>
+                  <span className="admin-horarios-tab__nombre">
+                    {
+                      dia.nombre
+                    }
+                  </span>
+
+                  <small>
+                    {cantidad}
+                  </small>
+                </button>
+              );
+            }
+          )}
         </div>
       </section>
-
-      {error && (
-        <div className="admin-horarios-error">
-          {error}
-        </div>
-      )}
 
       {cargando ? (
         <div className="admin-horarios-estado">
           Cargando horarios...
         </div>
       ) : (
-        <section className="admin-horarios-dias">
-          {DIAS.map((dia) => {
-            const franjas =
-              horariosPorDia[dia.numero] ||
-              [];
+        <section className="admin-horario-dia admin-horario-dia--seleccionado">
+          <div className="admin-horario-dia-top">
+            <div>
+              <span className="admin-horario-dia-eyebrow">
+                DÍA SELECCIONADO
+              </span>
 
-            return (
-              <article
-                key={dia.numero}
-                className="admin-horario-dia"
+              <div className="admin-horario-dia-titulo">
+                <h2>
+                  {
+                    diaActual
+                      ?.nombre
+                  }
+                </h2>
+
+                <span>
+                  {
+                    franjasDiaActual
+                      .length
+                  }{" "}
+                  {franjasDiaActual
+                    .length ===
+                  1
+                    ? "franja"
+                    : "franjas"}
+                </span>
+              </div>
+            </div>
+
+            {!mostrarNuevaFranja && (
+              <button
+                type="button"
+                className="admin-horario-agregar"
+                onClick={
+                  abrirNuevaFranja
+                }
               >
-                <div className="admin-horario-dia-header">
-                  <h2>{dia.nombre}</h2>
+                <span>
+                  +
+                </span>
 
-                  {franjas.length === 0 && (
-                    <span>Cerrado</span>
-                  )}
+                Agregar franja
+              </button>
+            )}
+          </div>
+
+          {mostrarNuevaFranja && (
+            <div className="admin-horario-nueva">
+              <div className="admin-horario-nueva__titulo">
+                <div>
+                  <span>
+                    NUEVA FRANJA
+                  </span>
+
+                  <h3>
+                    Agregar horario
+                    para{" "}
+                    {
+                      diaActual
+                        ?.nombre
+                    }
+                  </h3>
                 </div>
 
-                {franjas.map((horario) => {
+                <button
+                  type="button"
+                  className="admin-horario-nueva__cerrar"
+                  onClick={
+                    cancelarNuevaFranja
+                  }
+                  disabled={
+                    guardando
+                  }
+                  aria-label="Cerrar"
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="admin-horario-nueva__form">
+                <div>
+                  <label>
+                    Desde
+                  </label>
+
+                  <input
+                    type="time"
+                    value={
+                      nuevoHorario
+                        .horaInicio
+                    }
+                    onChange={(
+                      event
+                    ) =>
+                      setNuevoHorario(
+                        (
+                          anterior
+                        ) => ({
+                          ...anterior,
+
+                          horaInicio:
+                            event
+                              .target
+                              .value,
+                        })
+                      )
+                    }
+                  />
+                </div>
+
+                <div>
+                  <label>
+                    Hasta
+                  </label>
+
+                  <input
+                    type="time"
+                    value={
+                      nuevoHorario
+                        .horaFin
+                    }
+                    onChange={(
+                      event
+                    ) =>
+                      setNuevoHorario(
+                        (
+                          anterior
+                        ) => ({
+                          ...anterior,
+
+                          horaFin:
+                            event
+                              .target
+                              .value,
+                        })
+                      )
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className="admin-horario-nueva__acciones">
+                <button
+                  type="button"
+                  className="admin-horario-cancelar"
+                  onClick={
+                    cancelarNuevaFranja
+                  }
+                  disabled={
+                    guardando
+                  }
+                >
+                  Cancelar
+                </button>
+
+                <button
+                  type="button"
+                  className="admin-horario-guardar"
+                  onClick={
+                    agregarHorario
+                  }
+                  disabled={
+                    guardando
+                  }
+                >
+                  {guardando
+                    ? "Guardando..."
+                    : "Agregar franja"}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {franjasDiaActual.length ===
+          0 ? (
+            <div className="admin-horario-dia-vacio">
+              <div className="admin-horario-dia-vacio__icono">
+                ○
+              </div>
+
+              <strong>
+                {
+                  diaActual
+                    ?.nombre
+                }{" "}
+                está cerrado
+              </strong>
+
+              <p>
+                Todavía no tiene
+                ninguna franja
+                horaria configurada.
+              </p>
+
+              {!mostrarNuevaFranja && (
+                <button
+                  type="button"
+                  onClick={
+                    abrirNuevaFranja
+                  }
+                >
+                  + Agregar primera
+                  franja
+                </button>
+              )}
+            </div>
+          ) : (
+            <div className="admin-horario-lista">
+              {franjasDiaActual.map(
+                (
+                  horario,
+                  indice
+                ) => {
                   const editando =
-                    editandoId === horario.id;
+                    editandoId ===
+                    horario.id;
 
                   return (
                     <div
-                      key={horario.id}
-                      className="admin-horario-franja"
+                      key={
+                        horario.id
+                      }
+                      className={[
+                        "admin-horario-franja",
+
+                        !horario.activo
+                          ? "admin-horario-franja--inactiva"
+                          : "",
+
+                        editando
+                          ? "admin-horario-franja--editando"
+                          : "",
+                      ]
+                        .filter(
+                          Boolean
+                        )
+                        .join(
+                          " "
+                        )}
                     >
                       {editando ? (
-                        <>
-                          <input
-                            type="time"
-                            value={
-                              horario.horaInicio
-                            }
-                            onChange={(event) =>
-                              manejarCambioHorario(
-                                horario.id,
-                                "horaInicio",
-                                event.target
-                                  .value
-                              )
-                            }
-                          />
+                        <div className="admin-horario-edicion">
+                          <div className="admin-horario-edicion__numero">
+                            Franja{" "}
+                            {indice +
+                              1}
+                          </div>
 
-                          <span>—</span>
+                          <div className="admin-horario-edicion__campos">
+                            <div>
+                              <label>
+                                Desde
+                              </label>
 
-                          <input
-                            type="time"
-                            value={
-                              horario.horaFin
-                            }
-                            onChange={(event) =>
-                              manejarCambioHorario(
-                                horario.id,
-                                "horaFin",
-                                event.target
-                                  .value
-                              )
-                            }
-                          />
+                              <input
+                                type="time"
+                                value={
+                                  horario
+                                    .horaInicio
+                                }
+                                onChange={(
+                                  event
+                                ) =>
+                                  manejarCambioHorario(
+                                    horario.id,
+                                    "horaInicio",
+                                    event
+                                      .target
+                                      .value
+                                  )
+                                }
+                              />
+                            </div>
 
-                          <label className="admin-horario-activo">
-                            <input
-                              type="checkbox"
-                              checked={Boolean(
-                                horario.activo
-                              )}
-                              onChange={(
-                                event
-                              ) =>
-                                manejarCambioHorario(
-                                  horario.id,
-                                  "activo",
-                                  event.target
-                                    .checked
+                            <div>
+                              <label>
+                                Hasta
+                              </label>
+
+                              <input
+                                type="time"
+                                value={
+                                  horario
+                                    .horaFin
+                                }
+                                onChange={(
+                                  event
+                                ) =>
+                                  manejarCambioHorario(
+                                    horario.id,
+                                    "horaFin",
+                                    event
+                                      .target
+                                      .value
+                                  )
+                                }
+                              />
+                            </div>
+
+                            <label className="admin-horario-activo">
+                              <input
+                                type="checkbox"
+                                checked={Boolean(
+                                  horario
+                                    .activo
+                                )}
+                                onChange={(
+                                  event
+                                ) =>
+                                  manejarCambioHorario(
+                                    horario.id,
+                                    "activo",
+                                    event
+                                      .target
+                                      .checked
+                                  )
+                                }
+                              />
+
+                              <span>
+                                {
+                                  horario.activo
+                                    ? "Activo"
+                                    : "Inactivo"
+                                }
+                              </span>
+                            </label>
+                          </div>
+
+                          <div className="admin-horario-edicion__acciones">
+                            <button
+                              type="button"
+                              className="admin-horario-cancelar"
+                              onClick={
+                                cancelarEdicion
+                              }
+                              disabled={
+                                guardando
+                              }
+                            >
+                              Cancelar
+                            </button>
+
+                            <button
+                              type="button"
+                              className="admin-horario-guardar"
+                              onClick={() =>
+                                guardarHorario(
+                                  horario
                                 )
                               }
-                            />
-
-                            Activo
-                          </label>
-
-                          <button
-                            type="button"
-                            className="admin-horario-guardar"
-                            disabled={guardando}
-                            onClick={() =>
-                              guardarHorario(
-                                horario
-                              )
-                            }
-                          >
-                            Guardar
-                          </button>
-
-                          <button
-                            type="button"
-                            className="admin-horario-cancelar"
-                            onClick={() => {
-                              setEditandoId(null);
-                              cargarHorarios();
-                            }}
-                          >
-                            Cancelar
-                          </button>
-                        </>
+                              disabled={
+                                guardando
+                              }
+                            >
+                              {guardando
+                                ? "Guardando..."
+                                : "Guardar cambios"}
+                            </button>
+                          </div>
+                        </div>
                       ) : (
                         <>
-                          <div className="admin-horario-horas">
-                            <strong>
+                          <div className="admin-horario-franja__principal">
+                            <div className="admin-horario-franja__numero">
                               {
-                                horario.horaInicio
+                                indice +
+                                1
                               }
-                            </strong>
+                            </div>
 
-                            <span>—</span>
+                            <div className="admin-horario-horas">
+                              <strong>
+                                {
+                                  horario
+                                    .horaInicio
+                                }
+                              </strong>
 
-                            <strong>
-                              {horario.horaFin}
-                            </strong>
+                              <span>
+                                —
+                              </span>
 
-                            {!horario.activo && (
-                              <small>
-                                Inactivo
-                              </small>
-                            )}
+                              <strong>
+                                {
+                                  horario
+                                    .horaFin
+                                }
+                              </strong>
+                            </div>
+
+                            <span
+                              className={
+                                horario.activo
+                                  ? "admin-horario-estado admin-horario-estado--activo"
+                                  : "admin-horario-estado admin-horario-estado--inactivo"
+                              }
+                            >
+                              {horario.activo
+                                ? "Activo"
+                                : "Inactivo"}
+                            </span>
                           </div>
 
                           <div className="admin-horario-acciones">
                             <button
                               type="button"
-                              onClick={() =>
+                              onClick={() => {
+                                setMostrarNuevaFranja(
+                                  false
+                                );
+
                                 setEditandoId(
                                   horario.id
-                                )
-                              }
+                                );
+                              }}
                             >
                               Editar
                             </button>
@@ -432,23 +1070,53 @@ function AdminHorariosPage() {
                             <button
                               type="button"
                               className="admin-horario-eliminar"
+                              disabled={
+                                eliminandoId ===
+                                horario.id
+                              }
                               onClick={() =>
                                 eliminarHorario(
-                                  horario.id
+                                  horario
                                 )
                               }
                             >
-                              Eliminar
+                              {eliminandoId ===
+                              horario.id
+                                ? "Eliminando..."
+                                : "Eliminar"}
                             </button>
                           </div>
                         </>
                       )}
                     </div>
                   );
-                })}
-              </article>
-            );
-          })}
+                }
+              )}
+            </div>
+          )}
+
+          {franjasDiaActual.length >
+            0 &&
+            !mostrarNuevaFranja && (
+              <button
+                type="button"
+                className="admin-horario-agregar admin-horario-agregar--inferior"
+                onClick={
+                  abrirNuevaFranja
+                }
+              >
+                <span>
+                  +
+                </span>
+
+                Agregar otra franja
+                al{" "}
+                {
+                  diaActual
+                    ?.nombre
+                }
+              </button>
+            )}
         </section>
       )}
     </main>

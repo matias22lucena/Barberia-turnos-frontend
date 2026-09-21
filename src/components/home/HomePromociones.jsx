@@ -3,7 +3,9 @@ import {
   useState,
 } from "react";
 
-import { Link } from "react-router-dom";
+import {
+  Link,
+} from "react-router-dom";
 
 import {
   obtenerPromociones,
@@ -11,15 +13,23 @@ import {
 
 import "./HomePromociones.css";
 
-function HomePromociones() {
-  const [promociones, setPromociones] =
-    useState([]);
+function HomePromociones({
+  contenido,
+}) {
+  const [
+    promociones,
+    setPromociones,
+  ] = useState([]);
 
-  const [cargando, setCargando] =
-    useState(true);
+  const [
+    cargando,
+    setCargando,
+  ] = useState(true);
 
-  const [error, setError] =
-    useState("");
+  const [
+    error,
+    setError,
+  ] = useState("");
 
   useEffect(() => {
     const cargarPromociones =
@@ -32,10 +42,13 @@ function HomePromociones() {
             await obtenerPromociones();
 
           setPromociones(
-            promocionesObtenidas
+            promocionesObtenidas ||
+              []
           );
         } catch (error) {
-          console.error(error);
+          console.error(
+            error
+          );
 
           setError(
             "No se pudieron cargar las promociones."
@@ -72,14 +85,11 @@ function HomePromociones() {
     );
   };
 
-  /*
-   * Si no hay promociones activas,
-   * no mostramos toda la sección.
-   */
   if (
     !cargando &&
     !error &&
-    promociones.length === 0
+    promociones.length ===
+      0
   ) {
     return null;
   }
@@ -92,16 +102,18 @@ function HomePromociones() {
       <div className="home-promociones__container">
         <header className="home-promociones__header">
           <span className="home-promociones__eyebrow">
-            Promociones
+            {contenido?.promocionesEyebrow ||
+              "Promociones"}
           </span>
 
           <h2 className="home-promociones__title">
-            Aprovechá nuestras promos
+            {contenido?.promocionesTitulo ||
+              "Aprovechá nuestras promos"}
           </h2>
 
           <p className="home-promociones__description">
-            Opciones especiales con
-            precio y duración definidos.
+            {contenido?.promocionesDescripcion ||
+              "Opciones especiales con precio y duración definidos."}
           </p>
         </header>
 
@@ -130,10 +142,13 @@ function HomePromociones() {
 
         {!cargando &&
           !error &&
-          promociones.length > 0 && (
+          promociones.length >
+            0 && (
             <div className="home-promociones__grid">
               {promociones.map(
-                (promocion) => {
+                (
+                  promocion
+                ) => {
                   const precio =
                     formatearPrecio(
                       promocion.precio
@@ -147,7 +162,8 @@ function HomePromociones() {
                       className="home-promociones__card"
                     >
                       <div className="home-promociones__badge">
-                        PROMO
+                        {contenido?.promocionesBadge ||
+                          "PROMO"}
                       </div>
 
                       <div className="home-promociones__card-top">
@@ -168,7 +184,9 @@ function HomePromociones() {
 
                         {precio && (
                           <strong className="home-promociones__price">
-                            {precio}
+                            {
+                              precio
+                            }
                           </strong>
                         )}
                       </div>
@@ -182,10 +200,11 @@ function HomePromociones() {
                       )}
 
                       <Link
-                        to="/reservar"
+                        to={`/reservar?promocion=${promocion.id}`}
                         className="home-promociones__reserve-button"
                       >
-                        Reservar promoción
+                        {contenido?.promocionesBotonReservar ||
+                          "Reservar promoción"}
 
                         <span
                           aria-hidden="true"
